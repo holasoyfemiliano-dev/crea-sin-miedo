@@ -396,6 +396,22 @@ if (tier && TIERS[tier]) {
 } else {
   renderTierSelector();
 }
+
+// ——— Lead capture: fires when email is filled (abandoned checkout recovery) ———
+let leadCaptured = false;
+document.getElementById('email').addEventListener('blur', function() {
+  if (leadCaptured) return;
+  const email = this.value.trim();
+  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return;
+  leadCaptured = true;
+  const nombre   = document.getElementById('nombre').value.trim();
+  const telefono = document.getElementById('telefono').value.trim();
+  fetch('/api/capture-lead', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ nombre, email, telefono, tier: selectedTier }),
+  }).catch(() => {}); // silent — never block the user
+});
 </script>
 </body>
 </html>
