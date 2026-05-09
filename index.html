@@ -6,268 +6,379 @@
   <title>Crea sin Miedo — Taller Presencial · Guadalajara · 1 Agosto 2026</title>
   <meta name="description" content="El taller de marca personal y creación de contenido más práctico de México. Guadalajara, 1 de agosto 2026.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Antonio:wght@400;700&family=Oswald:wght@600;700&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
     :root {
-      --dark:    #06090f;
-      --card:    rgba(255,255,255,0.04);
-      --border:  rgba(249,115,22,0.2);
-      --orange:  #f97316;
-      --orange2: #fb923c;
-      --gold:    #fbbf24;
-      --red:     #ef4444;
-      --green:   #22c55e;
-      --white:   #ffffff;
-      --text:    #c8cfe0;
-      --muted:   #6a7590;
+      --dark:      #000000;
+      --card:      rgba(255,255,255,0.05);
+      --border:    rgba(229,39,43,0.2);
+      --red:       #e5272b;
+      --red2:      #ef3535;
+      --gold:      #f5c518;
+      --matrix:    #00cc52;
+      --green:     #22c55e;
+      --white:     #ffffff;
+      --text:      #cccccc;
+      --muted:     #666666;
     }
     html { scroll-behavior:smooth; }
-    body { background:var(--dark); color:var(--white); font-family:'Inter',sans-serif; overflow-x:hidden; }
+    body {
+      background:#06090f;
+      background-image:
+        radial-gradient(ellipse 75% 55% at 5% 8%, rgba(229,39,43,.09) 0%, transparent 58%),
+        radial-gradient(ellipse 60% 45% at 92% 88%, rgba(0,204,82,.06) 0%, transparent 58%),
+        radial-gradient(ellipse 40% 30% at 50% 100%, rgba(229,39,43,.04) 0%, transparent 60%);
+      color:var(--white);
+      font-family:'Inter',sans-serif;
+      overflow-x:hidden;
+    }
 
-    /* Ambient */
-    .ambient { position:fixed; inset:0; z-index:0; pointer-events:none; }
-    .ambient span { position:absolute; border-radius:50%; filter:blur(100px); opacity:.15; }
-    .a1 { width:700px; height:700px; top:-200px; right:-100px; background:#f97316; }
-    .a2 { width:600px; height:600px; bottom:-200px; left:-100px; background:#7c3aed; }
-    .a3 { width:400px; height:400px; top:40%; left:40%; background:#fbbf24; opacity:.06; }
+    /* Matrix background layers */
+    .matrix-bg { position:fixed; inset:0; z-index:0; pointer-events:none; overflow:hidden; }
+    .bg-wave { position:absolute; display:block; mix-blend-mode:screen; }
+    .bg-wave-1 { top:-5%; right:-10%; width:82vw; opacity:.48; transform:rotate(4deg); filter:blur(.5px); }
+    .bg-wave-2 { top:34%; left:-20%; width:65vw; opacity:.18; transform:rotate(-14deg) scaleX(-1); filter:blur(2px); }
+    .bg-wave-3 { bottom:-8%; right:-6%; width:62vw; opacity:.26; transform:rotate(20deg); filter:blur(1px); }
 
     /* Nav */
-    nav { position:fixed; top:0; left:0; right:0; z-index:100; padding:14px 28px; background:rgba(6,9,15,0.9); backdrop-filter:blur(14px); border-bottom:1px solid rgba(249,115,22,.1); display:flex; align-items:center; justify-content:space-between; }
-    .nav-logo { font-family:'Bebas Neue',sans-serif; font-size:1.4rem; letter-spacing:.06em; }
-    .nav-logo span { color:var(--orange); }
-    .nav-date { font-size:.75rem; color:var(--muted); }
-    .nav-cta { background:var(--orange); color:#000; border:none; padding:9px 22px; border-radius:6px; font-size:.78rem; font-weight:800; letter-spacing:.06em; text-transform:uppercase; cursor:pointer; text-decoration:none; transition:transform .15s; }
-    .nav-cta:hover { transform:scale(1.04); }
+    nav { position:fixed; top:0; left:0; right:0; z-index:100; padding:14px 28px; background:rgba(0,0,0,0.94); backdrop-filter:blur(20px); border-bottom:1px solid rgba(255,255,255,.06); display:flex; align-items:center; justify-content:space-between; }
+    .nav-logo img { height:32px; width:auto; display:block; }
+    .nav-date { font-size:.72rem; color:var(--muted); letter-spacing:.04em; }
+    .nav-cta { background:var(--red); color:#fff; border:none; padding:9px 22px; border-radius:4px; font-size:.75rem; font-weight:800; letter-spacing:.08em; text-transform:uppercase; cursor:pointer; text-decoration:none; transition:opacity .15s; }
+    .nav-cta:hover { opacity:.85; }
 
-    .container { max-width:1100px; margin:0 auto; padding:0 24px; position:relative; z-index:1; }
+    .container { max-width:1100px; margin:0 auto; padding:0 28px; position:relative; z-index:1; }
+
+    /* Urgency bar */
+    .urgency-bar { background:var(--red); padding:9px 16px; text-align:center; font-size:.75rem; font-weight:700; letter-spacing:.1em; text-transform:uppercase; position:relative; z-index:101; }
 
     /* Hero */
-    #hero { min-height:100vh; display:flex; align-items:center; padding:90px 0 60px; position:relative; }
-    .hero-eyebrow { display:inline-flex; align-items:center; gap:8px; background:rgba(249,115,22,.1); border:1px solid var(--border); border-radius:20px; padding:6px 16px; font-size:.7rem; letter-spacing:.18em; text-transform:uppercase; color:var(--orange2); margin-bottom:24px; }
-    .hero-eyebrow::before { content:''; width:6px; height:6px; border-radius:50%; background:var(--orange); animation:pulse 1.8s infinite; }
-    @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.4;transform:scale(.7)} }
-    .hero-title { font-family:'Bebas Neue',sans-serif; font-size:clamp(4rem,9vw,9rem); line-height:.92; letter-spacing:.02em; margin-bottom:16px; }
-    .hero-title .accent { color:var(--orange); }
-    .hero-sub { font-size:clamp(1rem,1.8vw,1.25rem); color:var(--text); line-height:1.7; max-width:580px; margin-bottom:32px; }
-    .hero-meta { display:flex; gap:20px; flex-wrap:wrap; margin-bottom:36px; }
-    .meta-pill { display:flex; align-items:center; gap:8px; background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.1); border-radius:8px; padding:10px 16px; font-size:.85rem; }
-    .meta-pill .icon { font-size:1.1rem; }
-    .meta-pill strong { color:var(--white); }
-    .meta-pill span { color:var(--muted); }
+    #hero { min-height:100vh; display:flex; align-items:center; padding:60px 0 60px; position:relative; overflow:hidden; }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.3} }
 
-    /* Countdown */
-    .countdown { display:flex; gap:12px; margin-bottom:40px; }
-    .cd-box { background:rgba(249,115,22,.08); border:1px solid var(--border); border-radius:10px; padding:14px 20px; text-align:center; min-width:72px; }
-    .cd-num { font-family:'Bebas Neue',sans-serif; font-size:2.4rem; color:var(--orange); line-height:1; }
-    .cd-label { font-size:.62rem; color:var(--muted); text-transform:uppercase; letter-spacing:.1em; margin-top:2px; }
+    /* Hero: title left + video right */
+    .hero-title { font-family:'Oswald','Impact',sans-serif; font-size:clamp(4rem,8.5vw,10rem); line-height:.88; letter-spacing:.02em; text-shadow:0 0 120px rgba(229,39,43,.25), 0 2px 8px rgba(0,0,0,.9); }
+    .hero-title .red { color:var(--red); text-shadow:0 0 60px rgba(229,39,43,.7), 0 0 140px rgba(229,39,43,.3); }
+    .hero-taller { font-family:'Antonio',sans-serif; font-size:clamp(1rem,1.8vw,1.35rem); letter-spacing:.1em; text-transform:uppercase; color:var(--gold); margin-top:18px; white-space:nowrap; }
+    .hero-layout { display:grid; grid-template-columns:1fr 1.45fr; gap:44px; align-items:center; margin:24px 0 44px; }
 
-    .btn-orange { background:var(--orange); color:#000; border:none; border-radius:8px; padding:18px 36px; font-size:1.05rem; font-weight:900; letter-spacing:.06em; text-transform:uppercase; cursor:pointer; text-decoration:none; display:inline-block; transition:transform .15s, box-shadow .15s; }
-    .btn-orange:hover { transform:scale(1.03); box-shadow:0 8px 40px rgba(249,115,22,.5); }
-    .btn-outline { background:transparent; color:var(--orange); border:1.5px solid var(--orange); border-radius:8px; padding:16px 32px; font-size:1rem; font-weight:700; letter-spacing:.06em; text-transform:uppercase; cursor:pointer; text-decoration:none; display:inline-block; transition:background .2s, color .2s; }
-    .btn-outline:hover { background:var(--orange); color:#000; }
+    .hero-video { position:relative; }
+    .video-wrapper { position:relative; width:100%; aspect-ratio:16/9; border-radius:8px; overflow:hidden; border:1px solid rgba(255,255,255,.14); box-shadow:0 0 60px rgba(0,204,82,.15), 0 0 120px rgba(229,39,43,.06), 0 16px 60px rgba(0,0,0,.7); }
+    .video-wrapper iframe { position:absolute; inset:0; width:100%; height:100%; display:block; }
+
+    .hero-sub { font-size:clamp(.95rem,1.6vw,1.15rem); color:var(--text); line-height:1.7; margin-bottom:28px; }
+    .hero-meta { display:flex; gap:0; flex-wrap:wrap; margin-bottom:32px; }
+    .meta-pill { display:flex; align-items:center; gap:10px; padding:0 24px 0 0; font-size:.95rem; }
+    .meta-pill:first-child { padding-left:0; }
+    .meta-pill + .meta-pill { border-left:1px solid rgba(255,255,255,.15); padding-left:24px; }
+    .pill-dot { width:6px; height:6px; border-radius:50%; background:var(--red); flex-shrink:0; }
+    .meta-pill strong { color:var(--white); font-size:1rem; }
+    .meta-pill .sub { color:var(--muted); }
+
+    /* Cupo bar */
+    .cupo-bar-wrap { margin-bottom:36px; }
+    .cupo-bar-label { display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; }
+    .cupo-bar-text { font-size:.75rem; letter-spacing:.12em; text-transform:uppercase; color:var(--muted); }
+    .cupo-bar-pct { font-family:'Antonio',sans-serif; font-size:1.6rem; color:var(--red); line-height:1; }
+    .cupo-bar-track { height:6px; background:rgba(229,39,43,.12); border-radius:3px; overflow:hidden; }
+    .cupo-bar-fill { height:100%; width:40%; background:linear-gradient(90deg,var(--red),var(--red2)); border-radius:3px; }
+    .cupo-bar-note { font-size:.7rem; color:var(--muted); margin-top:7px; letter-spacing:.04em; }
+
+    .hero-btns { display:flex; gap:14px; flex-wrap:wrap; }
+    .btn-red { background:var(--red); color:#fff; border:none; border-radius:4px; padding:16px 36px; font-size:1rem; font-weight:800; letter-spacing:.08em; text-transform:uppercase; cursor:pointer; text-decoration:none; display:inline-block; transition:all .2s; box-shadow:0 4px 24px rgba(229,39,43,.35); }
+    .btn-red:hover { opacity:1; transform:translateY(-2px); box-shadow:0 8px 40px rgba(229,39,43,.6); }
+    .btn-outline { background:transparent; color:var(--white); border:1.5px solid rgba(255,255,255,.2); border-radius:4px; padding:15px 30px; font-size:.95rem; font-weight:600; letter-spacing:.04em; text-transform:uppercase; cursor:pointer; text-decoration:none; display:inline-block; transition:all .2s; backdrop-filter:blur(8px); }
+    .btn-outline:hover { border-color:rgba(255,255,255,.6); background:rgba(255,255,255,.05); }
 
     /* Sections */
-    .section { padding:80px 0; position:relative; z-index:1; }
-    .sec-eyebrow { display:block; font-size:.66rem; letter-spacing:.22em; text-transform:uppercase; color:var(--orange); margin-bottom:10px; }
-    .sec-title { font-family:'Bebas Neue',sans-serif; font-size:clamp(2.2rem,4vw,3.8rem); line-height:1; margin-bottom:12px; }
-    .divider { width:40px; height:3px; background:var(--orange); margin:12px 0 44px; }
-    .divider-center { margin:12px auto 44px; }
-    .sec-sub { font-size:.95rem; color:var(--text); line-height:1.75; max-width:600px; margin-bottom:44px; }
+    .section { padding:80px 0; position:relative; z-index:1; overflow:hidden; }
+    /* Ensure hero content sits above matrix bg */
+    #hero .container { position:relative; z-index:1; }
+    .sec-eyebrow { display:block; font-size:.63rem; letter-spacing:.28em; text-transform:uppercase; color:var(--gold); margin-bottom:12px; }
+    .sec-title { font-family:'Oswald','Impact',sans-serif; font-size:clamp(2.6rem,5vw,4.8rem); line-height:1.05; margin-bottom:12px; letter-spacing:.02em; }
+    .divider { width:44px; height:2px; background:linear-gradient(90deg,var(--red),transparent); margin:16px 0 48px; }
+    .divider-center { margin:14px auto 44px; }
 
     /* Para quién */
     .audience-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; }
-    @media(max-width:768px){.audience-grid{grid-template-columns:1fr;}}
-    .audience-card { background:var(--card); border:1px solid rgba(255,255,255,.07); border-radius:12px; padding:26px; transition:border-color .2s; }
-    .audience-card:hover { border-color:rgba(249,115,22,.3); }
-    .audience-icon { font-size:2rem; margin-bottom:12px; }
-    .audience-title { font-weight:800; color:var(--white); margin-bottom:8px; }
-    .audience-desc { font-size:.83rem; color:var(--text); line-height:1.65; }
+    .audience-card { background:rgba(255,255,255,.03); backdrop-filter:blur(16px); -webkit-backdrop-filter:blur(16px); border:1px solid rgba(255,255,255,.08); border-radius:12px; padding:32px 28px; transition:all .25s; }
+    .audience-card:hover { border-color:rgba(229,39,43,.4); background:rgba(229,39,43,.04); transform:translateY(-4px); box-shadow:0 12px 40px rgba(0,0,0,.4); }
+    .audience-num { font-family:'Oswald','Impact',sans-serif; font-size:3.2rem; line-height:1; margin-bottom:14px; color:var(--red); text-shadow:0 0 60px rgba(229,39,43,.7), 0 0 140px rgba(229,39,43,.3); }
+    .audience-title { font-weight:800; color:var(--white); margin-bottom:10px; font-size:1rem; line-height:1.3; }
+    .audience-desc { font-size:.83rem; color:var(--text); line-height:1.7; }
 
     /* Agenda */
-    .agenda-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:20px; }
-    @media(max-width:768px){.agenda-grid{grid-template-columns:1fr;}}
-    .agenda-block { background:var(--card); border:1px solid rgba(255,255,255,.07); border-left:3px solid var(--orange); border-radius:10px; padding:22px 24px; }
-    .agenda-time { font-size:.7rem; color:var(--orange); letter-spacing:.12em; text-transform:uppercase; margin-bottom:6px; }
-    .agenda-title { font-weight:800; color:var(--white); margin-bottom:6px; font-size:.95rem; }
-    .agenda-desc { font-size:.82rem; color:var(--muted); line-height:1.6; }
+    .agenda-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:16px; align-items:start; }
+    .agenda-block { background:rgba(255,255,255,.03); backdrop-filter:blur(16px); -webkit-backdrop-filter:blur(16px); border:1px solid rgba(255,255,255,.07); border-left:2px solid var(--red); border-radius:12px; padding:26px 28px; transition:all .25s; }
+    .agenda-block:hover { background:rgba(255,255,255,.05); box-shadow:0 8px 32px rgba(0,0,0,.3); }
+    .agenda-time { font-size:.63rem; color:var(--gold); letter-spacing:.16em; text-transform:uppercase; margin-bottom:8px; }
+    .agenda-title { font-weight:800; color:var(--white); margin-bottom:8px; font-size:1rem; }
+    .agenda-desc { font-size:.82rem; color:var(--muted); line-height:1.65; }
 
     /* Speakers */
     .speakers-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:20px; }
-    @media(max-width:768px){.speakers-grid{grid-template-columns:1fr;}}
-    .speaker-card { background:var(--card); border:1px solid rgba(255,255,255,.07); border-radius:14px; padding:28px; text-align:center; transition:border-color .2s; }
-    .speaker-card:hover { border-color:rgba(249,115,22,.3); }
-    .speaker-avatar { width:80px; height:80px; border-radius:50%; background:rgba(249,115,22,.15); border:2px solid var(--border); margin:0 auto 14px; display:flex; align-items:center; justify-content:center; font-size:2rem; }
+    .speaker-card { background:rgba(255,255,255,.03); backdrop-filter:blur(16px); -webkit-backdrop-filter:blur(16px); border:1px solid rgba(255,255,255,.08); border-radius:12px; padding:32px 28px; text-align:center; transition:all .25s; }
+    .speaker-card:hover { border-color:rgba(229,39,43,.3); transform:translateY(-4px); box-shadow:0 12px 40px rgba(0,0,0,.4); }
+    .speaker-avatar { width:80px; height:80px; border-radius:50%; background:rgba(229,39,43,.08); border:1.5px solid rgba(229,39,43,.3); margin:0 auto 16px; display:flex; align-items:center; justify-content:center; font-family:'Impact',sans-serif; font-size:1.5rem; color:var(--red); letter-spacing:.04em; box-shadow:0 0 24px rgba(229,39,43,.15); }
     .speaker-name { font-weight:800; color:var(--white); margin-bottom:4px; }
-    .speaker-role { font-size:.78rem; color:var(--orange2); margin-bottom:10px; }
+    .speaker-role { font-size:.75rem; color:var(--gold); margin-bottom:10px; letter-spacing:.04em; }
     .speaker-desc { font-size:.8rem; color:var(--text); line-height:1.6; }
 
     /* Pricing */
     .pricing-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:20px; align-items:start; }
-    @media(max-width:768px){.pricing-grid{grid-template-columns:1fr;}}
-    .price-card { background:rgba(255,255,255,.03); border:1px solid rgba(255,255,255,.08); border-radius:18px; padding:32px 28px; position:relative; transition:transform .2s, border-color .2s; }
-    .price-card:hover { transform:translateY(-4px); }
-    .price-card.featured { background:rgba(249,115,22,.06); border-color:rgba(249,115,22,.4); border-width:1.5px; }
-    .price-card.elite { background:rgba(251,191,36,.05); border-color:rgba(251,191,36,.35); }
-    .price-badge { position:absolute; top:-14px; left:50%; transform:translateX(-50%); background:var(--orange); color:#000; font-size:.7rem; font-weight:800; letter-spacing:.08em; text-transform:uppercase; padding:5px 16px; border-radius:20px; white-space:nowrap; }
-    .price-badge.gold { background:var(--gold); }
-    .price-tier { font-size:.7rem; letter-spacing:.2em; text-transform:uppercase; color:var(--muted); margin-bottom:8px; }
-    .price-name { font-family:'Bebas Neue',sans-serif; font-size:2rem; color:var(--white); margin-bottom:4px; }
-    .price-amount { font-family:'Bebas Neue',sans-serif; font-size:3.2rem; line-height:1; margin-bottom:4px; }
-    .price-card.featured .price-amount { color:var(--orange); }
+    .price-card { background:rgba(255,255,255,.03); backdrop-filter:blur(16px); -webkit-backdrop-filter:blur(16px); border:1px solid rgba(255,255,255,.08); border-radius:14px; padding:36px 28px; position:relative; transition:all .25s; }
+    .price-card:hover { transform:translateY(-5px); box-shadow:0 16px 50px rgba(0,0,0,.5); }
+    .price-card.featured { background:rgba(0,204,82,.04); border-color:rgba(0,204,82,.45); border-top:2px solid var(--matrix); box-shadow:0 0 60px rgba(0,204,82,.1); }
+    .price-card.elite { background:rgba(245,197,24,.05); border-color:rgba(245,197,24,.35); border-top:2px solid var(--gold); box-shadow:0 0 60px rgba(245,197,24,.06); }
+    .price-badge { position:absolute; top:-13px; left:50%; transform:translateX(-50%); background:var(--red); color:#fff; font-size:.65rem; font-weight:800; letter-spacing:.1em; text-transform:uppercase; padding:5px 16px; border-radius:2px; white-space:nowrap; }
+    .price-badge.gold { background:var(--gold); color:#000; }
+    .price-tier { font-size:.63rem; letter-spacing:.22em; text-transform:uppercase; color:var(--muted); margin-bottom:8px; }
+    .price-name { font-family:'Antonio',sans-serif; font-size:2rem; color:var(--white); margin-bottom:4px; }
+    .price-amount { font-family:'Antonio',sans-serif; font-size:3rem; line-height:1; margin-bottom:4px; }
+    .price-card.featured .price-amount { color:var(--matrix); }
     .price-card.elite .price-amount { color:var(--gold); }
-    .price-currency { font-size:.85rem; color:var(--muted); margin-bottom:24px; }
-    .price-divider { height:1px; background:rgba(255,255,255,.08); margin:20px 0; }
+    .price-currency { font-size:.8rem; color:var(--muted); margin-bottom:24px; }
+    .price-divider { height:1px; background:rgba(255,255,255,.06); margin:20px 0; }
     .price-features { list-style:none; margin-bottom:28px; display:flex; flex-direction:column; gap:10px; }
-    .price-features li { display:flex; gap:10px; align-items:flex-start; font-size:.84rem; color:var(--text); }
-    .price-features li::before { content:'✓'; color:var(--green); font-weight:800; flex-shrink:0; margin-top:1px; }
+    .price-features li { display:flex; gap:10px; align-items:flex-start; font-size:.83rem; color:var(--text); }
+    .price-features li::before { content:'—'; color:var(--green); font-weight:800; flex-shrink:0; }
     .price-features li.muted { color:var(--muted); }
-    .price-features li.muted::before { content:'—'; color:var(--muted); font-weight:400; }
-    .price-cupos { font-size:.75rem; color:var(--orange); margin-top:-16px; margin-bottom:20px; font-weight:600; }
-    .price-btn { width:100%; background:rgba(255,255,255,.08); color:var(--white); border:1.5px solid rgba(255,255,255,.15); border-radius:8px; padding:14px; font-weight:800; font-size:.9rem; letter-spacing:.06em; text-transform:uppercase; cursor:pointer; transition:background .2s; }
-    .price-card.featured .price-btn { background:var(--orange); color:#000; border:none; }
+    .price-features li.muted::before { content:'—'; color:rgba(255,255,255,.15); font-weight:400; }
+    .price-cupos { font-size:.72rem; color:var(--gold); margin-top:-16px; margin-bottom:20px; font-weight:600; letter-spacing:.04em; }
+    .price-btn { width:100%; background:rgba(255,255,255,.06); color:var(--white); border:1px solid rgba(255,255,255,.12); border-radius:4px; padding:14px; font-weight:800; font-size:.88rem; letter-spacing:.06em; text-transform:uppercase; cursor:pointer; transition:background .2s; }
+    .price-card.featured .price-btn { background:var(--red); color:#fff; border:none; }
     .price-card.elite .price-btn { background:var(--gold); color:#000; border:none; }
     .price-btn:hover { filter:brightness(1.1); }
 
+    /* Stats bar */
+    .stats-bar { position:relative; z-index:1; border-top:1px solid rgba(255,255,255,.05); border-bottom:1px solid rgba(255,255,255,.05); padding:48px 0; background:rgba(255,255,255,.015); backdrop-filter:blur(8px); }
+    .stats-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:20px; text-align:center; }
+    .stat-num { font-family:'Oswald','Impact',sans-serif; font-size:clamp(2.8rem,5vw,4.5rem); line-height:1; margin-bottom:8px; }
+    .stat-item:nth-child(odd) .stat-num { color:var(--white); }
+    .stat-item:nth-child(even) .stat-num { color:var(--red); }
+    .stat-sep { width:1px; background:rgba(255,255,255,.06); }
+    .stat-label { font-size:.68rem; color:var(--muted); letter-spacing:.12em; text-transform:uppercase; line-height:1.5; }
+    @media(max-width:768px) { .stats-grid { grid-template-columns:repeat(3,1fr); gap:24px 12px; } .stat-sep { display:none; } }
+
+    /* Testimonios */
+    .testimonios-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:20px; }
+    .testimonio-card { display:flex; flex-direction:column; gap:12px; }
+    .testimonio-card video { width:100%; aspect-ratio:16/9; object-fit:cover; border-radius:8px; border:1px solid rgba(255,255,255,.08); background:#000; display:block; }
+    .testimonio-name { font-size:.82rem; color:var(--muted); letter-spacing:.04em; padding-left:4px; }
+    @media(max-width:768px) { .testimonios-grid { grid-template-columns:1fr; } }
+
     /* FAQ */
-    .faq-list { display:flex; flex-direction:column; gap:0; }
-    .faq-item { border-bottom:1px solid rgba(255,255,255,.07); }
-    .faq-q { width:100%; background:none; border:none; color:var(--white); font-size:.95rem; font-weight:700; padding:20px 0; text-align:left; cursor:pointer; display:flex; justify-content:space-between; align-items:center; font-family:'Inter',sans-serif; }
-    .faq-q:hover { color:var(--orange2); }
-    .faq-q .icon { color:var(--orange); font-size:1.2rem; transition:transform .2s; }
+    .faq-list { display:flex; flex-direction:column; }
+    .faq-item { border-bottom:1px solid rgba(255,255,255,.06); }
+    .faq-q { width:100%; background:none; border:none; color:var(--white); font-size:.92rem; font-weight:700; padding:20px 0; text-align:left; cursor:pointer; display:flex; justify-content:space-between; align-items:center; font-family:'Inter',sans-serif; }
+    .faq-q:hover { color:var(--gold); }
+    .faq-q .icon { color:var(--red); font-size:1.1rem; transition:transform .2s; font-weight:400; }
     .faq-q.open .icon { transform:rotate(45deg); }
-    .faq-a { font-size:.88rem; color:var(--text); line-height:1.75; max-height:0; overflow:hidden; transition:max-height .3s ease, padding .3s; }
+    .faq-a { font-size:.86rem; color:var(--text); line-height:1.75; max-height:0; overflow:hidden; transition:max-height .3s ease, padding .3s; }
     .faq-a.open { max-height:200px; padding-bottom:20px; }
 
     /* Final CTA */
-    #cta-final { text-align:center; padding:80px 0 100px; position:relative; z-index:1; }
-    .cta-card { max-width:700px; margin:0 auto; background:rgba(249,115,22,.05); border:1.5px solid rgba(249,115,22,.25); border-radius:24px; padding:60px 40px; }
+    #cta-final { text-align:center; padding:80px 0 100px; position:relative; z-index:1; background:radial-gradient(ellipse 80% 60% at 50% 50%, rgba(229,39,43,.06) 0%, transparent 70%); }
+    .cta-card { max-width:680px; margin:0 auto; background:rgba(229,39,43,.06); backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px); border:1px solid rgba(229,39,43,.25); border-radius:16px; padding:64px 48px; box-shadow:0 0 100px rgba(229,39,43,.12); }
 
     /* Sticky */
-    #stickyCta { position:fixed; bottom:0; left:0; right:0; z-index:99; background:rgba(6,9,15,.96); border-top:1px solid rgba(249,115,22,.25); padding:14px 28px; display:flex; align-items:center; justify-content:space-between; transform:translateY(100%); transition:transform .3s; }
+    #stickyCta { position:fixed; bottom:0; left:0; right:0; z-index:99; background:rgba(0,0,0,.97); border-top:1px solid rgba(255,255,255,.08); padding:14px 28px; display:flex; align-items:center; justify-content:space-between; transform:translateY(100%); transition:transform .3s; }
     #stickyCta.visible { transform:translateY(0); }
 
-    /* Urgency bar */
-    .urgency-bar { background:linear-gradient(90deg,#7c3aed,#f97316); padding:10px; text-align:center; font-size:.8rem; font-weight:700; letter-spacing:.06em; position:relative; z-index:1; }
+    footer { border-top:1px solid rgba(255,255,255,.05); padding:24px; text-align:center; font-size:.72rem; color:var(--muted); position:relative; z-index:1; }
 
-    footer { border-top:1px solid rgba(255,255,255,.05); padding:24px; text-align:center; font-size:.73rem; color:var(--muted); position:relative; z-index:1; }
-
-    @keyframes fadeUp { from{opacity:0;transform:translateY(24px)} to{opacity:1;transform:translateY(0)} }
-    .fadein { opacity:0; transform:translateY(24px); transition:opacity .5s, transform .5s; }
+    @keyframes fadeUp { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
+    .fadein { opacity:0; transform:translateY(20px); transition:opacity .5s, transform .5s; }
     .fadein.visible { opacity:1; transform:none; }
+
+    /* Mobile */
+    @media(max-width:768px) {
+      nav { padding:12px 16px; flex-wrap:wrap; gap:8px; }
+      .nav-date { display:none; }
+      .container { padding:0 16px; }
+      .hero-layout { grid-template-columns:1fr; gap:24px; }
+      .hero-title { font-size:clamp(3.5rem,16vw,7rem); }
+      .hero-sub { max-width:100%; }
+      .hero-btns { flex-direction:column; }
+      .btn-red, .btn-outline { width:100%; text-align:center; }
+      .section { padding:56px 0; }
+      .audience-grid { grid-template-columns:1fr; }
+      .agenda-grid { grid-template-columns:1fr; }
+      .speakers-grid { grid-template-columns:1fr; }
+      .pricing-grid { grid-template-columns:1fr; }
+      .cta-card { padding:40px 20px; }
+      .price-card { padding:28px 20px; }
+      #stickyCta { padding:12px 16px; }
+    }
+    @media(max-width:480px) {
+      .urgency-bar { font-size:.68rem; padding:8px 12px; }
+      .hero-eyebrow { font-size:.6rem; }
+      .meta-pill { font-size:.78rem; padding:8px 12px; }
+    }
   </style>
 </head>
 <body>
 
-<div class="ambient">
-  <span class="a1"></span><span class="a2"></span><span class="a3"></span>
+<!-- MATRIX BACKGROUND -->
+<div class="matrix-bg" aria-hidden="true">
+  <img src="recursos/elemento de fondo .png" class="bg-wave bg-wave-1" alt="">
+  <img src="recursos/elemento de fondo .png" class="bg-wave bg-wave-2" alt="">
+  <img src="recursos/elemento de fondo .png" class="bg-wave bg-wave-3" alt="">
 </div>
-
-<!-- URGENCY BAR -->
-<div class="urgency-bar">🔥 Cupos limitados — Full Experience solo 10 lugares · Guadalajara · 1 Agosto 2026</div>
-
-<!-- NAV -->
-<nav>
-  <div class="nav-logo">CREA <span>SIN</span> MIEDO</div>
-  <div class="nav-date">Sáb 1 Agosto · Guadalajara</div>
-  <a href="#boletos" class="nav-cta">Consigue tu lugar</a>
-</nav>
 
 <!-- HERO -->
 <section id="hero">
   <div class="container">
-    <div class="hero-eyebrow">Taller presencial de marca personal</div>
-    <h1 class="hero-title">
-      CREA<br>
-      <span class="accent">SIN</span><br>
-      MIEDO
-    </h1>
+
+    <!-- Logo (left) + Video (right) -->
+    <div class="hero-layout">
+      <div>
+        <h1 class="hero-title">CREA<br><span class="red">SIN MIEDO</span></h1>
+        <div class="hero-taller">Taller práctico de creación de contenido</div>
+      </div>
+      <div class="hero-video">
+        <div class="video-wrapper">
+          <iframe
+            src="https://www.youtube.com/embed/PH-qO65W_0c?rel=0&modestbranding=1"
+            title="Crea sin Miedo — Trailer"
+            frameborder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowfullscreen
+          ></iframe>
+        </div>
+      </div>
+    </div>
+
+    <!-- Supporting content below -->
     <p class="hero-sub">
-      El taller más práctico de México para emprendedores, marcas personales y creadores que quieren
-      construir su estrategia de contenido, posicionar su marca y empezar a generar desde el primer día.
+      Sales con tu marca definida, una estrategia de contenido lista y las primeras piezas grabadas.
+      Un día que convierte lo que sabes en una presencia digital que posiciona y genera.
     </p>
-    <div class="hero-meta">
-      <div class="meta-pill"><span class="icon">📍</span><div><strong>Guadalajara, Jalisco</strong><span> · Venue por confirmar</span></div></div>
-      <div class="meta-pill"><span class="icon">📅</span><div><strong>Sábado 1 de Agosto, 2026</strong><span> · Full day</span></div></div>
-      <div class="meta-pill"><span class="icon">🎟️</span><div><strong>60–120 lugares</strong><span> · Se agotan rápido</span></div></div>
+    <div class="cupo-bar-wrap">
+      <div class="cupo-bar-label">
+        <span class="cupo-bar-text">Cupos disponibles</span>
+        <span class="cupo-bar-pct">40%</span>
+      </div>
+      <div class="cupo-bar-track"><div class="cupo-bar-fill"></div></div>
+      <div class="cupo-bar-note">El cupo se agota — los precios suben conforme avanza la fecha</div>
     </div>
-
-    <div id="countdown" class="countdown">
-      <div class="cd-box"><div class="cd-num" id="cd-d">—</div><div class="cd-label">Días</div></div>
-      <div class="cd-box"><div class="cd-num" id="cd-h">—</div><div class="cd-label">Horas</div></div>
-      <div class="cd-box"><div class="cd-num" id="cd-m">—</div><div class="cd-label">Min</div></div>
-      <div class="cd-box"><div class="cd-num" id="cd-s">—</div><div class="cd-label">Seg</div></div>
-    </div>
-
-    <div style="display:flex;gap:16px;flex-wrap:wrap">
-      <a href="#boletos" class="btn-orange">Consigue tu lugar →</a>
+    <div class="hero-btns">
+      <a href="#boletos" class="btn-red">Consigue tu lugar →</a>
       <a href="#que-vas-a-lograr" class="btn-outline">Ver programa</a>
     </div>
   </div>
 </section>
 
-<!-- PARA QUIÉN -->
-<section class="section">
+<!-- STATS -->
+<div class="stats-bar">
   <div class="container">
-    <span class="sec-eyebrow">¿Esto es para ti?</span>
-    <h2 class="sec-title">ESTE TALLER ES PARA TI SI...</h2>
+    <div class="stats-grid">
+      <div class="stat-item">
+        <div class="stat-num">GDL</div>
+        <div class="stat-label">Guadalajara, Jalisco</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num">1 AGO</div>
+        <div class="stat-label">Sábado 1 de Agosto, 2026</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num">40%</div>
+        <div class="stat-label">Del cupo lleno</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PARA QUIÉN -->
+<section class="section" style="position:relative;overflow:hidden">
+  <canvas data-wave="left"  style="position:absolute;top:0;left:0;width:260px;height:100%;pointer-events:none;z-index:0;opacity:.55"></canvas>
+  <canvas data-wave="right" style="position:absolute;top:0;right:0;width:260px;height:100%;pointer-events:none;z-index:0;opacity:.55"></canvas>
+  <div class="container">
+    <span class="sec-eyebrow">Los 3 pilares del taller</span>
+    <h2 class="sec-title">ESTE TALLER<br>ES PARA TI SI...</h2>
     <div class="divider"></div>
     <div class="audience-grid">
       <div class="audience-card fadein">
-        <div class="audience-icon">🚀</div>
-        <div class="audience-title">Eres emprendedor</div>
-        <p class="audience-desc">Tienes un negocio o proyecto y sabes que el contenido es clave, pero no sabes por dónde empezar o qué publicar para que convierta.</p>
+        <div class="audience-num">01</div>
+        <div class="audience-title">Marca personal</div>
+        <p class="audience-desc">Quieres estructurar tu marca personal para dejar de improvisar y no saber qué publicar.</p>
       </div>
       <div class="audience-card fadein">
-        <div class="audience-icon">🎯</div>
-        <div class="audience-title">Quieres posicionar tu marca personal</div>
-        <p class="audience-desc">Sabes que necesitas presencia digital pero nunca has tenido una estrategia clara. Sales de aquí con un plan accionable, no teoría.</p>
+        <div class="audience-num">02</div>
+        <div class="audience-title">Creación de contenido</div>
+        <p class="audience-desc">Estás buscando cómo grabarte y mostrarte en redes como un referente con calidad y sin gastar en equipo costoso.</p>
       </div>
       <div class="audience-card fadein">
-        <div class="audience-icon">📲</div>
-        <div class="audience-title">Eres un creador que quiere monetizar</div>
-        <p class="audience-desc">Creas contenido pero no tiene dirección. Aprendes cómo hacer que cada pieza de contenido trabaje para tus objetivos de negocio.</p>
+        <div class="audience-num">03</div>
+        <div class="audience-title">Ventas a través del contenido</div>
+        <p class="audience-desc">Quieres generar más ventas con tu contenido y el sistema para convertir la atención en ingresos.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIOS -->
+<section class="section" style="background:rgba(255,255,255,.012);position:relative;overflow:hidden">
+  <canvas data-wave="right" style="position:absolute;top:0;right:0;width:260px;height:100%;pointer-events:none;z-index:0;opacity:.4"></canvas>
+  <div class="container">
+    <span class="sec-eyebrow">Lo que dicen los que ya vivieron esto</span>
+    <h2 class="sec-title">RESULTADOS<br>REALES</h2>
+    <div class="divider"></div>
+    <div class="testimonios-grid">
+      <div class="testimonio-card fadein">
+        <video controls preload="none" playsinline poster="testimonios/aza.jpg">
+          <source src="testimonios/EDIT 1 - AZA.mp4" type="video/mp4">
+        </video>
+        <p class="testimonio-name">Aza</p>
+      </div>
+      <div class="testimonio-card fadein">
+        <video controls preload="none" playsinline poster="testimonios/david.jpg">
+          <source src="testimonios/EDIT 2 - DAVID .mp4" type="video/mp4">
+        </video>
+        <p class="testimonio-name">David</p>
+      </div>
+      <div class="testimonio-card fadein">
+        <video controls preload="none" playsinline poster="testimonios/maru.jpg">
+          <source src="testimonios/Edit 3 - maru .mp4" type="video/mp4">
+        </video>
+        <p class="testimonio-name">Maru</p>
       </div>
     </div>
   </div>
 </section>
 
 <!-- QUÉ VAS A LOGRAR -->
-<section class="section" id="que-vas-a-lograr" style="background:rgba(255,255,255,.015)">
+<section class="section" id="que-vas-a-lograr" style="background:rgba(255,255,255,.012);position:relative;overflow:hidden">
+  <canvas data-wave="left"  style="position:absolute;top:0;left:0;width:260px;height:100%;pointer-events:none;z-index:0;opacity:.45"></canvas>
   <div class="container">
     <span class="sec-eyebrow">Lo que te llevas</span>
     <h2 class="sec-title">UN DÍA QUE VALE<br>MÁS QUE UN AÑO</h2>
     <div class="divider"></div>
     <div class="agenda-grid">
       <div class="agenda-block fadein">
-        <div class="agenda-time">Módulo 01</div>
-        <div class="agenda-title">Tu marca personal en 60 minutos</div>
-        <p class="agenda-desc">Definimos quién eres, a quién le hablas y qué te hace diferente. Sales con tu propuesta de valor lista.</p>
+        <div class="agenda-title">Define tu identidad de marca</div>
+        <p class="agenda-desc">Trabajamos quién eres, a quién le hablas y qué te hace diferente. Defines tu posicionamiento y propuesta de valor desde el día 1.</p>
       </div>
       <div class="agenda-block fadein">
-        <div class="agenda-time">Módulo 02</div>
         <div class="agenda-title">Estrategia de contenido con propósito</div>
         <p class="agenda-desc">Cómo crear contenido que posiciona, conecta y vende. El sistema de 3 pilares que usan los creadores top.</p>
       </div>
       <div class="agenda-block fadein">
-        <div class="agenda-time">Módulo 03</div>
-        <div class="agenda-title">Producción en vivo — creas hoy</div>
-        <p class="agenda-desc">Grabamos y editamos contenido real en el evento. Sales con piezas producidas listas para publicar.</p>
+        <div class="agenda-title">Aprende a grabar contenido</div>
+        <p class="agenda-desc">Técnicas reales para grabarte con tu celular: encuadre, luz, audio y presencia en cámara. Sin equipo caro, sin excusas.</p>
       </div>
       <div class="agenda-block fadein">
-        <div class="agenda-time">Módulo 04</div>
-        <div class="agenda-title">Panel de creadores locales</div>
-        <p class="agenda-desc">Conversación real con creadores y emprendedores de Guadalajara. Proximidad directa — no un panel inalcanzable.</p>
+        <div class="agenda-title">Panel de creadores con resultados</div>
+        <p class="agenda-desc">Conversación directa con creadores de Guadalajara que ya lo hicieron. Sin teoría, solo experiencia real sobre lo que funciona.</p>
       </div>
       <div class="agenda-block fadein">
-        <div class="agenda-time">Módulo 05</div>
-        <div class="agenda-title">Tu plan de acción para los próximos 30 días</div>
-        <p class="agenda-desc">Cada persona sale con un plan concreto, su calendario de contenido y métricas clave. Nada queda en teoría.</p>
+        <div class="agenda-title">Plan de acción para tu marca personal</div>
+        <p class="agenda-desc">Defines tus pilares, formatos y frecuencia de publicación. Sales con un plan concreto de qué hacer la próxima semana para empezar a posicionarte.</p>
       </div>
       <div class="agenda-block fadein">
-        <div class="agenda-time">Sky Bar · Final del día</div>
-        <div class="agenda-title">Networking VIP — Sky Bar</div>
-        <p class="agenda-desc">Conexiones reales con el resto del grupo, speakers y creadores. El networking que no se consigue en ningún otro evento.</p>
+        <div class="agenda-title">Networking con creadores y emprendedores</div>
+        <p class="agenda-desc">Conecta con personas que tienen los mismos objetivos que tú. Colaboraciones, alianzas y relaciones reales con gente que también está construyendo algo.</p>
       </div>
     </div>
   </div>
@@ -276,24 +387,24 @@
 <!-- SPEAKERS -->
 <section class="section">
   <div class="container">
-    <span class="sec-eyebrow">Quiénes están</span>
-    <h2 class="sec-title">LOS QUE TE<br>ENSEÑAN HOY</h2>
+    <span class="sec-eyebrow">Quiénes facilitan</span>
+    <h2 class="sec-title">LOS QUE VAN<br>CONTIGO ESE DÍA</h2>
     <div class="divider"></div>
     <div class="speakers-grid">
       <div class="speaker-card fadein">
-        <div class="speaker-avatar">🎯</div>
+        <div class="speaker-avatar">FE</div>
         <div class="speaker-name">Femiliano</div>
         <div class="speaker-role">Estratega de Marca Personal · Host</div>
         <p class="speaker-desc">Creador de Proximity Brand. Construye marcas personales que posicionan, conectan y venden. Lleva el día completo.</p>
       </div>
       <div class="speaker-card fadein">
-        <div class="speaker-avatar">⭐</div>
+        <div class="speaker-avatar">?</div>
         <div class="speaker-name">Invitado Especial</div>
         <div class="speaker-role">Próximamente revelado</div>
         <p class="speaker-desc">Un referente nacional que suma credibilidad y perspectiva única al taller. Se revela en los próximos días.</p>
       </div>
       <div class="speaker-card fadein">
-        <div class="speaker-avatar">🎙️</div>
+        <div class="speaker-avatar">P</div>
         <div class="speaker-name">Panel de Creadores</div>
         <div class="speaker-role">Creadores locales · Guadalajara</div>
         <p class="speaker-desc">Emprendedores y creadores de Guadalajara comparten su experiencia real. Proximidad directa con gente que ya lo hizo.</p>
@@ -303,7 +414,8 @@
 </section>
 
 <!-- BOLETOS -->
-<section class="section" id="boletos" style="background:rgba(255,255,255,.015)">
+<section class="section" id="boletos" style="background:rgba(255,255,255,.012);position:relative;overflow:hidden">
+  <canvas data-wave="right" style="position:absolute;top:0;right:0;width:260px;height:100%;pointer-events:none;z-index:0;opacity:.4"></canvas>
   <div class="container">
     <span class="sec-eyebrow" style="text-align:center;display:block">Elige tu experiencia</span>
     <h2 class="sec-title" style="text-align:center">ASEGURA TU<br>LUGAR HOY</h2>
@@ -314,7 +426,7 @@
       <div class="price-card fadein">
         <div class="price-tier">Tier 1</div>
         <div class="price-name">General</div>
-        <div class="price-amount">$2,999</div>
+        <div class="price-amount">$2,997</div>
         <div class="price-currency">MXN · pago único</div>
         <div class="price-divider"></div>
         <ul class="price-features">
@@ -334,10 +446,10 @@
 
       <!-- VIP -->
       <div class="price-card featured fadein">
-        <div class="price-badge">🔥 Más popular</div>
+        <div class="price-badge" style="background:var(--matrix);color:#000">Más popular</div>
         <div class="price-tier">Tier 2</div>
         <div class="price-name">VIP</div>
-        <div class="price-amount">$5,000</div>
+        <div class="price-amount">$4,997</div>
         <div class="price-currency">MXN · pago único</div>
         <div class="price-divider"></div>
         <ul class="price-features">
@@ -347,6 +459,7 @@
           <li>Prioridad en producción de contenido</li>
           <li>Acceso Sky Bar al final del día</li>
           <li>Networking con speakers</li>
+          <li>Grabaciones completas del evento</li>
           <li class="muted">Mastermind viernes + cena</li>
           <li class="muted">Domingo de grabación de contenido</li>
         </ul>
@@ -355,14 +468,15 @@
 
       <!-- FULL EXPERIENCE -->
       <div class="price-card elite fadein">
-        <div class="price-badge gold">👑 Solo 10 cupos</div>
+        <div class="price-badge gold">Solo 10 cupos</div>
         <div class="price-tier">Tier 3</div>
         <div class="price-name">Full Experience</div>
         <div class="price-amount">$9,997</div>
         <div class="price-currency">MXN · pago único</div>
-        <div class="price-cupos">⚠️ Quedan pocos lugares disponibles</div>
+        <div class="price-cupos">Quedan pocos lugares disponibles</div>
         <ul class="price-features">
           <li>Todo lo del boleto VIP</li>
+          <li>Grabaciones completas del evento Crea sin Miedo</li>
           <li>Mastermind exclusivo el viernes 31 jul</li>
           <li>Cena privada con Femiliano + speakers</li>
           <li>Domingo 2 ago: producción profesional de contenido</li>
@@ -374,7 +488,7 @@
       </div>
 
     </div>
-    <p style="text-align:center;font-size:.78rem;color:var(--muted);margin-top:28px">
+    <p style="text-align:center;font-size:.76rem;color:var(--muted);margin-top:28px">
       Pago seguro vía MercadoPago · Tarjeta, transferencia, OXXO
     </p>
   </div>
@@ -384,7 +498,7 @@
 <section class="section">
   <div class="container" style="max-width:720px">
     <span class="sec-eyebrow" style="text-align:center;display:block">Preguntas frecuentes</span>
-    <h2 class="sec-title" style="text-align:center">¿TIENES DUDAS?</h2>
+    <h2 class="sec-title" style="text-align:center">RESOLVEMOS TUS<br>DUDAS</h2>
     <div class="divider divider-center"></div>
     <div class="faq-list">
       <div class="faq-item"><button class="faq-q" onclick="toggleFaq(this)">¿Necesito experiencia previa en contenido? <span class="icon">+</span></button><div class="faq-a">No. El taller está diseñado para todos los niveles. Si eres principiante sales con tus bases sólidas. Si ya creas contenido, sales con una estrategia y contenido producido.</div></div>
@@ -397,19 +511,21 @@
 </section>
 
 <!-- FINAL CTA -->
-<section id="cta-final">
-  <div class="container">
+<section id="cta-final" style="position:relative;overflow:hidden">
+  <canvas data-wave="left"  style="position:absolute;top:0;left:0;width:260px;height:100%;pointer-events:none;z-index:0;opacity:.45"></canvas>
+  <canvas data-wave="right" style="position:absolute;top:0;right:0;width:260px;height:100%;pointer-events:none;z-index:0;opacity:.45"></canvas>
+  <div class="container" style="position:relative;z-index:1">
     <div class="cta-card">
       <span class="sec-eyebrow" style="display:block;text-align:center;margin-bottom:16px">El momento es ahora</span>
-      <h2 style="font-family:'Bebas Neue',sans-serif;font-size:clamp(2.5rem,5vw,4rem);text-align:center;margin-bottom:16px;line-height:1">
-        TU MARCA PERSONAL<br><span style="color:var(--orange)">EMPIEZA EL 1 DE AGOSTO</span>
+      <h2 style="font-family:'Antonio',sans-serif;font-size:clamp(2.4rem,5vw,3.8rem);text-align:center;margin-bottom:16px;line-height:1">
+        TU MARCA PERSONAL<br><span style="color:var(--red)">EMPIEZA EL 1 DE AGOSTO</span>
       </h2>
-      <p style="font-size:.9rem;color:var(--text);line-height:1.75;margin-bottom:32px;text-align:center">
+      <p style="font-size:.88rem;color:var(--text);line-height:1.75;margin-bottom:32px;text-align:center">
         No es otro evento donde anotas y te vas. Sales con contenido producido, una estrategia lista
         y conexiones reales. Guadalajara, 1 de agosto 2026.
       </p>
       <div style="text-align:center">
-        <a href="#boletos" class="btn-orange">Asegurar mi lugar ahora →</a>
+        <a href="#boletos" class="btn-red">Asegurar mi lugar →</a>
       </div>
     </div>
   </div>
@@ -417,32 +533,15 @@
 
 <!-- STICKY CTA -->
 <div id="stickyCta">
-  <div style="font-size:.82rem;color:var(--text)"><strong style="color:var(--white)">Crea sin Miedo</strong> · 1 Agosto · Guadalajara</div>
+  <div style="font-size:.8rem;color:var(--text)"><strong style="color:var(--white)">Crea sin Miedo</strong> · 1 Agosto · Guadalajara</div>
   <a href="#boletos" class="nav-cta">Ver boletos</a>
 </div>
 
 <footer>
-  <p>© 2026 Crea sin Miedo · Proximity Brand · <a href="mailto:brandproximity@gmail.com" style="color:var(--orange);text-decoration:none">brandproximity@gmail.com</a></p>
+  <p>© 2026 Crea sin Miedo · Proximity Brand · <a href="mailto:brandproximity@gmail.com" style="color:var(--red);text-decoration:none">brandproximity@gmail.com</a></p>
 </footer>
 
 <script>
-  // Countdown to August 1, 2026
-  function updateCountdown() {
-    const target = new Date('2026-08-01T09:00:00-06:00').getTime();
-    const now = Date.now();
-    const diff = target - now;
-    if (diff <= 0) { document.getElementById('countdown').innerHTML = '<div style="color:var(--orange);font-weight:800;font-size:1.2rem">¡El evento es HOY!</div>'; return; }
-    const d = Math.floor(diff / 86400000);
-    const h = Math.floor((diff % 86400000) / 3600000);
-    const m = Math.floor((diff % 3600000) / 60000);
-    const s = Math.floor((diff % 60000) / 1000);
-    document.getElementById('cd-d').textContent = String(d).padStart(2,'0');
-    document.getElementById('cd-h').textContent = String(h).padStart(2,'0');
-    document.getElementById('cd-m').textContent = String(m).padStart(2,'0');
-    document.getElementById('cd-s').textContent = String(s).padStart(2,'0');
-  }
-  updateCountdown();
-  setInterval(updateCountdown, 1000);
 
   // Sticky CTA
   const sticky = document.getElementById('stickyCta');
@@ -455,13 +554,52 @@
   }
 
   // Scroll fade-in
-  const obs = new IntersectionObserver(entries => entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('visible'); }), { threshold:0.1 });
+  const obs = new IntersectionObserver(entries => entries.forEach(e => {
+    if (e.isIntersecting) e.target.classList.add('visible');
+  }), { threshold: 0.1 });
   document.querySelectorAll('.fadein').forEach(el => obs.observe(el));
 
   // Checkout redirect
   function goCheckout(tier) {
     window.location.href = `/checkout?tier=${tier}`;
   }
+
+  // Matrix wave decoration
+  function drawWave(canvas, flipped) {
+    const w = canvas.width  = canvas.offsetWidth  || 260;
+    const h = canvas.height = canvas.offsetHeight || 600;
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, w, h);
+    const count = 18;
+    for (let i = 0; i < count; i++) {
+      ctx.beginPath();
+      ctx.strokeStyle = `rgba(0,204,82,${0.06 + (i / count) * 0.42})`;
+      ctx.lineWidth = 1.2;
+      ctx.setLineDash([2.5, 8]);
+      ctx.lineDashOffset = i * 6;
+      for (let s = 0; s <= 120; s++) {
+        const t = s / 120;
+        const x = flipped ? w - t * w * 0.8 : t * w * 0.8;
+        const baseY = h * (0.95 - i * 0.04);
+        const y = baseY
+          - t * h * 0.78
+          + Math.sin(t * Math.PI * 2.6 + i * 0.45) * (26 + i * 2.8)
+          + Math.sin(t * Math.PI * 5.5 + i * 0.2) * 10;
+        s === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+      }
+      ctx.stroke();
+    }
+  }
+
+  function initWaves() {
+    document.querySelectorAll('[data-wave]').forEach(c => {
+      drawWave(c, c.dataset.wave === 'right');
+    });
+  }
+
+  window.addEventListener('load', initWaves);
+  let rTimer;
+  window.addEventListener('resize', () => { clearTimeout(rTimer); rTimer = setTimeout(initWaves, 250); });
 </script>
 </body>
 </html>
