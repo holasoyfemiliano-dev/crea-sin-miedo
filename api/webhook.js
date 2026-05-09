@@ -1,7 +1,7 @@
 const { MercadoPagoConfig, Payment } = require('mercadopago');
 
-const SB_URL = process.env.SUPABASE_URL;
-const SB_KEY = process.env.SUPABASE_SERVICE_KEY;
+const SB_URL = process.env.SB_URL;
+const SB_KEY = process.env.SB_SERVICE;
 
 const AMOUNTS = { general: 2999, vip: 5000, full: 9997 };
 

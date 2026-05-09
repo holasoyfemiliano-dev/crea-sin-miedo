@@ -1,5 +1,5 @@
-const SB_URL = process.env.SUPABASE_URL;
-const SB_KEY = process.env.SUPABASE_SERVICE_KEY;
+const SB_URL = process.env.SB_URL;
+const SB_KEY = process.env.SB_SERVICE;
 
 module.exports = async function handler(req, res) {
   if (req.method !== 'GET') { res.status(405).end(); return; }

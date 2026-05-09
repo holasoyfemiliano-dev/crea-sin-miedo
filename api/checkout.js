@@ -6,8 +6,8 @@ const TIERS = {
   full:    { title: 'Full Experience — Crea sin Miedo', price: 9997 },
 };
 
-const SB_URL  = process.env.SUPABASE_URL;
-const SB_KEY  = process.env.SUPABASE_SERVICE_KEY;
+const SB_URL  = process.env.SB_URL;
+const SB_KEY  = process.env.SB_SERVICE;
 const BASE    = process.env.BASE_URL || 'https://crea-sin-miedo.vercel.app';
 
 async function sbGet(table, query) {

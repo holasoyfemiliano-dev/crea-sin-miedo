@@ -1,5 +1,5 @@
-const SB_URL  = process.env.SUPABASE_URL;
-const SB_KEY  = process.env.SUPABASE_SERVICE_KEY;
+const SB_URL  = process.env.SB_URL;
+const SB_KEY  = process.env.SB_SERVICE;
 const ADMIN_KEY = process.env.ADMIN_KEY || 'CSM2026';
 
 const ALLOWED_TABLES = [
