@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Checkout — Crea sin Miedo</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+    :root {
+      --dark:#06090f; --card:rgba(255,255,255,0.04); --border:rgba(249,115,22,0.2);
+      --orange:#f97316; --orange2:#fb923c; --gold:#fbbf24; --green:#22c55e;
+      --white:#ffffff; --text:#c8cfe0; --muted:#6a7590; --red:#ef4444;
+    }
+    body { background:var(--dark); color:var(--white); font-family:'Inter',sans-serif; min-height:100vh; }
+    .ambient { position:fixed; inset:0; z-index:0; pointer-events:none; }
+    .ambient span { position:absolute; border-radius:50%; filter:blur(100px); opacity:.12; }
+    .a1 { width:600px; height:600px; top:-200px; right:-100px; background:#f97316; }
+    .a2 { width:500px; height:500px; bottom:-200px; left:-100px; background:#7c3aed; }
+    nav { position:fixed; top:0; left:0; right:0; z-index:100; padding:14px 28px; background:rgba(6,9,15,0.9); backdrop-filter:blur(14px); border-bottom:1px solid rgba(249,115,22,.1); display:flex; align-items:center; justify-content:space-between; }
+    .nav-logo { font-family:'Bebas Neue',sans-serif; font-size:1.4rem; letter-spacing:.06em; text-decoration:none; color:var(--white); }
+    .nav-logo span { color:var(--orange); }
+    .nav-back { font-size:.8rem; color:var(--muted); text-decoration:none; display:flex; align-items:center; gap:6px; transition:color .2s; }
+    .nav-back:hover { color:var(--white); }
+
+    .page { max-width:980px; margin:0 auto; padding:100px 24px 80px; position:relative; z-index:1; }
+    .page-head { margin-bottom:40px; }
+    .page-head h2 { font-family:'Bebas Neue',sans-serif; font-size:clamp(2rem,4vw,3rem); margin-bottom:6px; }
+    .page-head p { color:var(--muted); font-size:.9rem; }
+
+    .grid { display:grid; grid-template-columns:1fr 1fr; gap:36px; align-items:start; }
+    @media(max-width:700px){ .grid { grid-template-columns:1fr; } }
+
+    /* Tier Summary */
+    .tier-card { background:rgba(255,255,255,.03); border:1.5px solid rgba(249,115,22,.25); border-radius:18px; padding:30px; position:sticky; top:90px; }
+    .tier-card.vip { border-color:rgba(249,115,22,.4); }
+    .tier-card.full { border-color:rgba(251,191,36,.35); }
+    .tier-eyebrow { font-size:.65rem; letter-spacing:.2em; text-transform:uppercase; color:var(--muted); margin-bottom:6px; }
+    .tier-name { font-family:'Bebas Neue',sans-serif; font-size:2rem; margin-bottom:4px; }
+    .tier-price { font-family:'Bebas Neue',sans-serif; font-size:3rem; line-height:1; color:var(--orange); margin-bottom:4px; }
+    .tier-card.full .tier-price { color:var(--gold); }
+    .tier-currency { font-size:.8rem; color:var(--muted); margin-bottom:20px; }
+    .tier-divider { height:1px; background:rgba(255,255,255,.08); margin:20px 0; }
+    .tier-features { list-style:none; display:flex; flex-direction:column; gap:10px; }
+    .tier-features li { display:flex; gap:10px; align-items:flex-start; font-size:.84rem; color:var(--text); }
+    .tier-features li::before { content:'✓'; color:var(--green); font-weight:800; flex-shrink:0; }
+    .tier-badge { display:inline-block; background:var(--orange); color:#000; font-size:.68rem; font-weight:800; letter-spacing:.08em; text-transform:uppercase; padding:4px 12px; border-radius:20px; margin-bottom:14px; }
+    .tier-card.full .tier-badge { background:var(--gold); }
+
+    /* Form */
+    .form-card { background:rgba(255,255,255,.03); border:1px solid rgba(255,255,255,.07); border-radius:18px; padding:30px; }
+    .form-section { margin-bottom:24px; }
+    .form-section h3 { font-size:.75rem; letter-spacing:.15em; text-transform:uppercase; color:var(--orange); margin-bottom:16px; }
+    .field { margin-bottom:16px; }
+    .field label { display:block; font-size:.8rem; color:var(--muted); margin-bottom:6px; font-weight:500; }
+    .field input { width:100%; background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.1); border-radius:8px; padding:13px 16px; color:var(--white); font-size:.95rem; font-family:'Inter',sans-serif; outline:none; transition:border-color .2s; }
+    .field input:focus { border-color:rgba(249,115,22,.5); }
+    .field input::placeholder { color:var(--muted); }
+    .field input.error { border-color:var(--red); }
+    .field-err { font-size:.75rem; color:var(--red); margin-top:4px; display:none; }
+    .field input.error + .field-err { display:block; }
+
+    .coupon-row { display:flex; gap:8px; }
+    .coupon-row input { flex:1; }
+    .coupon-btn { background:rgba(255,255,255,.07); border:1px solid rgba(255,255,255,.12); border-radius:8px; padding:0 18px; color:var(--white); font-size:.82rem; font-weight:600; cursor:pointer; white-space:nowrap; transition:background .2s; }
+    .coupon-btn:hover { background:rgba(255,255,255,.12); }
+    .coupon-msg { font-size:.78rem; margin-top:6px; font-weight:600; }
+    .coupon-ok { color:var(--green); }
+    .coupon-fail { color:var(--red); }
+
+    .summary-row { display:flex; justify-content:space-between; align-items:center; font-size:.88rem; color:var(--text); margin-bottom:8px; }
+    .summary-row.total { font-size:1.1rem; font-weight:800; color:var(--white); border-top:1px solid rgba(255,255,255,.08); padding-top:12px; margin-top:4px; }
+    .summary-row .strike { text-decoration:line-through; color:var(--muted); }
+
+    .pay-btn { width:100%; background:var(--orange); color:#000; border:none; border-radius:10px; padding:18px; font-size:1rem; font-weight:900; letter-spacing:.06em; text-transform:uppercase; cursor:pointer; margin-top:20px; transition:filter .2s, transform .15s; display:flex; align-items:center; justify-content:center; gap:10px; }
+    .pay-btn:hover:not(:disabled) { filter:brightness(1.1); transform:scale(1.02); }
+    .pay-btn:disabled { opacity:.5; cursor:not-allowed; transform:none; }
+    .tier-card.full ~ .form-card .pay-btn,
+    .pay-btn.gold { background:var(--gold); }
+
+    .trust-row { display:flex; align-items:center; justify-content:center; gap:16px; margin-top:14px; font-size:.73rem; color:var(--muted); }
+    .trust-row span { display:flex; align-items:center; gap:4px; }
+
+    .spinner { width:18px; height:18px; border:2px solid rgba(0,0,0,.3); border-top-color:#000; border-radius:50%; animation:spin .6s linear infinite; display:none; }
+    @keyframes spin { to{transform:rotate(360deg)} }
+
+    /* Tier selector (when no tier in URL) */
+    .tier-selector { display:none; }
+    .tier-selector.active { display:block; }
+    .tier-selector h3 { font-size:.8rem; letter-spacing:.15em; text-transform:uppercase; color:var(--muted); margin-bottom:14px; }
+    .tier-options { display:grid; gap:10px; }
+    .tier-opt { background:rgba(255,255,255,.04); border:1.5px solid rgba(255,255,255,.1); border-radius:10px; padding:14px 16px; cursor:pointer; display:flex; justify-content:space-between; align-items:center; transition:border-color .2s; }
+    .tier-opt:hover { border-color:rgba(249,115,22,.3); }
+    .tier-opt.selected { border-color:var(--orange); background:rgba(249,115,22,.06); }
+    .tier-opt-name { font-weight:700; font-size:.9rem; }
+    .tier-opt-price { font-family:'Bebas Neue',sans-serif; font-size:1.4rem; color:var(--orange); }
+  </style>
+</head>
+<body>
+<div class="ambient"><span class="a1"></span><span class="a2"></span></div>
+
+<nav>
+  <a href="/" class="nav-logo">CREA <span>SIN</span> MIEDO</a>
+  <a href="/#boletos" class="nav-back">← Ver todos los boletos</a>
+</nav>
+
+<div class="page">
+  <div class="page-head">
+    <h2>Asegura tu lugar</h2>
+    <p>Guadalajara · Sábado 1 de Agosto, 2026</p>
+  </div>
+
+  <div class="grid">
+    <!-- LEFT: Tier Summary -->
+    <div id="tierCard" class="tier-card">
+      <!-- populated by JS -->
+    </div>
+
+    <!-- RIGHT: Form -->
+    <div class="form-card">
+      <form id="checkoutForm">
+        <div class="form-section">
+          <h3>Tus datos</h3>
+          <div class="field">
+            <label>Nombre completo *</label>
+            <input type="text" id="nombre" name="nombre" placeholder="Como aparecerá en tu entrada" required autocomplete="name">
+            <div class="field-err">Ingresa tu nombre completo</div>
+          </div>
+          <div class="field">
+            <label>Correo electrónico *</label>
+            <input type="email" id="email" name="email" placeholder="tu@correo.com" required autocomplete="email">
+            <div class="field-err">Correo electrónico inválido</div>
+          </div>
+          <div class="field">
+            <label>WhatsApp / Teléfono *</label>
+            <input type="tel" id="telefono" name="telefono" placeholder="+52 33 1234 5678" required autocomplete="tel">
+            <div class="field-err">Ingresa tu número de contacto</div>
+          </div>
+        </div>
+
+        <div class="form-section">
+          <h3>Código de descuento</h3>
+          <div class="coupon-row">
+            <input type="text" id="codigo" name="codigo" placeholder="CODIGO123" style="text-transform:uppercase;">
+            <button type="button" class="coupon-btn" onclick="applyCoupon()">Aplicar</button>
+          </div>
+          <div id="couponMsg" class="coupon-msg"></div>
+        </div>
+
+        <div class="form-section">
+          <h3>Resumen</h3>
+          <div class="summary-row">
+            <span id="summaryTier">—</span>
+            <span id="summaryBase">—</span>
+          </div>
+          <div class="summary-row" id="discountRow" style="display:none;">
+            <span>Descuento</span>
+            <span id="summaryDiscount" style="color:var(--green)">—</span>
+          </div>
+          <div class="summary-row total">
+            <span>Total a pagar</span>
+            <span id="summaryTotal">—</span>
+          </div>
+        </div>
+
+        <button type="submit" class="pay-btn" id="payBtn">
+          <span id="payBtnText">Pagar con MercadoPago</span>
+          <div class="spinner" id="paySpinner"></div>
+        </button>
+        <div class="trust-row">
+          <span>🔒 Pago 100% seguro</span>
+          <span>🇲🇽 MercadoPago México</span>
+          <span>📧 Confirmación por email</span>
+        </div>
+        <div id="formError" style="display:none;margin-top:12px;font-size:.8rem;color:var(--red);text-align:center;"></div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+const TIERS = {
+  general: {
+    name: 'General', badge: null,
+    price: 2999,
+    features: [
+      'Acceso completo al taller (full day)',
+      '6 módulos prácticos de contenido y marca personal',
+      'Materiales digitales descargables',
+      'Acceso a comunidad post-evento',
+      'Coffee breaks incluidos',
+    ],
+    class: '',
+  },
+  vip: {
+    name: 'VIP', badge: 'Más popular',
+    price: 5000,
+    features: [
+      'Todo lo del General',
+      'Asiento preferencial en el venue',
+      'Sesión de fotos profesional con el evento',
+      'Sky Bar networking posterior al taller',
+      'Acceso al grupo VIP de WhatsApp',
+    ],
+    class: 'vip',
+  },
+  full: {
+    name: 'Full Experience', badge: 'Solo 10 cupos',
+    price: 9997,
+    features: [
+      'Todo lo del VIP',
+      'Mastermind exclusivo el viernes anterior (31 jul)',
+      'Cena privada con Femiliano + speakers',
+      'Domingo de producción de contenido',
+      'Acceso de por vida a grabaciones',
+      'Mentoría grupal 30 días post-evento',
+    ],
+    class: 'full',
+  },
+};
+
+let selectedTier = null;
+let discount = 0;
+let couponCode = '';
+
+function getTierFromURL() {
+  const p = new URLSearchParams(window.location.search);
+  return p.get('tier') || null;
+}
+
+function fmt(n) { return '$' + n.toLocaleString('es-MX'); }
+
+function renderTierCard(tier) {
+  const t = TIERS[tier];
+  const card = document.getElementById('tierCard');
+  card.className = 'tier-card ' + t.class;
+  card.innerHTML = `
+    ${t.badge ? `<div class="tier-badge">${t.badge}</div>` : ''}
+    <div class="tier-eyebrow">Boleto seleccionado</div>
+    <div class="tier-name">${t.name}</div>
+    <div class="tier-price">${fmt(t.price)}</div>
+    <div class="tier-currency">MXN · pago único</div>
+    <div class="tier-divider"></div>
+    <ul class="tier-features">
+      ${t.features.map(f => `<li>${f}</li>`).join('')}
+    </ul>
+    <div class="tier-divider"></div>
+    <div style="font-size:.75rem;color:var(--muted);text-align:center;">Guadalajara · Sábado 1 Agosto 2026</div>
+  `;
+}
+
+function renderTierSelector() {
+  const card = document.getElementById('tierCard');
+  card.className = 'tier-card';
+  card.innerHTML = `
+    <div class="tier-selector active">
+      <h3>Selecciona tu boleto</h3>
+      <div class="tier-options">
+        ${Object.entries(TIERS).map(([k, t]) => `
+          <div class="tier-opt" onclick="selectTier('${k}')" id="opt-${k}">
+            <div>
+              <div class="tier-opt-name">${t.name}</div>
+              <div style="font-size:.75rem;color:var(--muted)">${t.features[0]}</div>
+            </div>
+            <div class="tier-opt-price">${fmt(t.price)}</div>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+  `;
+}
+
+function selectTier(tier) {
+  selectedTier = tier;
+  document.querySelectorAll('.tier-opt').forEach(el => el.classList.remove('selected'));
+  const opt = document.getElementById('opt-' + tier);
+  if (opt) opt.classList.add('selected');
+  // After short delay, switch to tier card
+  setTimeout(() => {
+    renderTierCard(tier);
+    updateSummary();
+    const payBtn = document.getElementById('payBtn');
+    if (tier === 'full') payBtn.classList.add('gold');
+    else payBtn.classList.remove('gold');
+  }, 200);
+}
+
+function updateSummary() {
+  if (!selectedTier) return;
+  const t = TIERS[selectedTier];
+  const base = t.price;
+  const total = Math.max(0, base - discount);
+  document.getElementById('summaryTier').textContent = 'Boleto ' + t.name;
+  document.getElementById('summaryBase').textContent = discount > 0 ? '' : fmt(base);
+  if (discount > 0) {
+    document.getElementById('summaryBase').innerHTML = `<span class="strike">${fmt(base)}</span>`;
+    document.getElementById('discountRow').style.display = 'flex';
+    document.getElementById('summaryDiscount').textContent = '-' + fmt(discount);
+  } else {
+    document.getElementById('discountRow').style.display = 'none';
+  }
+  document.getElementById('summaryTotal').textContent = fmt(total);
+}
+
+async function applyCoupon() {
+  const code = document.getElementById('codigo').value.trim().toUpperCase();
+  if (!code) return;
+  const msg = document.getElementById('couponMsg');
+  if (!selectedTier) {
+    msg.textContent = 'Primero selecciona un boleto';
+    msg.className = 'coupon-msg coupon-fail';
+    return;
+  }
+  msg.textContent = 'Verificando…';
+  msg.className = 'coupon-msg';
+  try {
+    const r = await fetch('/api/coupon?code=' + encodeURIComponent(code) + '&tier=' + selectedTier);
+    const data = await r.json();
+    if (data.valid) {
+      const t = TIERS[selectedTier];
+      if (data.tipo === 'gratis') {
+        discount = t.price;
+        msg.textContent = '✓ Acceso gratis aplicado';
+      } else {
+        discount = Math.round(t.price * data.descuento / 100);
+        msg.textContent = `✓ Descuento del ${data.descuento}% aplicado`;
+      }
+      couponCode = code;
+      msg.className = 'coupon-msg coupon-ok';
+      updateSummary();
+    } else {
+      discount = 0; couponCode = '';
+      msg.textContent = data.error || 'Código inválido o expirado';
+      msg.className = 'coupon-msg coupon-fail';
+      updateSummary();
+    }
+  } catch(e) {
+    msg.textContent = 'Error verificando código';
+    msg.className = 'coupon-msg coupon-fail';
+  }
+}
+
+document.getElementById('checkoutForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  if (!selectedTier) {
+    document.getElementById('formError').style.display = 'block';
+    document.getElementById('formError').textContent = 'Por favor selecciona un boleto';
+    return;
+  }
+  const nombre = document.getElementById('nombre').value.trim();
+  const email = document.getElementById('email').value.trim();
+  const telefono = document.getElementById('telefono').value.trim();
+  let valid = true;
+  if (!nombre) { document.getElementById('nombre').classList.add('error'); valid = false; } else document.getElementById('nombre').classList.remove('error');
+  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { document.getElementById('email').classList.add('error'); valid = false; } else document.getElementById('email').classList.remove('error');
+  if (!telefono) { document.getElementById('telefono').classList.add('error'); valid = false; } else document.getElementById('telefono').classList.remove('error');
+  if (!valid) return;
+
+  const btn = document.getElementById('payBtn');
+  const spinner = document.getElementById('paySpinner');
+  const btnText = document.getElementById('payBtnText');
+  btn.disabled = true;
+  spinner.style.display = 'block';
+  btnText.textContent = 'Procesando…';
+  document.getElementById('formError').style.display = 'none';
+
+  try {
+    const res = await fetch('/api/checkout', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ tier: selectedTier, nombre, email, telefono, codigo: couponCode }),
+    });
+    const data = await res.json();
+    if (data.init_point) {
+      window.location.href = data.init_point;
+    } else {
+      throw new Error(data.error || 'Error al crear el pago');
+    }
+  } catch (err) {
+    btn.disabled = false;
+    spinner.style.display = 'none';
+    btnText.textContent = 'Pagar con MercadoPago';
+    document.getElementById('formError').style.display = 'block';
+    document.getElementById('formError').textContent = err.message || 'Error al procesar. Intenta de nuevo.';
+  }
+});
+
+// Init
+const tier = getTierFromURL();
+if (tier && TIERS[tier]) {
+  selectedTier = tier;
+  renderTierCard(tier);
+  updateSummary();
+  if (tier === 'full') document.getElementById('payBtn').classList.add('gold');
+} else {
+  renderTierSelector();
+}
+</script>
+</body>
+</html>

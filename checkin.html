@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Check-in — Crea sin Miedo</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+  <style>
+    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+    :root {
+      --dark:#06090f; --orange:#f97316; --gold:#fbbf24; --green:#22c55e; --red:#ef4444;
+      --white:#ffffff; --text:#c8cfe0; --muted:#6a7590; --card:rgba(255,255,255,.04);
+    }
+    body { background:var(--dark); color:var(--white); font-family:'Inter',sans-serif; min-height:100vh; max-width:600px; margin:0 auto; padding:0 16px 60px; }
+
+    /* Gate */
+    #gate { position:fixed; inset:0; z-index:999; background:var(--dark); display:flex; align-items:center; justify-content:center; }
+    .gate-card { background:rgba(255,255,255,.04); border:1px solid rgba(249,115,22,.2); border-radius:16px; padding:32px; width:320px; text-align:center; }
+    .gate-card h2 { font-family:'Bebas Neue',sans-serif; font-size:1.8rem; margin-bottom:6px; }
+    .gate-card p { font-size:.8rem; color:var(--muted); margin-bottom:20px; }
+    .gate-card input { width:100%; background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.1); border-radius:8px; padding:12px; color:var(--white); font-size:1rem; outline:none; text-align:center; letter-spacing:.1em; margin-bottom:10px; }
+    .gate-btn { width:100%; background:var(--orange); color:#000; border:none; border-radius:8px; padding:12px; font-weight:800; font-size:.88rem; letter-spacing:.06em; text-transform:uppercase; cursor:pointer; }
+    .gate-err { font-size:.75rem; color:var(--red); margin-top:8px; display:none; }
+
+    header { padding:18px 0 14px; display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid rgba(249,115,22,.12); margin-bottom:20px; }
+    .h-logo { font-family:'Bebas Neue',sans-serif; font-size:1.2rem; letter-spacing:.06em; }
+    .h-logo span { color:var(--orange); }
+    .stats-row { display:flex; gap:10px; font-size:.75rem; color:var(--muted); }
+    .stats-row strong { color:var(--white); }
+
+    /* Tabs */
+    .tabs { display:flex; gap:0; background:rgba(255,255,255,.04); border-radius:10px; padding:4px; margin-bottom:20px; border:1px solid rgba(255,255,255,.07); }
+    .tab { flex:1; padding:10px; text-align:center; border-radius:7px; font-size:.82rem; font-weight:600; cursor:pointer; transition:background .2s, color .2s; color:var(--muted); }
+    .tab.active { background:var(--orange); color:#000; }
+
+    /* QR Scanner */
+    #qrSection { display:block; }
+    #qrReader { width:100%; border-radius:12px; overflow:hidden; background:#000; margin-bottom:16px; }
+    .qr-status { text-align:center; font-size:.83rem; color:var(--muted); margin-bottom:14px; }
+
+    /* Manual search */
+    #searchSection { display:none; }
+    .search-box { display:flex; gap:8px; margin-bottom:16px; }
+    .search-box input { flex:1; background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.1); border-radius:8px; padding:12px 16px; color:var(--white); font-size:.95rem; outline:none; }
+    .search-box input:focus { border-color:rgba(249,115,22,.4); }
+    .search-btn { background:var(--orange); color:#000; border:none; border-radius:8px; padding:12px 20px; font-weight:800; font-size:.85rem; cursor:pointer; }
+    .search-results { display:flex; flex-direction:column; gap:8px; }
+    .search-item { background:var(--card); border:1px solid rgba(255,255,255,.07); border-radius:10px; padding:14px 16px; cursor:pointer; display:flex; justify-content:space-between; align-items:center; transition:border-color .2s; }
+    .search-item:hover { border-color:rgba(249,115,22,.3); }
+    .search-item-name { font-weight:700; font-size:.9rem; }
+    .search-item-info { font-size:.75rem; color:var(--muted); margin-top:2px; }
+    .tier-chip { display:inline-block; border-radius:20px; padding:2px 8px; font-size:.65rem; font-weight:700; text-transform:uppercase; }
+    .tier-chip.general { background:rgba(255,255,255,.08); color:var(--text); }
+    .tier-chip.vip { background:rgba(249,115,22,.15); color:var(--orange); }
+    .tier-chip.full { background:rgba(251,191,36,.15); color:var(--gold); }
+
+    /* Result Card */
+    #resultSection { display:none; }
+    .result-card { border-radius:16px; padding:24px; margin-bottom:16px; text-align:center; }
+    .result-card.success { background:rgba(34,197,94,.08); border:1.5px solid rgba(34,197,94,.3); }
+    .result-card.already { background:rgba(251,191,36,.06); border:1.5px solid rgba(251,191,36,.25); }
+    .result-card.error { background:rgba(239,68,68,.07); border:1.5px solid rgba(239,68,68,.25); }
+    .result-icon { font-size:2.5rem; margin-bottom:10px; }
+    .result-name { font-family:'Bebas Neue',sans-serif; font-size:1.8rem; margin-bottom:4px; }
+    .result-tier { display:inline-block; border-radius:20px; padding:4px 14px; font-size:.72rem; font-weight:800; text-transform:uppercase; margin-bottom:12px; }
+    .result-tier.general { background:rgba(255,255,255,.1); color:var(--text); }
+    .result-tier.vip { background:rgba(249,115,22,.2); color:var(--orange); }
+    .result-tier.full { background:rgba(251,191,36,.2); color:var(--gold); }
+    .result-detail { font-size:.82rem; color:var(--muted); line-height:1.7; }
+    .result-actions { display:flex; gap:10px; margin-top:16px; }
+    .result-actions button { flex:1; border:none; border-radius:8px; padding:13px; font-weight:800; font-size:.85rem; letter-spacing:.04em; text-transform:uppercase; cursor:pointer; }
+    .btn-confirm { background:var(--green); color:#000; }
+    .btn-back { background:rgba(255,255,255,.07); color:var(--text); }
+    .btn-confirm:disabled { opacity:.4; cursor:not-allowed; }
+
+    .empty-state { text-align:center; color:var(--muted); padding:40px 0; font-size:.85rem; }
+    .loading { text-align:center; color:var(--muted); padding:20px; }
+
+    .toast { position:fixed; bottom:20px; left:50%; transform:translateX(-50%) translateY(80px); background:#fff; color:#000; border-radius:10px; padding:12px 24px; font-weight:700; font-size:.88rem; transition:transform .3s; z-index:999; white-space:nowrap; }
+    .toast.show { transform:translateX(-50%) translateY(0); }
+    .toast.green { background:var(--green); }
+    .toast.red { background:var(--red); color:#fff; }
+  </style>
+</head>
+<body>
+
+<div id="gate">
+  <div class="gate-card">
+    <h2>CHECK-IN</h2>
+    <p>Crea sin Miedo · 1 Agosto 2026</p>
+    <input type="password" id="pwInput" placeholder="Clave de staff" onkeydown="if(event.key==='Enter')checkPw()">
+    <button class="gate-btn" onclick="checkPw()">Acceder</button>
+    <div class="gate-err" id="gateErr">Clave incorrecta</div>
+  </div>
+</div>
+
+<div id="app" style="display:none">
+  <header>
+    <div class="h-logo">CREA <span>SIN</span> MIEDO</div>
+    <div class="stats-row">
+      <span>✓ <strong id="statCheckin">0</strong></span>
+      <span>Total: <strong id="statTotal">0</strong></span>
+    </div>
+  </header>
+
+  <div class="tabs">
+    <div class="tab active" onclick="showTab('qr',this)">📷 Escanear QR</div>
+    <div class="tab" onclick="showTab('search',this)">🔍 Buscar</div>
+  </div>
+
+  <!-- QR Section -->
+  <div id="qrSection">
+    <div class="qr-status" id="qrStatus">Iniciando cámara…</div>
+    <div id="qrReader"></div>
+    <div class="qr-status" style="font-size:.75rem">Apunta al QR del boleto del asistente</div>
+  </div>
+
+  <!-- Search Section -->
+  <div id="searchSection">
+    <div class="search-box">
+      <input type="text" id="searchInput" placeholder="Nombre, email o teléfono…" onkeydown="if(event.key==='Enter')doSearch()">
+      <button class="search-btn" onclick="doSearch()">Buscar</button>
+    </div>
+    <div id="searchResults" class="search-results">
+      <div class="empty-state">Ingresa nombre o email para buscar</div>
+    </div>
+  </div>
+
+  <!-- Result Section -->
+  <div id="resultSection">
+    <div class="result-card" id="resultCard">
+      <div class="result-icon" id="resultIcon">—</div>
+      <div class="result-name" id="resultName">—</div>
+      <span class="result-tier" id="resultTier">—</span>
+      <div class="result-detail" id="resultDetail">—</div>
+      <div class="result-actions">
+        <button class="btn-confirm" id="confirmBtn" onclick="doCheckin()">✓ Confirmar entrada</button>
+        <button class="btn-back" onclick="showResult(null)">← Volver</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+let adminKey = sessionStorage.getItem('csm_admin_key');
+let scanner = null;
+let currentAsistente = null;
+let stats = { checkin: 0, total: 0 };
+
+function checkPw() {
+  const v = document.getElementById('pwInput').value.trim();
+  if (!v) return;
+  fetch('/api/checkin?key=' + encodeURIComponent(v) + '&q=_test_').then(r => {
+    if (r.status === 401) throw new Error('unauth');
+    return r.json();
+  }).then(d => {
+    if (d && d.error === 'No autorizado') throw new Error('unauth');
+    sessionStorage.setItem('csm_admin_key', v);
+    adminKey = v;
+    document.getElementById('gate').style.display = 'none';
+    document.getElementById('app').style.display = 'block';
+    initScanner();
+    loadStats();
+  }).catch(e => {
+    document.getElementById('gateErr').style.display = 'block';
+  });
+}
+
+async function loadStats() {
+  const d = await apiFetch('table=csm_asistentes&qs=select=check_in,pagado');
+  if (Array.isArray(d)) {
+    const pagados = d.filter(a => a.pagado);
+    stats.total = pagados.length;
+    stats.checkin = pagados.filter(a => a.check_in).length;
+    document.getElementById('statCheckin').textContent = stats.checkin;
+    document.getElementById('statTotal').textContent = stats.total;
+  }
+}
+
+async function apiFetch(qs) {
+  const r = await fetch('/api/admin-data?' + qs, { headers: { 'x-admin-key': adminKey } });
+  return r.json();
+}
+
+async function apiCheckin(path, opts) {
+  const r = await fetch('/api/checkin' + path, {
+    ...opts,
+    headers: { 'x-admin-key': adminKey, 'Content-Type': 'application/json', ...(opts?.headers || {}) },
+  });
+  return r.json();
+}
+
+function showTab(tab, btn) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('qrSection').style.display = tab === 'qr' ? 'block' : 'none';
+  document.getElementById('searchSection').style.display = tab === 'search' ? 'block' : 'none';
+  document.getElementById('resultSection').style.display = 'none';
+  if (tab === 'qr' && !scanner) initScanner();
+}
+
+function initScanner() {
+  document.getElementById('qrStatus').textContent = 'Iniciando cámara…';
+  scanner = new Html5Qrcode('qrReader');
+  const cfg = { fps: 10, qrbox: { width: 260, height: 260 }, aspectRatio: 1.0 };
+  scanner.start({ facingMode: 'environment' }, cfg, onQRSuccess, onQRError)
+    .then(() => { document.getElementById('qrStatus').textContent = '✓ Cámara lista — escanea el QR'; })
+    .catch(err => { document.getElementById('qrStatus').textContent = 'Sin acceso a cámara — usa búsqueda manual'; });
+}
+
+let scanning = false;
+async function onQRSuccess(text) {
+  if (scanning) return;
+  scanning = true;
+  try {
+    const data = await apiCheckin('?q=' + encodeURIComponent(text), { method: 'GET', headers: {} });
+    showResult(data);
+  } catch(e) {
+    showToast('Error al leer QR', 'red');
+    setTimeout(() => { scanning = false; }, 2000);
+  }
+}
+
+function onQRError() {} // silent
+
+async function doSearch() {
+  const q = document.getElementById('searchInput').value.trim();
+  if (!q) return;
+  document.getElementById('searchResults').innerHTML = '<div class="loading">Buscando…</div>';
+  const data = await apiCheckin('', {
+    method: 'POST',
+    body: JSON.stringify({ action: 'search', q }),
+  });
+  renderSearchResults(Array.isArray(data) ? data : []);
+}
+
+function renderSearchResults(rows) {
+  if (rows.length === 0) {
+    document.getElementById('searchResults').innerHTML = '<div class="empty-state">Sin resultados</div>';
+    return;
+  }
+  document.getElementById('searchResults').innerHTML = rows.map(a => `
+    <div class="search-item" onclick="showResult(${JSON.stringify(a).replace(/"/g,'&quot;')})">
+      <div>
+        <div class="search-item-name">${esc(a.nombre || '—')}</div>
+        <div class="search-item-info">${esc(a.email || '')} · ${esc(a.telefono || '')}</div>
+      </div>
+      <span class="tier-chip ${a.tipo}">${a.tipo || '—'}</span>
+    </div>
+  `).join('');
+}
+
+function showResult(asistente) {
+  document.getElementById('qrSection').style.display = 'none';
+  document.getElementById('searchSection').style.display = 'none';
+  document.getElementById('resultSection').style.display = 'block';
+
+  if (!asistente || asistente.error) {
+    document.getElementById('resultCard').className = 'result-card error';
+    document.getElementById('resultIcon').textContent = '✕';
+    document.getElementById('resultName').textContent = 'No encontrado';
+    document.getElementById('resultTier').style.display = 'none';
+    document.getElementById('resultDetail').textContent = asistente?.error || 'Este QR no corresponde a ningún boleto registrado.';
+    document.getElementById('confirmBtn').style.display = 'none';
+    scanning = false;
+    return;
+  }
+
+  currentAsistente = asistente;
+  const alreadyIn = asistente.check_in;
+  document.getElementById('resultCard').className = 'result-card ' + (alreadyIn ? 'already' : 'success');
+  document.getElementById('resultIcon').textContent = alreadyIn ? '⚠️' : '✓';
+  document.getElementById('resultName').textContent = asistente.nombre || '—';
+  const tierEl = document.getElementById('resultTier');
+  tierEl.style.display = 'inline-block';
+  tierEl.className = 'result-tier ' + (asistente.tipo || 'general');
+  tierEl.textContent = (asistente.tipo || 'General').toUpperCase() + (asistente.es_invitado ? ' · INVITADO' : '');
+  document.getElementById('resultDetail').innerHTML = alreadyIn
+    ? `Ya registró entrada${asistente.check_in_at ? ' · ' + new Date(asistente.check_in_at).toLocaleTimeString('es-MX') : ''}`
+    : `${esc(asistente.email || '')} · ${esc(asistente.telefono || '')}`;
+  const btn = document.getElementById('confirmBtn');
+  btn.style.display = 'block';
+  btn.disabled = alreadyIn;
+  btn.textContent = alreadyIn ? '✓ Ya ingresó' : '✓ Confirmar entrada';
+  scanning = false;
+}
+
+async function doCheckin() {
+  if (!currentAsistente) return;
+  const btn = document.getElementById('confirmBtn');
+  btn.disabled = true;
+  btn.textContent = 'Registrando…';
+  const data = await apiCheckin('', {
+    method: 'PATCH',
+    body: JSON.stringify({ id: currentAsistente.id, es_invitado: currentAsistente.es_invitado }),
+  });
+  if (data && !data.error) {
+    showToast('✓ Entrada confirmada: ' + (data.nombre || currentAsistente.nombre), 'green');
+    stats.checkin++;
+    document.getElementById('statCheckin').textContent = stats.checkin;
+    document.getElementById('resultCard').className = 'result-card already';
+    document.getElementById('resultIcon').textContent = '✓';
+    btn.textContent = '✓ Entrada registrada';
+    document.getElementById('resultDetail').textContent = 'Check-in a las ' + new Date().toLocaleTimeString('es-MX');
+    setTimeout(() => { backToScanner(); }, 2500);
+  } else {
+    showToast('Error al registrar', 'red');
+    btn.disabled = false;
+    btn.textContent = '✓ Confirmar entrada';
+  }
+}
+
+function backToScanner() {
+  currentAsistente = null;
+  document.getElementById('resultSection').style.display = 'none';
+  document.getElementById('qrSection').style.display = 'block';
+  document.querySelectorAll('.tab').forEach((t, i) => t.classList.toggle('active', i === 0));
+}
+
+function showToast(msg, type) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast ' + (type || '');
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+function esc(s) { return String(s || '').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+if (sessionStorage.getItem('csm_admin_key')) {
+  adminKey = sessionStorage.getItem('csm_admin_key');
+  document.getElementById('gate').style.display = 'none';
+  document.getElementById('app').style.display = 'block';
+  initScanner();
+  loadStats();
+}
+setInterval(loadStats, 30000);
+</script>
+</body>
+</html>

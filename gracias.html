@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>¡Tu lugar está confirmado! — Crea sin Miedo</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+    :root {
+      --dark:#06090f; --card:rgba(255,255,255,0.04); --border:rgba(249,115,22,0.2);
+      --orange:#f97316; --orange2:#fb923c; --gold:#fbbf24; --green:#22c55e;
+      --white:#ffffff; --text:#c8cfe0; --muted:#6a7590;
+    }
+    body { background:var(--dark); color:var(--white); font-family:'Inter',sans-serif; min-height:100vh; }
+    .ambient { position:fixed; inset:0; z-index:0; pointer-events:none; }
+    .ambient span { position:absolute; border-radius:50%; filter:blur(100px); opacity:.1; }
+    .a1 { width:600px; height:600px; top:-150px; right:-100px; background:#22c55e; }
+    .a2 { width:500px; height:500px; bottom:-200px; left:-100px; background:#7c3aed; }
+    nav { position:fixed; top:0; left:0; right:0; z-index:100; padding:14px 28px; background:rgba(6,9,15,0.9); backdrop-filter:blur(14px); border-bottom:1px solid rgba(249,115,22,.1); display:flex; align-items:center; justify-content:space-between; }
+    .nav-logo { font-family:'Bebas Neue',sans-serif; font-size:1.4rem; letter-spacing:.06em; text-decoration:none; color:var(--white); }
+    .nav-logo span { color:var(--orange); }
+
+    .page { max-width:680px; margin:0 auto; padding:120px 24px 80px; position:relative; z-index:1; text-align:center; }
+
+    .check-icon { width:72px; height:72px; border-radius:50%; background:rgba(34,197,94,.15); border:2px solid rgba(34,197,94,.4); display:flex; align-items:center; justify-content:center; font-size:2.2rem; margin:0 auto 24px; animation:popIn .5s cubic-bezier(.175,.885,.32,1.275) forwards; }
+    @keyframes popIn { from{opacity:0;transform:scale(.5)} to{opacity:1;transform:scale(1)} }
+
+    h1 { font-family:'Bebas Neue',sans-serif; font-size:clamp(2.5rem,5vw,4rem); margin-bottom:12px; }
+    h1 span { color:var(--orange); }
+    .subtitle { font-size:1rem; color:var(--text); line-height:1.7; margin-bottom:40px; }
+
+    /* Ticket */
+    .ticket { background:rgba(255,255,255,.04); border:1.5px solid rgba(249,115,22,.3); border-radius:20px; padding:32px; margin-bottom:32px; position:relative; overflow:hidden; }
+    .ticket::before { content:''; position:absolute; top:0; left:0; right:0; height:3px; background:linear-gradient(90deg,var(--orange),var(--gold)); }
+    .ticket-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:24px; }
+    .ticket-label { font-size:.65rem; letter-spacing:.2em; text-transform:uppercase; color:var(--muted); }
+    .ticket-event { font-family:'Bebas Neue',sans-serif; font-size:1.5rem; color:var(--white); }
+    .ticket-tier { display:inline-block; background:var(--orange); color:#000; font-size:.7rem; font-weight:800; letter-spacing:.08em; text-transform:uppercase; padding:4px 14px; border-radius:20px; }
+
+    .ticket-body { display:grid; grid-template-columns:1fr auto; gap:20px; align-items:center; }
+    .ticket-info { text-align:left; }
+    .info-row { margin-bottom:12px; }
+    .info-row .label { font-size:.72rem; color:var(--muted); text-transform:uppercase; letter-spacing:.1em; margin-bottom:2px; }
+    .info-row .value { font-size:.95rem; font-weight:600; color:var(--white); }
+
+    .qr-wrap { text-align:center; }
+    .qr-wrap img { width:130px; height:130px; border-radius:10px; background:#fff; padding:6px; }
+    .qr-wrap .qr-id { font-size:.65rem; color:var(--muted); margin-top:6px; font-family:monospace; }
+
+    .ticket-footer { border-top:1px solid rgba(255,255,255,.07); margin-top:20px; padding-top:16px; font-size:.78rem; color:var(--muted); text-align:center; }
+
+    /* Pending state */
+    .pending-box { background:rgba(251,191,36,.06); border:1px solid rgba(251,191,36,.3); border-radius:14px; padding:24px; margin-bottom:32px; text-align:center; }
+    .pending-box h3 { color:var(--gold); font-size:1rem; margin-bottom:8px; }
+    .pending-box p { font-size:.85rem; color:var(--text); line-height:1.6; }
+
+    /* Info cards */
+    .info-cards { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:32px; text-align:left; }
+    @media(max-width:500px){ .info-cards { grid-template-columns:1fr; } }
+    .info-card { background:rgba(255,255,255,.03); border:1px solid rgba(255,255,255,.07); border-radius:12px; padding:18px; }
+    .info-card .ic-icon { font-size:1.5rem; margin-bottom:8px; }
+    .info-card h4 { font-size:.82rem; font-weight:700; margin-bottom:4px; }
+    .info-card p { font-size:.77rem; color:var(--muted); line-height:1.6; }
+
+    .btn-orange { background:var(--orange); color:#000; border:none; border-radius:10px; padding:16px 32px; font-size:1rem; font-weight:900; letter-spacing:.06em; text-transform:uppercase; cursor:pointer; text-decoration:none; display:inline-block; transition:filter .2s, transform .15s; margin:8px; }
+    .btn-orange:hover { filter:brightness(1.1); transform:scale(1.02); }
+    .btn-outline { background:transparent; color:var(--white); border:1px solid rgba(255,255,255,.2); border-radius:10px; padding:14px 28px; font-size:.9rem; font-weight:600; cursor:pointer; text-decoration:none; display:inline-block; transition:border-color .2s; margin:8px; }
+    .btn-outline:hover { border-color:var(--orange); color:var(--orange); }
+
+    footer { text-align:center; font-size:.73rem; color:var(--muted); padding-bottom:40px; position:relative; z-index:1; }
+  </style>
+</head>
+<body>
+<div class="ambient"><span class="a1"></span><span class="a2"></span></div>
+<nav><a href="/" class="nav-logo">CREA <span>SIN</span> MIEDO</a></nav>
+
+<div class="page" id="mainPage">
+  <!-- Content injected by JS -->
+</div>
+
+<script>
+const TIER_NAMES = { general: 'General', vip: 'VIP', full: 'Full Experience' };
+
+function fmt(n) { return '$' + Number(n).toLocaleString('es-MX'); }
+
+function getParams() {
+  const p = new URLSearchParams(window.location.search);
+  return {
+    status: p.get('collection_status') || p.get('status'),
+    paymentId: p.get('collection_id') || p.get('payment_id'),
+    prefId: p.get('preference_id'),
+    pending: p.get('pending') === '1',
+    tier: p.get('tier'),
+  };
+}
+
+function renderPending() {
+  document.getElementById('mainPage').innerHTML = `
+    <div class="check-icon">⏳</div>
+    <h1>Pago <span>en revisión</span></h1>
+    <p class="subtitle">Tu pago está siendo procesado. Te notificaremos por email cuando se confirme.</p>
+    <div class="pending-box">
+      <h3>⚠️ No cierres esta página aún</h3>
+      <p>MercadoPago está verificando tu pago. Puede tardar algunos minutos. Recibirás un correo con tu boleto una vez confirmado.</p>
+    </div>
+    <a href="/" class="btn-outline">Volver al inicio</a>
+  `;
+}
+
+function renderConfirmed(paymentId, tier) {
+  const tierName = TIER_NAMES[tier] || 'General';
+  const qrData = 'CSM-' + (paymentId || 'TICKET');
+  const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(qrData)}&bgcolor=ffffff&color=000000&margin=4`;
+
+  document.getElementById('mainPage').innerHTML = `
+    <div class="check-icon">✓</div>
+    <h1>¡Tu lugar está <span>confirmado!</span></h1>
+    <p class="subtitle">Bienvenido a Crea sin Miedo. Guarda este boleto — lo necesitarás el día del evento.</p>
+
+    <div class="ticket">
+      <div class="ticket-header">
+        <div>
+          <div class="ticket-label">Entrada confirmada</div>
+          <div class="ticket-event">CREA SIN MIEDO</div>
+        </div>
+        <div class="ticket-tier">${tierName}</div>
+      </div>
+      <div class="ticket-body">
+        <div class="ticket-info">
+          <div class="info-row">
+            <div class="label">Fecha</div>
+            <div class="value">Sábado 1 de Agosto, 2026</div>
+          </div>
+          <div class="info-row">
+            <div class="label">Lugar</div>
+            <div class="value">Guadalajara, Jalisco</div>
+          </div>
+          <div class="info-row">
+            <div class="label">ID de pago</div>
+            <div class="value" style="font-family:monospace;font-size:.85rem">${paymentId || '—'}</div>
+          </div>
+        </div>
+        <div class="qr-wrap">
+          <img src="${qrUrl}" alt="QR de entrada" loading="lazy">
+          <div class="qr-id">${qrData}</div>
+        </div>
+      </div>
+      <div class="ticket-footer">
+        Muestra este QR en la entrada el día del evento · No es transferible
+      </div>
+    </div>
+
+    <div class="info-cards">
+      <div class="info-card">
+        <div class="ic-icon">📧</div>
+        <h4>Revisa tu correo</h4>
+        <p>Te enviamos la confirmación con todos los detalles del evento a tu email.</p>
+      </div>
+      <div class="info-card">
+        <div class="ic-icon">📍</div>
+        <h4>Venue</h4>
+        <p>Pronto confirmamos el lugar exacto. Te avisamos por email y WhatsApp.</p>
+      </div>
+      <div class="ic-icon" style="display:none"></div>
+      <div class="info-card">
+        <div class="ic-icon">📱</div>
+        <h4>Guarda tu QR</h4>
+        <p>Toma screenshot de este boleto. Lo escanearemos en la entrada el 1 de agosto.</p>
+      </div>
+      <div class="info-card">
+        <div class="ic-icon">🕘</div>
+        <h4>Horario</h4>
+        <p>Registro: 8:30 AM. Inicio: 9:00 AM. Full day hasta las 6–7 PM aproximadamente.</p>
+      </div>
+    </div>
+
+    <div>
+      <a href="/" class="btn-outline">← Volver al inicio</a>
+    </div>
+  `;
+}
+
+function renderError() {
+  document.getElementById('mainPage').innerHTML = `
+    <div class="check-icon" style="background:rgba(239,68,68,.15);border-color:rgba(239,68,68,.4)">✕</div>
+    <h1>Pago <span style="color:#ef4444">no completado</span></h1>
+    <p class="subtitle">Hubo un problema con tu pago. No se realizó ningún cargo. Puedes intentarlo de nuevo.</p>
+    <a href="/checkout" class="btn-orange">Intentar de nuevo</a>
+    <a href="/" class="btn-outline">Volver al inicio</a>
+  `;
+}
+
+// Init
+const { status, paymentId, pending, tier } = getParams();
+
+if (pending || status === 'pending' || status === 'in_process') {
+  renderPending();
+} else if (status === 'approved' || paymentId) {
+  renderConfirmed(paymentId, tier);
+} else if (status === 'rejected' || status === 'cancelled') {
+  renderError();
+} else {
+  // No params — direct visit
+  renderConfirmed(null, null);
+}
+</script>
+</body>
+</html>

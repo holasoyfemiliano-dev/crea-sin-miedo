@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Staff — Crea sin Miedo</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+    :root {
+      --dark:#06090f; --orange:#f97316; --gold:#fbbf24; --green:#22c55e;
+      --red:#ef4444; --blue:#3b82f6; --purple:#8b5cf6;
+      --white:#ffffff; --text:#c8cfe0; --muted:#6a7590; --card:rgba(255,255,255,.04);
+    }
+    body { background:var(--dark); color:var(--white); font-family:'Inter',sans-serif; min-height:100vh; }
+
+    /* Gate */
+    #gate { position:fixed; inset:0; z-index:999; background:var(--dark); display:flex; align-items:center; justify-content:center; }
+    .gate-card { background:rgba(255,255,255,.04); border:1px solid rgba(249,115,22,.2); border-radius:16px; padding:32px; width:320px; text-align:center; }
+    .gate-card h2 { font-family:'Bebas Neue',sans-serif; font-size:1.8rem; margin-bottom:6px; }
+    .gate-card p { font-size:.8rem; color:var(--muted); margin-bottom:20px; }
+    .gate-card input { width:100%; background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.1); border-radius:8px; padding:12px; color:var(--white); font-size:1rem; outline:none; text-align:center; margin-bottom:10px; }
+    .gate-btn { width:100%; background:var(--orange); color:#000; border:none; border-radius:8px; padding:12px; font-weight:800; font-size:.88rem; letter-spacing:.06em; text-transform:uppercase; cursor:pointer; }
+    .gate-err { font-size:.75rem; color:var(--red); margin-top:8px; display:none; }
+
+    header { background:rgba(10,15,26,.98); border-bottom:1px solid rgba(249,115,22,.12); padding:14px 24px; display:flex; align-items:center; justify-content:space-between; position:sticky; top:0; z-index:50; }
+    .h-logo { font-family:'Bebas Neue',sans-serif; font-size:1.2rem; letter-spacing:.06em; }
+    .h-logo span { color:var(--orange); }
+    .h-date { font-size:.75rem; color:var(--muted); }
+
+    .content { max-width:1100px; margin:0 auto; padding:24px; }
+
+    /* Tabs */
+    .tabs { display:flex; gap:0; background:rgba(255,255,255,.04); border-radius:10px; padding:4px; margin-bottom:24px; border:1px solid rgba(255,255,255,.07); overflow-x:auto; }
+    .tab { flex:1; min-width:max-content; padding:10px 16px; text-align:center; border-radius:7px; font-size:.82rem; font-weight:600; cursor:pointer; transition:background .2s, color .2s; color:var(--muted); white-space:nowrap; }
+    .tab.active { background:var(--orange); color:#000; }
+
+    /* Cronograma */
+    .timeline { display:flex; flex-direction:column; gap:0; }
+    .tl-item { display:grid; grid-template-columns:80px 1fr; gap:0; }
+    .tl-time { padding:16px 16px 16px 0; text-align:right; }
+    .tl-time span { font-family:'Bebas Neue',sans-serif; font-size:1rem; color:var(--orange); white-space:nowrap; }
+    .tl-body { border-left:2px solid rgba(249,115,22,.2); padding:16px 16px 16px 20px; position:relative; }
+    .tl-body::before { content:''; position:absolute; left:-5px; top:22px; width:8px; height:8px; border-radius:50%; background:var(--orange); }
+    .tl-item.staff .tl-body::before { background:var(--blue); }
+    .tl-item.staff .tl-time span { color:var(--blue); }
+    .tl-item.break .tl-body::before { background:var(--muted); }
+    .tl-item.break .tl-time span { color:var(--muted); }
+    .tl-card { background:var(--card); border:1px solid rgba(255,255,255,.06); border-radius:10px; padding:14px 16px; }
+    .tl-card.staff-card { border-left:3px solid var(--blue); }
+    .tl-card.break-card { border-left:3px solid rgba(255,255,255,.1); opacity:.7; }
+    .tl-card h4 { font-size:.9rem; font-weight:700; margin-bottom:4px; }
+    .tl-card p { font-size:.78rem; color:var(--muted); line-height:1.6; }
+    .tl-card .tl-meta { display:flex; gap:10px; margin-top:8px; flex-wrap:wrap; }
+    .tl-tag { background:rgba(255,255,255,.07); border-radius:20px; padding:2px 10px; font-size:.68rem; color:var(--text); }
+    .tl-tag.orange { background:rgba(249,115,22,.12); color:var(--orange); }
+    .tl-tag.blue { background:rgba(59,130,246,.12); color:var(--blue); }
+    .tl-tag.green { background:rgba(34,197,94,.12); color:var(--green); }
+
+    /* Staff list */
+    .staff-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(280px, 1fr)); gap:16px; }
+    .staff-card { background:var(--card); border:1px solid rgba(255,255,255,.06); border-radius:14px; padding:20px; }
+    .staff-avatar { width:48px; height:48px; border-radius:50%; background:rgba(249,115,22,.15); border:2px solid rgba(249,115,22,.2); display:flex; align-items:center; justify-content:center; font-size:1.3rem; margin-bottom:12px; }
+    .staff-name { font-weight:800; font-size:.95rem; margin-bottom:2px; }
+    .staff-rol { font-size:.75rem; color:var(--orange); margin-bottom:8px; font-weight:600; text-transform:uppercase; letter-spacing:.08em; }
+    .staff-area { display:inline-block; background:rgba(255,255,255,.07); border-radius:20px; padding:2px 10px; font-size:.7rem; color:var(--text); margin-bottom:10px; }
+    .staff-horario { font-size:.8rem; color:var(--muted); }
+    .staff-tareas { margin-top:12px; border-top:1px solid rgba(255,255,255,.06); padding-top:12px; }
+    .staff-tareas h5 { font-size:.68rem; letter-spacing:.12em; text-transform:uppercase; color:var(--muted); margin-bottom:8px; }
+    .tarea { display:flex; gap:8px; align-items:flex-start; margin-bottom:6px; }
+    .tarea-check { width:16px; height:16px; border-radius:4px; border:1.5px solid rgba(255,255,255,.2); flex-shrink:0; margin-top:1px; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:background .2s, border-color .2s; }
+    .tarea-check.done { background:var(--green); border-color:var(--green); }
+    .tarea-check.done::after { content:'✓'; font-size:.6rem; color:#000; font-weight:900; }
+    .tarea-text { font-size:.78rem; color:var(--text); line-height:1.5; }
+    .tarea.done .tarea-text { text-decoration:line-through; color:var(--muted); }
+
+    /* Logistics */
+    .logistics-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(300px, 1fr)); gap:16px; }
+    .logis-card { background:var(--card); border:1px solid rgba(255,255,255,.06); border-radius:14px; padding:20px; }
+    .logis-card h3 { font-family:'Bebas Neue',sans-serif; font-size:1.2rem; margin-bottom:14px; display:flex; align-items:center; gap:8px; }
+    .checklist { list-style:none; display:flex; flex-direction:column; gap:8px; }
+    .checklist li { display:flex; gap:10px; align-items:flex-start; }
+    .checklist li .cb { width:18px; height:18px; border-radius:4px; border:1.5px solid rgba(255,255,255,.2); flex-shrink:0; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:all .2s; }
+    .checklist li .cb.done { background:var(--green); border-color:var(--green); }
+    .checklist li .cb.done::after { content:'✓'; font-size:.65rem; color:#000; font-weight:900; }
+    .checklist li span { font-size:.82rem; color:var(--text); line-height:1.5; transition:color .2s; }
+    .checklist li.done span { text-decoration:line-through; color:var(--muted); }
+
+    /* Contenido team */
+    .contenido-section { display:flex; flex-direction:column; gap:16px; }
+    .cont-card { background:var(--card); border:1px solid rgba(255,255,255,.06); border-radius:14px; padding:20px; }
+    .cont-card h3 { font-family:'Bebas Neue',sans-serif; font-size:1.1rem; margin-bottom:8px; display:flex; align-items:center; gap:8px; }
+    .cont-card p { font-size:.83rem; color:var(--text); line-height:1.7; }
+    .cont-card ul { list-style:none; margin-top:10px; display:flex; flex-direction:column; gap:6px; }
+    .cont-card ul li::before { content:'→ '; color:var(--orange); font-weight:700; }
+    .cont-card ul li { font-size:.82rem; color:var(--text); }
+
+    #app { display:none; }
+    .section { display:none; }
+    .section.active { display:block; }
+  </style>
+</head>
+<body>
+
+<div id="gate">
+  <div class="gate-card">
+    <h2>STAFF</h2>
+    <p>Crea sin Miedo · 1 Agosto 2026</p>
+    <input type="password" id="pwInput" placeholder="Clave de staff" onkeydown="if(event.key==='Enter')checkPw()">
+    <button class="gate-btn" onclick="checkPw()">Acceder</button>
+    <div class="gate-err" id="gateErr">Clave incorrecta</div>
+  </div>
+</div>
+
+<div id="app">
+  <header>
+    <div class="h-logo">CREA <span>SIN</span> MIEDO · <span style="color:var(--muted);font-size:.75rem;font-family:'Inter'">Staff</span></div>
+    <div class="h-date">Sábado 1 Agosto 2026 · GDL</div>
+  </header>
+
+  <div class="content">
+    <div class="tabs">
+      <div class="tab active" onclick="showSection('cronograma',this)">📅 Cronograma</div>
+      <div class="tab" onclick="showSection('equipo',this)">👥 Equipo</div>
+      <div class="tab" onclick="showSection('logistica',this)">📦 Logística</div>
+      <div class="tab" onclick="showSection('contenido',this)">🎬 Contenido</div>
+    </div>
+
+    <!-- CRONOGRAMA -->
+    <div class="section active" id="sec-cronograma">
+      <div class="timeline" id="timelinePublico"></div>
+      <div style="margin:24px 0 12px;font-size:.7rem;letter-spacing:.15em;text-transform:uppercase;color:var(--muted)">— Solo staff</div>
+      <div class="timeline" id="timelineStaff"></div>
+    </div>
+
+    <!-- EQUIPO -->
+    <div class="section" id="sec-equipo">
+      <div class="staff-grid" id="staffGrid">
+        <div style="color:var(--muted);font-size:.85rem;padding:20px">Cargando equipo…</div>
+      </div>
+    </div>
+
+    <!-- LOGÍSTICA -->
+    <div class="section" id="sec-logistica">
+      <div class="logistics-grid" id="logisticsGrid">Loading…</div>
+    </div>
+
+    <!-- CONTENIDO -->
+    <div class="section" id="sec-contenido">
+      <div class="contenido-section" id="contenidoSection">Loading…</div>
+    </div>
+  </div>
+</div>
+
+<script>
+let adminKey = sessionStorage.getItem('csm_admin_key');
+
+function checkPw() {
+  const v = document.getElementById('pwInput').value.trim();
+  if (!v) return;
+  fetch('/api/checkin?key=' + encodeURIComponent(v) + '&q=_test_')
+    .then(r => { if (r.status === 401) throw new Error(); return r.json(); })
+    .then(d => {
+      if (d?.error === 'No autorizado') throw new Error();
+      sessionStorage.setItem('csm_admin_key', v);
+      adminKey = v;
+      document.getElementById('gate').style.display = 'none';
+      document.getElementById('app').style.display = 'block';
+      renderAll();
+    }).catch(() => { document.getElementById('gateErr').style.display = 'block'; });
+}
+
+function showSection(id, btn) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.getElementById('sec-' + id).classList.add('active');
+}
+
+// ——— CRONOGRAMA DATA ———
+const CRONOGRAMA_PUBLICO = [
+  { hora: '8:30', actividad: 'Registro y bienvenida', responsable: 'Recepción', lugar: 'Entrada principal', tipo: 'publico' },
+  { hora: '9:00', actividad: 'Apertura — Femiliano', responsable: 'Femiliano', lugar: 'Escenario principal', notas: 'Energía máxima, música de entrada', tipo: 'publico' },
+  { hora: '9:30', actividad: 'Módulo 1: Marca personal desde cero', responsable: 'Femiliano', lugar: 'Escenario principal', notas: 'Ejercicio práctico de posicionamiento', tipo: 'publico' },
+  { hora: '10:30', actividad: 'Coffee break ☕', responsable: 'Logística', lugar: 'Área de catering', tipo: 'break' },
+  { hora: '10:45', actividad: 'Módulo 2: Estrategia de contenido', responsable: 'Femiliano', lugar: 'Escenario principal', notas: 'Workshop con ejercicio individual', tipo: 'publico' },
+  { hora: '12:00', actividad: 'Panel de creadores locales', responsable: 'Moderador', lugar: 'Escenario principal', notas: '3 creadores GDL + Q&A', tipo: 'publico' },
+  { hora: '13:00', actividad: 'Comida 🍽️', responsable: 'Logística', lugar: 'Área comedor', tipo: 'break' },
+  { hora: '14:30', actividad: 'Módulo 3: Cámara, luz y producción', responsable: 'Invitado especial', lugar: 'Escenario principal', notas: 'Práctica con equipo propio', tipo: 'publico' },
+  { hora: '16:00', actividad: 'Módulo 4: Monetización y comunidad', responsable: 'Femiliano', lugar: 'Escenario principal', tipo: 'publico' },
+  { hora: '17:00', actividad: 'Sesión de fotos VIP + Full 📸', responsable: 'Fotógrafo', lugar: 'Área fotográfica', notas: 'Solo boletos VIP y Full Experience', tipo: 'publico' },
+  { hora: '17:30', actividad: 'Cierre y networking', responsable: 'Femiliano', lugar: 'Escenario principal', tipo: 'publico' },
+  { hora: '18:30', actividad: 'Sky Bar — VIP & Full 🥂', responsable: 'Staff VIP', lugar: 'Sky Bar / Rooftop', notas: 'Solo boletos VIP y Full Experience', tipo: 'publico' },
+];
+
+const CRONOGRAMA_STAFF = [
+  { hora: '7:00', actividad: 'Montaje y setup general', responsable: 'Todo el equipo', lugar: 'Venue completo', notas: 'Llegada mínima 7AM. Traer ID.' },
+  { hora: '7:30', actividad: 'Setup AV y sonido', responsable: 'Técnico AV', lugar: 'Escenario', notas: 'Prueba de micrófonos y proyector' },
+  { hora: '8:00', actividad: 'Briefing final de staff', responsable: 'Femiliano', lugar: 'Back stage', notas: 'Repasar roles y contingencias' },
+  { hora: '8:15', actividad: 'Apertura de puertas', responsable: 'Recepción', lugar: 'Entrada', notas: 'Activar app de check-in' },
+  { hora: '19:00', actividad: 'Desmontaje y cierre', responsable: 'Logística', lugar: 'Venue completo', tipo: 'staff' },
+];
+
+// ——— STAFF DATA ———
+const STAFF_DATA = [
+  { nombre: 'Femiliano', rol: 'Host / Speaker Principal', area: 'Escenario', horario: '7:00 – 21:00', emoji: '🎤', tareas: ['Apertura del evento', 'Módulos 1, 2 y 4', 'Cierre y llamada a acción'] },
+  { nombre: 'Staff Recepción 1', rol: 'Check-in & Registro', area: 'Entrada', horario: '7:45 – 14:00', emoji: '📋', tareas: ['Escanear QR de asistentes', 'Entregar kits de bienvenida', 'Manejo de lista de invitados'] },
+  { nombre: 'Staff Recepción 2', rol: 'Check-in & Registro', area: 'Entrada', horario: '7:45 – 14:00', emoji: '📋', tareas: ['Apoyo en check-in', 'Atención a dudas', 'Control de aforo'] },
+  { nombre: 'Técnico AV', rol: 'Audio y Video', area: 'Técnica', horario: '7:00 – 19:00', emoji: '🎛️', tareas: ['Setup de sonido y proyección', 'Manejo de slides durante módulos', 'Soporte durante panel de creadores'] },
+  { nombre: 'Fotógrafo', rol: 'Fotografía y Video', area: 'Contenido', horario: '8:30 – 20:00', emoji: '📸', tareas: ['Cobertura general del evento', 'Sesión fotos VIP (5PM)', 'Entrega de selección al día siguiente'] },
+  { nombre: 'Staff Logística', rol: 'Logística y Catering', area: 'Operaciones', horario: '7:00 – 19:30', emoji: '📦', tareas: ['Coordinación catering (coffee y comida)', 'Control de materiales', 'Setup y desmontaje'] },
+  { nombre: 'Staff VIP', rol: 'Atención VIP & Full', area: 'VIP', horario: '16:30 – 22:00', emoji: '✨', tareas: ['Acompañar asistentes VIP en fotos', 'Organizar acceso Sky Bar', 'Coordinar cena Full Experience'] },
+  { nombre: 'Community Manager', rol: 'Redes Sociales en Vivo', area: 'Contenido', horario: '8:00 – 20:00', emoji: '📱', tareas: ['Publicar stories en tiempo real', 'Responder DMs del evento', 'Recolectar testimonios'] },
+];
+
+// ——— LOGISTICS DATA ———
+const LOGISTICS = [
+  {
+    title: '🏛️ Venue', items: [
+      'Confirmar dirección exacta y estacionamiento',
+      'Acceso para montaje desde las 7AM',
+      'Coordinar mesas y sillas (80–120 pax)',
+      'Verificar proyector / pantalla',
+      'Señalética de entrada y registro',
+      'Acceso a Sky Bar para VIP',
+    ]
+  },
+  {
+    title: '🍽️ Catering', items: [
+      'Coffee break 10:30AM (café, agua, snacks)',
+      'Comida 1PM (buffet o cajas — confirmar)',
+      'Agua disponible todo el día',
+      'Mesa de Sky Bar (bebidas VIP 6:30PM)',
+      'Cena Full Experience (lugar y hora)',
+    ]
+  },
+  {
+    title: '📦 Materiales', items: [
+      'Kit bienvenida: cuaderno + bolígrafo + flyer',
+      'Credenciales por tier (color-coded)',
+      'Banners / backdrop para fotos',
+      'Roll-up escenario',
+      'Señalética de áreas VIP',
+      'Extension cords y power strips',
+    ]
+  },
+  {
+    title: '💻 Tech & AV', items: [
+      'Laptop del speaker + HDMI adapter',
+      'Slides de todos los módulos descargadas',
+      'Micrófono de mano + lavalier',
+      'Conexión a internet (hotspot backup)',
+      'App de check-in probada',
+      'Grabación de respaldo (cámara fija)',
+    ]
+  },
+  {
+    title: '🚑 Contingencias', items: [
+      'Número de emergencias del venue',
+      'Kit de primeros auxilios',
+      'Plan B si falla el proyector',
+      'Lista de asistentes impresa (backup)',
+      'Contacto de sustituto para cada rol',
+    ]
+  },
+  {
+    title: '📸 Foto / Video', items: [
+      'Brief a fotógrafo: momentos clave',
+      'Área de fotos VIP montada desde 4:30PM',
+      'Formato de entrega acordado',
+      'Derechos de uso definidos',
+      'Reels del evento para día siguiente',
+    ]
+  },
+];
+
+// ——— CONTENIDO DATA ———
+const CONTENIDO = [
+  {
+    title: '🎬 Cobertura del Evento',
+    desc: 'El equipo de contenido es responsable de documentar cada momento para redes sociales, testimonios y material evergreen.',
+    items: ['Stories en vivo desde las 8AM (apertura de puertas)', 'Reel del evento (30–60s) para publicar 24h después', 'Clips de los mejores momentos de cada módulo', 'Testimonios en cámara al final del día', 'BTS del equipo y backstage'],
+  },
+  {
+    title: '📱 Redes en Tiempo Real',
+    desc: 'El Community Manager publica durante el evento.',
+    items: ['IG Stories cada 30–45 min máximo', 'Quote cards de las frases más potentes', 'Encuestas y stickers interactivos', 'Mención de asistentes que hagan contenido'],
+  },
+  {
+    title: '📹 Setup de Producción',
+    desc: 'Especificaciones técnicas para el equipo de contenido.',
+    items: ['Cámara principal fija para grabar módulos', 'Segunda cámara para B-roll y audiencia', 'Ring light o luz natural para fotos VIP', 'Teleprompter opcional para módulos', 'Discos duros externos para backup inmediato'],
+  },
+  {
+    title: '🗂️ Domingo — Producción Full Experience',
+    desc: 'Sesión exclusiva para asistentes Full Experience el domingo 2 de agosto.',
+    items: ['Producción de 1 video de marca personal por asistente', 'Setup profesional: luz, fondo, audio', 'Edición básica entregada en 48h', 'Sesión de fotos de perfil profesional'],
+  },
+];
+
+function renderCronograma() {
+  const pub = CRONOGRAMA_PUBLICO.filter(i => i.tipo !== 'staff');
+  const sta = CRONOGRAMA_STAFF;
+  document.getElementById('timelinePublico').innerHTML = pub.map(item => `
+    <div class="tl-item ${item.tipo === 'break' ? 'break' : ''}">
+      <div class="tl-time"><span>${item.hora}</span></div>
+      <div class="tl-body">
+        <div class="tl-card ${item.tipo === 'break' ? 'break-card' : ''}">
+          <h4>${item.actividad}</h4>
+          ${item.notas ? `<p>${item.notas}</p>` : ''}
+          <div class="tl-meta">
+            ${item.responsable ? `<span class="tl-tag orange">${item.responsable}</span>` : ''}
+            ${item.lugar ? `<span class="tl-tag blue">${item.lugar}</span>` : ''}
+          </div>
+        </div>
+      </div>
+    </div>
+  `).join('');
+
+  document.getElementById('timelineStaff').innerHTML = sta.map(item => `
+    <div class="tl-item staff">
+      <div class="tl-time"><span>${item.hora}</span></div>
+      <div class="tl-body">
+        <div class="tl-card staff-card">
+          <h4>${item.actividad}</h4>
+          ${item.notas ? `<p>${item.notas}</p>` : ''}
+          <div class="tl-meta">
+            ${item.responsable ? `<span class="tl-tag blue">${item.responsable}</span>` : ''}
+            ${item.lugar ? `<span class="tl-tag">${item.lugar}</span>` : ''}
+          </div>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function renderEquipo() {
+  document.getElementById('staffGrid').innerHTML = STAFF_DATA.map(s => `
+    <div class="staff-card">
+      <div class="staff-avatar">${s.emoji}</div>
+      <div class="staff-name">${s.nombre}</div>
+      <div class="staff-rol">${s.rol}</div>
+      <span class="staff-area">${s.area}</span>
+      <div class="staff-horario">⏰ ${s.horario}</div>
+      <div class="staff-tareas">
+        <h5>Responsabilidades</h5>
+        ${s.tareas.map(t => `
+          <div class="tarea">
+            <div class="tarea-check" onclick="toggleCheck(this)"></div>
+            <div class="tarea-text">${t}</div>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+  `).join('');
+}
+
+function renderLogistica() {
+  document.getElementById('logisticsGrid').innerHTML = LOGISTICS.map(sec => `
+    <div class="logis-card">
+      <h3>${sec.title}</h3>
+      <ul class="checklist">
+        ${sec.items.map(item => `
+          <li onclick="toggleListItem(this)">
+            <div class="cb"></div>
+            <span>${item}</span>
+          </li>
+        `).join('')}
+      </ul>
+    </div>
+  `).join('');
+}
+
+function renderContenido() {
+  document.getElementById('contenidoSection').innerHTML = CONTENIDO.map(c => `
+    <div class="cont-card">
+      <h3>${c.title}</h3>
+      <p>${c.desc}</p>
+      <ul>${c.items.map(i => `<li>${i}</li>`).join('')}</ul>
+    </div>
+  `).join('');
+}
+
+function toggleCheck(el) {
+  el.classList.toggle('done');
+  el.closest('.tarea').classList.toggle('done');
+}
+
+function toggleListItem(li) {
+  li.querySelector('.cb').classList.toggle('done');
+  li.classList.toggle('done');
+}
+
+function renderAll() {
+  renderCronograma();
+  renderEquipo();
+  renderLogistica();
+  renderContenido();
+}
+
+if (sessionStorage.getItem('csm_admin_key')) {
+  adminKey = sessionStorage.getItem('csm_admin_key');
+  document.getElementById('gate').style.display = 'none';
+  document.getElementById('app').style.display = 'block';
+  renderAll();
+}
+</script>
+</body>
+</html>

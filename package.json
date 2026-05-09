@@ -1,0 +1,9 @@
+{
+  "name": "crea-sin-miedo",
+  "version": "1.0.0",
+  "private": true,
+  "engines": { "node": ">=18" },
+  "dependencies": {
+    "mercadopago": "^2.0.6"
+  }
+}

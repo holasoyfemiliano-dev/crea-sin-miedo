@@ -1,0 +1,12 @@
+{
+  "version": 2,
+  "routes": [
+    { "src": "/api/(.*)", "dest": "/api/$1" },
+    { "src": "/checkout",  "dest": "/checkout.html" },
+    { "src": "/gracias",   "dest": "/gracias.html" },
+    { "src": "/admin",     "dest": "/admin.html" },
+    { "src": "/checkin",   "dest": "/checkin.html" },
+    { "src": "/staff",     "dest": "/staff.html" },
+    { "src": "/",          "dest": "/index.html" }
+  ]
+}
