@@ -38,7 +38,7 @@
     .tier-card.full { border-color:rgba(251,191,36,.35); }
     .tier-eyebrow { font-size:.65rem; letter-spacing:.2em; text-transform:uppercase; color:var(--muted); margin-bottom:6px; }
     .tier-name { font-family:'Bebas Neue',sans-serif; font-size:2rem; margin-bottom:4px; }
-    .tier-price { font-family:'Bebas Neue',sans-serif; font-size:3rem; line-height:1; color:var(--orange); margin-bottom:4px; }
+    .tier-price { font-family:'Bebas Neue',sans-serif; font-size:clamp(2rem,5vw,3rem); line-height:1; color:var(--orange); margin-bottom:4px; white-space:nowrap; }
     .tier-card.full .tier-price { color:var(--gold); }
     .tier-currency { font-size:.8rem; color:var(--muted); margin-bottom:20px; }
     .tier-divider { height:1px; background:rgba(255,255,255,.08); margin:20px 0; }
@@ -183,7 +183,7 @@
 const TIERS = {
   general: {
     name: 'General', badge: null,
-    price: 2999,
+    price: 2997,
     features: [
       'Acceso completo al taller (full day)',
       '6 módulos prácticos de contenido y marca personal',
@@ -195,7 +195,7 @@ const TIERS = {
   },
   vip: {
     name: 'VIP', badge: 'Más popular',
-    price: 5000,
+    price: 4997,
     features: [
       'Todo lo del General',
       'Asiento preferencial en el venue',
@@ -207,7 +207,7 @@ const TIERS = {
   },
   full: {
     name: 'Full Experience', badge: 'Solo 10 cupos',
-    price: 9997,
+    price: 14997,
     features: [
       'Todo lo del VIP',
       'Mastermind exclusivo el viernes anterior (31 jul)',
