@@ -1,10 +1,5 @@
 const { MercadoPagoConfig, Preference } = require('mercadopago');
-
-const TIERS = {
-  general: { title: 'Entrada General — Crea sin Miedo', price: 2999 },
-  vip:     { title: 'Entrada VIP — Crea sin Miedo',     price: 5000 },
-  full:    { title: 'Full Experience — Crea sin Miedo', price: 9997 },
-};
+const TIERS = require('./_tiers');
 
 const SB_URL  = process.env.SB_URL;
 const SB_KEY  = process.env.SB_SERVICE;

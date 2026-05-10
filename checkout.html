@@ -255,12 +255,32 @@
 </div>
 
 <script>
-const PRICES = { general: 2997, vip: 4997, full: 14997 };
-const NAMES  = { general: 'General', vip: 'VIP', full: 'Full Experience' };
+// Prices loaded from API — single source of truth with api/_tiers.js
+let PRICES = { general: 2997, vip: 4997, full: 14997 };
+let NAMES  = { general: 'General', vip: 'VIP', full: 'Full Experience' };
 
 let selectedTier = null;
 let discount = 0;
 let couponCode = '';
+const urlTier = new URLSearchParams(window.location.search).get('tier');
+
+// Load prices from API before rendering
+fetch('/api/prices')
+  .then(r => r.json())
+  .then(data => {
+    Object.keys(data).forEach(k => {
+      PRICES[k] = data[k].price;
+      NAMES[k]  = data[k].name;
+      // Update displayed price in the static tier card
+      const priceEl = document.querySelector('#card-' + k + ' .tier-price');
+      if (priceEl) priceEl.textContent = fmt(data[k].price);
+    });
+    if (urlTier && PRICES[urlTier]) { selectTier(urlTier); } else { showCard(null); }
+  })
+  .catch(() => {
+    // Fallback: use hardcoded defaults if API fails
+    if (urlTier && PRICES[urlTier]) { selectTier(urlTier); } else { showCard(null); }
+  });
 
 function fmt(n) { return '$' + n.toLocaleString('es-MX'); }
 
@@ -371,9 +391,7 @@ document.getElementById('email').addEventListener('blur', function() {
   }).catch(() => {});
 });
 
-// Init
-const urlTier = new URLSearchParams(window.location.search).get('tier');
-if (urlTier && PRICES[urlTier]) { selectTier(urlTier); } else { showCard(null); }
+// Init handled by fetch('/api/prices') above
 </script>
 </body>
 </html>
