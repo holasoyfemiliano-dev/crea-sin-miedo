@@ -5,57 +5,61 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Checkout — Crea sin Miedo</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Antonio:wght@400;700&family=Oswald:wght@600;700&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
     :root {
-      --dark:#06090f; --card:rgba(255,255,255,0.04); --border:rgba(249,115,22,0.2);
-      --orange:#f97316; --orange2:#fb923c; --gold:#fbbf24; --green:#22c55e;
-      --white:#ffffff; --text:#c8cfe0; --muted:#6a7590; --red:#ef4444;
+      --dark:#06090f; --card:rgba(255,255,255,0.04); --border:rgba(229,39,43,0.2);
+      --red:#e5272b; --red2:#ef3535; --gold:#f5c518; --matrix:#00cc52; --green:#22c55e;
+      --white:#ffffff; --text:#cccccc; --muted:#9ca3af;
     }
-    body { background:var(--dark); color:var(--white); font-family:'Inter',sans-serif; min-height:100vh; }
-    .ambient { position:fixed; inset:0; z-index:0; pointer-events:none; }
-    .ambient span { position:absolute; border-radius:50%; filter:blur(100px); opacity:.12; }
-    .a1 { width:600px; height:600px; top:-200px; right:-100px; background:#f97316; }
-    .a2 { width:500px; height:500px; bottom:-200px; left:-100px; background:#7c3aed; }
-    nav { position:fixed; top:0; left:0; right:0; z-index:100; padding:14px 28px; background:rgba(6,9,15,0.9); backdrop-filter:blur(14px); border-bottom:1px solid rgba(249,115,22,.1); display:flex; align-items:center; justify-content:space-between; }
-    .nav-logo { font-family:'Bebas Neue',sans-serif; font-size:1.4rem; letter-spacing:.06em; text-decoration:none; color:var(--white); }
-    .nav-logo span { color:var(--orange); }
+    body {
+      background:var(--dark);
+      background-image:
+        radial-gradient(ellipse 75% 55% at 5% 8%, rgba(229,39,43,.07) 0%, transparent 58%),
+        radial-gradient(ellipse 60% 45% at 92% 88%, rgba(0,204,82,.04) 0%, transparent 58%);
+      color:var(--white); font-family:'Inter',sans-serif; min-height:100vh;
+    }
+    nav { position:fixed; top:0; left:0; right:0; z-index:100; padding:14px 28px; background:rgba(0,0,0,.94); backdrop-filter:blur(20px); border-bottom:1px solid rgba(255,255,255,.06); display:flex; align-items:center; justify-content:space-between; }
+    .nav-logo { font-family:'Oswald',sans-serif; font-size:1.3rem; font-weight:700; letter-spacing:.06em; text-decoration:none; color:var(--white); }
+    .nav-logo span { color:var(--red); }
     .nav-back { font-size:.8rem; color:var(--muted); text-decoration:none; display:flex; align-items:center; gap:6px; transition:color .2s; }
     .nav-back:hover { color:var(--white); }
 
     .page { max-width:980px; margin:0 auto; padding:100px 24px 80px; position:relative; z-index:1; }
     .page-head { margin-bottom:40px; }
-    .page-head h2 { font-family:'Bebas Neue',sans-serif; font-size:clamp(2rem,4vw,3rem); margin-bottom:6px; }
+    .page-head h2 { font-family:'Oswald',sans-serif; font-weight:700; font-size:clamp(2rem,4vw,3rem); margin-bottom:6px; }
     .page-head p { color:var(--muted); font-size:.9rem; }
 
     .grid { display:grid; grid-template-columns:1fr 1fr; gap:36px; align-items:start; }
     @media(max-width:700px){ .grid { grid-template-columns:1fr; } .tier-card { position:static; } }
 
     /* Tier Summary */
-    .tier-card { background:rgba(255,255,255,.03); border:1.5px solid rgba(249,115,22,.25); border-radius:18px; padding:30px; position:sticky; top:90px; }
-    .tier-card.vip { border-color:rgba(249,115,22,.4); }
-    .tier-card.full { border-color:rgba(251,191,36,.35); }
+    .tier-card { background:rgba(255,255,255,.03); border:1.5px solid rgba(229,39,43,.25); border-radius:18px; padding:30px; position:sticky; top:90px; backdrop-filter:blur(16px); }
+    .tier-card.vip { border-color:rgba(0,204,82,.4); }
+    .tier-card.full { border-color:rgba(245,197,24,.35); }
     .tier-eyebrow { font-size:.65rem; letter-spacing:.2em; text-transform:uppercase; color:var(--muted); margin-bottom:6px; }
-    .tier-name { font-family:'Bebas Neue',sans-serif; font-size:2rem; margin-bottom:4px; }
-    .tier-price { font-family:'Bebas Neue',sans-serif; font-size:clamp(2rem,5vw,3rem); line-height:1; color:var(--orange); margin-bottom:4px; white-space:nowrap; }
+    .tier-name { font-family:'Oswald',sans-serif; font-weight:700; font-size:2rem; margin-bottom:4px; }
+    .tier-price { font-family:'Antonio',sans-serif; font-size:clamp(2rem,5vw,3rem); line-height:1; color:var(--red); margin-bottom:4px; white-space:nowrap; }
+    .tier-card.vip .tier-price { color:var(--matrix); }
     .tier-card.full .tier-price { color:var(--gold); }
     .tier-currency { font-size:.8rem; color:var(--muted); margin-bottom:20px; }
     .tier-divider { height:1px; background:rgba(255,255,255,.08); margin:20px 0; }
     .tier-features { list-style:none; display:flex; flex-direction:column; gap:10px; }
-    .tier-features li { display:flex; gap:10px; align-items:flex-start; font-size:.84rem; color:var(--text); }
-    .tier-features li::before { content:'✓'; color:var(--green); font-weight:800; flex-shrink:0; }
-    .tier-badge { display:inline-block; background:var(--orange); color:#000; font-size:.68rem; font-weight:800; letter-spacing:.08em; text-transform:uppercase; padding:4px 12px; border-radius:20px; margin-bottom:14px; }
-    .tier-card.full .tier-badge { background:var(--gold); }
+    .tier-features li { display:flex; gap:10px; align-items:flex-start; font-size:.88rem; color:var(--text); }
+    .tier-features li::before { content:'—'; color:var(--green); font-weight:800; flex-shrink:0; }
+    .tier-badge { display:inline-block; background:var(--red); color:#fff; font-size:.68rem; font-weight:800; letter-spacing:.08em; text-transform:uppercase; padding:4px 12px; border-radius:3px; margin-bottom:14px; }
+    .tier-card.vip .tier-badge { background:var(--matrix); color:#000; }
+    .tier-card.full .tier-badge { background:var(--gold); color:#000; }
 
     /* Form */
-    .form-card { background:rgba(255,255,255,.03); border:1px solid rgba(255,255,255,.07); border-radius:18px; padding:30px; }
+    .form-card { background:rgba(255,255,255,.03); border:1px solid rgba(255,255,255,.07); border-radius:18px; padding:30px; backdrop-filter:blur(16px); }
     .form-section { margin-bottom:24px; }
-    .form-section h3 { font-size:.75rem; letter-spacing:.15em; text-transform:uppercase; color:var(--orange); margin-bottom:16px; }
+    .form-section h3 { font-size:.75rem; letter-spacing:.15em; text-transform:uppercase; color:var(--red); margin-bottom:16px; }
     .field { margin-bottom:16px; }
     .field label { display:block; font-size:.8rem; color:var(--muted); margin-bottom:6px; font-weight:500; }
     .field input { width:100%; background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.1); border-radius:8px; padding:13px 16px; color:var(--white); font-size:.95rem; font-family:'Inter',sans-serif; outline:none; transition:border-color .2s; }
-    .field input:focus { border-color:rgba(249,115,22,.5); }
+    .field input:focus { border-color:rgba(229,39,43,.5); }
     .field input::placeholder { color:var(--muted); }
     .field input.error { border-color:var(--red); }
     .field-err { font-size:.75rem; color:var(--red); margin-top:4px; display:none; }
@@ -73,11 +77,10 @@
     .summary-row.total { font-size:1.1rem; font-weight:800; color:var(--white); border-top:1px solid rgba(255,255,255,.08); padding-top:12px; margin-top:4px; }
     .summary-row .strike { text-decoration:line-through; color:var(--muted); }
 
-    .pay-btn { width:100%; background:var(--orange); color:#000; border:none; border-radius:10px; padding:18px; font-size:1rem; font-weight:900; letter-spacing:.06em; text-transform:uppercase; cursor:pointer; margin-top:20px; transition:filter .2s, transform .15s; display:flex; align-items:center; justify-content:center; gap:10px; }
+    .pay-btn { width:100%; background:var(--red); color:#fff; border:none; border-radius:6px; padding:18px; font-size:1rem; font-weight:900; letter-spacing:.06em; text-transform:uppercase; cursor:pointer; margin-top:20px; transition:filter .2s, transform .15s; display:flex; align-items:center; justify-content:center; gap:10px; box-shadow:0 4px 24px rgba(229,39,43,.35); }
     .pay-btn:hover:not(:disabled) { filter:brightness(1.1); transform:scale(1.02); }
     .pay-btn:disabled { opacity:.5; cursor:not-allowed; transform:none; }
-    .tier-card.full ~ .form-card .pay-btn,
-    .pay-btn.gold { background:var(--gold); }
+    .pay-btn.gold { background:var(--gold); color:#000; box-shadow:0 4px 24px rgba(245,197,24,.3); }
 
     .trust-row { display:flex; align-items:center; justify-content:center; gap:16px; margin-top:14px; font-size:.73rem; color:var(--muted); }
     .trust-row span { display:flex; align-items:center; gap:4px; }
@@ -91,17 +94,15 @@
     .tier-selector h3 { font-size:.8rem; letter-spacing:.15em; text-transform:uppercase; color:var(--muted); margin-bottom:14px; }
     .tier-options { display:grid; gap:10px; }
     .tier-opt { background:rgba(255,255,255,.04); border:1.5px solid rgba(255,255,255,.1); border-radius:10px; padding:14px 16px; cursor:pointer; display:flex; justify-content:space-between; align-items:center; transition:border-color .2s; }
-    .tier-opt:hover { border-color:rgba(249,115,22,.3); }
-    .tier-opt.selected { border-color:var(--orange); background:rgba(249,115,22,.06); }
+    .tier-opt:hover { border-color:rgba(229,39,43,.3); }
+    .tier-opt.selected { border-color:var(--red); background:rgba(229,39,43,.06); }
     .tier-opt-name { font-weight:700; font-size:.9rem; }
-    .tier-opt-price { font-family:'Bebas Neue',sans-serif; font-size:1.4rem; color:var(--orange); }
+    .tier-opt-price { font-family:'Antonio',sans-serif; font-size:1.4rem; color:var(--red); }
   </style>
 </head>
 <body>
-<div class="ambient"><span class="a1"></span><span class="a2"></span></div>
-
 <nav>
-  <a href="/" class="nav-logo">CREA <span>SIN</span> MIEDO</a>
+  <a href="/" class="nav-logo">CREA <span>SIN MIEDO</span></a>
   <a href="/#boletos" class="nav-back">← Ver todos los boletos</a>
 </nav>
 
