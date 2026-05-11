@@ -8,6 +8,11 @@ const ALLOWED_TABLES = [
 ];
 
 module.exports = async function handler(req, res) {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'x-admin-key, Authorization');
+  if (req.method === 'OPTIONS') return res.status(200).end();
+
   const k = req.headers['x-admin-key'] || req.query.key;
   if (k !== ADMIN_KEY) { res.status(401).json({ error: 'No autorizado' }); return; }
 
