@@ -82,7 +82,7 @@
     .cupo-bar-text { font-size:.75rem; letter-spacing:.12em; text-transform:uppercase; color:var(--muted); }
     .cupo-bar-pct { font-family:'Antonio',sans-serif; font-size:1.6rem; color:var(--red); line-height:1; }
     .cupo-bar-track { height:6px; background:rgba(229,39,43,.12); border-radius:3px; overflow:hidden; }
-    .cupo-bar-fill { height:100%; width:40%; background:linear-gradient(90deg,var(--red),var(--red2)); border-radius:3px; }
+    .cupo-bar-fill { height:100%; width:0%; background:linear-gradient(90deg,var(--red),var(--red2)); border-radius:3px; transition:width 1.2s ease; }
     .cupo-bar-note { font-size:.7rem; color:var(--muted); margin-top:7px; letter-spacing:.04em; }
 
     .hero-btns { display:flex; gap:14px; flex-wrap:wrap; }
@@ -258,10 +258,10 @@
     <div class="cupo-bar-wrap">
       <div class="cupo-bar-label">
         <span class="cupo-bar-text">Cupos disponibles</span>
-        <span class="cupo-bar-pct">40%</span>
+        <span class="cupo-bar-pct" id="cupoPct">—</span>
       </div>
-      <div class="cupo-bar-track"><div class="cupo-bar-fill"></div></div>
-      <div class="cupo-bar-note">El cupo se agota — los precios suben conforme avanza la fecha</div>
+      <div class="cupo-bar-track"><div class="cupo-bar-fill" id="cupoFill"></div></div>
+      <div class="cupo-bar-note" id="cupoNote">Cargando disponibilidad…</div>
     </div>
     <div class="hero-btns">
       <a href="#boletos" class="btn-red">Consigue tu lugar →</a>
@@ -283,8 +283,8 @@
         <div class="stat-label">Sábado 1 de Agosto, 2026</div>
       </div>
       <div class="stat-item">
-        <div class="stat-num">40%</div>
-        <div class="stat-label">Del cupo lleno</div>
+        <div class="stat-num" id="statPct">—</div>
+        <div class="stat-label">Del cupo vendido</div>
       </div>
     </div>
   </div>
@@ -473,7 +473,7 @@
         <div class="price-name">Full Experience</div>
         <div class="price-amount">$14,997</div>
         <div class="price-currency">MXN · pago único</div>
-        <div class="price-cupos">Quedan pocos lugares disponibles</div>
+        <div class="price-cupos" id="fullCuposText">Quedan pocos lugares disponibles</div>
         <ul class="price-features">
           <li>Todo lo del boleto VIP</li>
           <li>Grabaciones completas del evento Crea sin Miedo</li>
@@ -542,6 +542,71 @@
 </footer>
 
 <script>
+
+  // Live cupos
+  const TOTAL_CUPOS = 200;
+  const FULL_CUPOS  = 10;
+
+  async function loadCupos() {
+    try {
+      const res = await fetch('/api/admin-data?table=csm_asistentes', {
+        headers: { 'x-admin-key': 'CSM2026' }
+      });
+      if (!res.ok) throw new Error(res.status);
+      const all = await res.json();
+      const arr = Array.isArray(all) ? all : [];
+      const pagados = arr.filter(a => a.pagado);
+
+      const general = pagados.filter(a => a.tipo === 'general').length;
+      const vip     = pagados.filter(a => a.tipo === 'vip').length;
+      const full    = pagados.filter(a => a.tipo === 'full').length;
+      const total   = pagados.length;
+      const pct     = Math.round((total / TOTAL_CUPOS) * 100);
+      const disponibles = TOTAL_CUPOS - total;
+      const fullRestantes = Math.max(0, FULL_CUPOS - full);
+
+      // Cupo bar
+      const fillEl = document.getElementById('cupoFill');
+      const pctEl  = document.getElementById('cupoPct');
+      const noteEl = document.getElementById('cupoNote');
+      if (fillEl) fillEl.style.width = pct + '%';
+      if (pctEl)  pctEl.textContent  = pct + '%';
+      if (noteEl) {
+        if (disponibles <= 0) {
+          noteEl.textContent = '¡Cupo agotado! Únete a la lista de espera';
+          noteEl.style.color = 'var(--red)';
+        } else if (disponibles <= 30) {
+          noteEl.textContent = `¡Solo quedan ${disponibles} lugares disponibles!`;
+          noteEl.style.color = 'var(--gold)';
+        } else {
+          noteEl.textContent = `${disponibles} lugares disponibles · los precios suben conforme avanza la fecha`;
+        }
+      }
+
+      // Stats bar
+      const statEl = document.getElementById('statPct');
+      if (statEl) statEl.textContent = pct + '%';
+
+      // Full Experience cupos
+      const fullText = document.getElementById('fullCuposText');
+      if (fullText) {
+        if (fullRestantes <= 0) {
+          fullText.textContent = 'Cupo agotado';
+          fullText.style.color = 'var(--red)';
+        } else {
+          fullText.textContent = `Quedan ${fullRestantes} de ${FULL_CUPOS} lugares`;
+        }
+      }
+    } catch(e) {
+      console.warn('Cupos:', e.message);
+      const pctEl = document.getElementById('cupoPct');
+      if (pctEl) pctEl.textContent = '—';
+      const noteEl = document.getElementById('cupoNote');
+      if (noteEl) noteEl.textContent = 'El cupo se agota — los precios suben conforme avanza la fecha';
+    }
+  }
+
+  loadCupos();
 
   // Sticky CTA
   const sticky = document.getElementById('stickyCta');
