@@ -387,6 +387,7 @@ async function loadData() {
     renderKPIs();
     renderTable();
     renderPC();
+    renderLeads();
     document.getElementById('lastUpdate').textContent = 'Actualizado ' + new Date().toLocaleTimeString('es-MX');
   } catch(e) {
     document.getElementById('lastUpdate').textContent = 'Error al cargar';
