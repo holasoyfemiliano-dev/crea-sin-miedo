@@ -225,67 +225,31 @@
       </div>
     </div>
 
-    <!-- TABLES: Asistentes + Proximity Creators -->
-    <div class="tables-grid">
-
-      <!-- ASISTENTES -->
-      <div>
-        <div class="sec-head">
-          <h3>Asistentes</h3>
-          <span class="badge" id="tableCount">0 registros</span>
-        </div>
-        <div class="table-wrap">
-          <div class="table-toolbar">
-            <input type="text" id="searchInput" placeholder="Buscar nombre, email…" oninput="renderTable()">
-            <button class="filter-btn active" data-f="todos" onclick="setFilter('todos',this)">Todos</button>
-            <button class="filter-btn" data-f="general" onclick="setFilter('general',this)">General</button>
-            <button class="filter-btn" data-f="vip" onclick="setFilter('vip',this)">VIP</button>
-            <button class="filter-btn" data-f="full" onclick="setFilter('full',this)">Full</button>
-            <button class="filter-btn" data-f="checkin" onclick="setFilter('checkin',this)">✓ Check-in</button>
-          </div>
-          <table>
-            <thead><tr>
-              <th>#</th><th>Nombre</th><th>Email</th>
-              <th>Tipo</th><th>Monto</th><th>Check-in</th>
-            </tr></thead>
-            <tbody id="tbodyAsistentes"><tr><td colspan="6" class="empty-row">Cargando…</td></tr></tbody>
-          </table>
-          <div class="pagination">
-            <span id="pgInfo">—</span>
-            <button class="pg-btn" id="pgPrev" onclick="pgChange(-1)">← Ant</button>
-            <button class="pg-btn" id="pgNext" onclick="pgChange(1)">Sig →</button>
-          </div>
-        </div>
+    <!-- PROXIMITY CREATORS -->
+    <div class="sec-head">
+      <h3>Proximity Creators</h3>
+      <span class="badge" id="pcCount">0 miembros</span>
+    </div>
+    <div class="table-wrap">
+      <div class="table-toolbar">
+        <input type="text" id="pcSearch" placeholder="Buscar miembro…" oninput="renderPC()">
       </div>
-
-      <!-- PROXIMITY CREATORS -->
-      <div>
-        <div class="sec-head">
-          <h3>Proximity Creators</h3>
-          <span class="badge" id="pcCount">0 miembros</span>
-        </div>
-        <div class="table-wrap">
-          <div class="table-toolbar">
-            <input type="text" id="pcSearch" placeholder="Buscar miembro…" oninput="renderPC()">
-          </div>
-          <table>
-            <thead><tr>
-              <th>#</th><th>Nombre</th><th>Email</th><th>Teléfono</th><th>Nivel</th>
-            </tr></thead>
-            <tbody id="tbodyPC"><tr><td colspan="5" class="empty-row">Cargando…</td></tr></tbody>
-          </table>
-          <div class="pagination">
-            <span id="pcPgInfo">—</span>
-            <button class="pg-btn" id="pcPrev" onclick="pcChange(-1)">← Ant</button>
-            <button class="pg-btn" id="pcNext" onclick="pcChange(1)">Sig →</button>
-          </div>
-        </div>
+      <table>
+        <thead><tr>
+          <th>#</th><th>Nombre</th><th>Email</th><th>Teléfono</th><th>Nivel</th>
+        </tr></thead>
+        <tbody id="tbodyPC"><tr><td colspan="5" class="empty-row">Cargando…</td></tr></tbody>
+      </table>
+      <div class="pagination">
+        <span id="pcPgInfo">—</span>
+        <button class="pg-btn" id="pcPrev" onclick="pcChange(-1)">← Ant</button>
+        <button class="pg-btn" id="pcNext" onclick="pcChange(1)">Sig →</button>
       </div>
+    </div>
+  </div><!-- /content -->
+</div><!-- /tab-dashboard -->
 
-    </div><!-- /tables-grid -->
-  </div>
-
-  <!-- LEADS TAB -->
+  <!-- ASISTENTES TAB -->
   <div id="tab-leads" class="tab-view">
     <div class="content">
       <div class="leads-header">
