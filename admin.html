@@ -18,7 +18,8 @@
     /* Password Gate */
     #gate { position:fixed; inset:0; z-index:999; background:var(--dark); display:flex; align-items:center; justify-content:center; }
     .gate-card { background:rgba(255,255,255,.04); border:1px solid rgba(229,39,43,.2); border-radius:16px; padding:40px; width:360px; text-align:center; }
-    .gate-card h2 { font-family:'Oswald',sans-serif; font-weight:700; font-size:2rem; margin-bottom:6px; }
+    .gate-card h2 { font-family:'Oswald',sans-serif; font-weight:700; font-size:2.4rem; line-height:.92; margin-bottom:6px; text-shadow:0 0 60px rgba(229,39,43,.25); }
+    .gate-card h2 .red { color:var(--red); text-shadow:0 0 40px rgba(229,39,43,.7), 0 0 80px rgba(229,39,43,.3); }
     .gate-card p { font-size:.82rem; color:var(--muted); margin-bottom:24px; }
     .gate-card input { width:100%; background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.1); border-radius:8px; padding:12px 16px; color:var(--white); font-size:1rem; outline:none; text-align:center; letter-spacing:.1em; margin-bottom:12px; }
     .gate-card input:focus { border-color:rgba(229,39,43,.5); }
@@ -98,8 +99,8 @@
 <!-- PASSWORD GATE -->
 <div id="gate">
   <div class="gate-card">
-    <h2>ADMIN</h2>
-    <p>Acceso restringido · Crea sin Miedo</p>
+    <h2>CREA<br><span class="red">SIN MIEDO</span></h2>
+    <p>Acceso restringido · Admin</p>
     <input type="password" id="pwInput" placeholder="Contraseña" onkeydown="if(event.key==='Enter')checkPw()">
     <button class="gate-btn" onclick="checkPw()">Entrar</button>
     <div class="gate-err" id="gateErr">Contraseña incorrecta</div>
