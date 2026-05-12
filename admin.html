@@ -292,42 +292,15 @@
         </table>
       </div>
 
-      <!-- PROXIMITY CREATORS por categoría -->
-      <div class="sec-head" style="margin-bottom:8px"><h3>Proximity Creators</h3></div>
-
-      <!-- PC General -->
-      <div class="sec-head" style="margin-top:20px;margin-bottom:8px">
-        <h3 style="font-size:1rem;color:var(--text)">General</h3>
-        <span class="badge" id="pcCountGen">0</span>
-      </div>
-      <div class="table-wrap" style="margin-bottom:28px">
-        <table>
-          <thead><tr><th>#</th><th>Nombre</th><th>Email</th><th>Teléfono</th></tr></thead>
-          <tbody id="tbodyPCGen"><tr><td colspan="4" class="empty-row">Cargando…</td></tr></tbody>
-        </table>
-      </div>
-
-      <!-- PC VIP -->
-      <div class="sec-head" style="margin-top:0;margin-bottom:8px">
-        <h3 style="font-size:1rem;color:var(--matrix)">VIP</h3>
-        <span class="badge" id="pcCountVip">0</span>
-      </div>
-      <div class="table-wrap" style="margin-bottom:28px">
-        <table>
-          <thead><tr><th>#</th><th>Nombre</th><th>Email</th><th>Teléfono</th></tr></thead>
-          <tbody id="tbodyPCVip"><tr><td colspan="4" class="empty-row">Cargando…</td></tr></tbody>
-        </table>
-      </div>
-
-      <!-- PC Full Experience -->
-      <div class="sec-head" style="margin-top:0;margin-bottom:8px">
-        <h3 style="font-size:1rem;color:var(--gold)">Full Experience</h3>
-        <span class="badge" id="pcCountFull">0</span>
+      <!-- PROXIMITY CREATORS (solo liquidados) -->
+      <div class="sec-head" style="margin-top:8px;margin-bottom:8px">
+        <h3>Proximity Creators</h3>
+        <span class="badge" id="pcCountAll">0 miembros</span>
       </div>
       <div class="table-wrap" style="margin-bottom:40px">
         <table>
           <thead><tr><th>#</th><th>Nombre</th><th>Email</th><th>Teléfono</th></tr></thead>
-          <tbody id="tbodyPCFull"><tr><td colspan="4" class="empty-row">Cargando…</td></tr></tbody>
+          <tbody id="tbodyPCAll"><tr><td colspan="4" class="empty-row">Cargando…</td></tr></tbody>
         </table>
       </div>
 
@@ -570,7 +543,7 @@ function renderAsistentesSection(rows, tbodyId, countId) {
 }
 
 function renderPCSection(rows, tbodyId, countId) {
-  document.getElementById(countId).textContent = rows.length;
+  document.getElementById(countId).textContent = rows.length + ' miembros';
   const tbody = document.getElementById(tbodyId);
   if (!rows.length) { tbody.innerHTML = '<tr><td colspan="4" class="empty-row">Sin miembros</td></tr>'; return; }
   tbody.innerHTML = rows.map((m, i) => `<tr>
@@ -588,9 +561,7 @@ function renderLeads() {
 }
 
 function renderPC2() {
-  renderPCSection(pcData.filter(m => (m.nivel||m.tier||'').toLowerCase() === 'general'), 'tbodyPCGen',  'pcCountGen');
-  renderPCSection(pcData.filter(m => (m.nivel||m.tier||'').toLowerCase() === 'vip'),     'tbodyPCVip',  'pcCountVip');
-  renderPCSection(pcData.filter(m => (m.nivel||m.tier||'').toLowerCase() === 'full'),    'tbodyPCFull', 'pcCountFull');
+  renderPCSection(pcData, 'tbodyPCAll', 'pcCountAll');
 }
 
 async function updateAsistencia(id, sel) {

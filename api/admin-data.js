@@ -27,7 +27,7 @@ module.exports = async function handler(req, res) {
     csm_staff:      'select=*&order=horario_entrada',
     csm_cronograma: 'select=*&order=hora',
     csm_codigos_descuento: 'select=*&order=created_at.desc',
-    proximity_creators: 'select=*&order=nombre',
+    proximity_creators: 'select=*&liquidado=eq.true&order=nombre',
   };
 
   const qs = req.query.qs || queryMap[table] || 'select=*';
