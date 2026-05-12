@@ -173,6 +173,7 @@
   <div class="tab-nav">
     <button class="tab-btn active" onclick="switchTab('dashboard',this)">Dashboard</button>
     <button class="tab-btn" onclick="switchTab('leads',this)">Asistentes</button>
+    <button class="tab-btn" onclick="switchTab('cupones',this)">Cupones</button>
   </div>
 
   <!-- DASHBOARD TAB -->
@@ -307,6 +308,69 @@
         <table>
           <thead><tr><th>#</th><th>Nombre</th><th>Email</th><th>Teléfono</th><th>Monto</th><th>Tipo acceso</th><th>Ingreso</th></tr></thead>
           <tbody id="tbodyPCAll"><tr><td colspan="7" class="empty-row">Cargando…</td></tr></tbody>
+        </table>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- CUPONES TAB -->
+  <div id="tab-cupones" class="tab-view">
+    <div class="content">
+
+      <!-- Create form -->
+      <div class="sec-head" style="margin-top:8px;margin-bottom:16px">
+        <h3>Códigos de descuento</h3>
+        <span class="badge" id="cuponesCount">0 códigos</span>
+      </div>
+
+      <div class="table-wrap" style="margin-bottom:28px;padding:22px 24px">
+        <div style="font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;color:var(--red);margin-bottom:14px">Crear nuevo código</div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:14px">
+          <div>
+            <label style="font-size:.75rem;color:var(--muted);display:block;margin-bottom:5px">Código</label>
+            <div style="display:flex;gap:6px">
+              <input type="text" id="newCodigo" placeholder="CODIGO50" style="text-transform:uppercase;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:7px;padding:9px 12px;color:#fff;font-size:.85rem;outline:none;flex:1;font-family:'Inter',sans-serif">
+              <button onclick="autoGenCodigo()" style="background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:7px;padding:9px 12px;color:var(--muted);font-size:.75rem;cursor:pointer" title="Generar aleatorio">⟳</button>
+            </div>
+          </div>
+          <div>
+            <label style="font-size:.75rem;color:var(--muted);display:block;margin-bottom:5px">Tipo</label>
+            <select id="newTipo" onchange="toggleDescuentoPct()" style="width:100%;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:7px;padding:9px 12px;color:#fff;font-size:.85rem;outline:none;font-family:'Inter',sans-serif">
+              <option value="porcentaje">% Porcentaje</option>
+              <option value="gratis">100% Gratis</option>
+            </select>
+          </div>
+          <div id="pctField">
+            <label style="font-size:.75rem;color:var(--muted);display:block;margin-bottom:5px">Descuento %</label>
+            <input type="number" id="newDescuento" value="50" min="1" max="99" style="width:100%;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:7px;padding:9px 12px;color:#fff;font-size:.85rem;outline:none;font-family:'Inter',sans-serif">
+          </div>
+          <div>
+            <label style="font-size:.75rem;color:var(--muted);display:block;margin-bottom:5px">Categoría</label>
+            <select id="newTier" style="width:100%;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:7px;padding:9px 12px;color:#fff;font-size:.85rem;outline:none;font-family:'Inter',sans-serif">
+              <option value="all">Todos</option>
+              <option value="general">General</option>
+              <option value="vip">VIP</option>
+              <option value="full">Full Experience</option>
+            </select>
+          </div>
+          <div>
+            <label style="font-size:.75rem;color:var(--muted);display:block;margin-bottom:5px">Usos máx. (0=∞)</label>
+            <input type="number" id="newUsosMax" value="1" min="0" style="width:100%;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:7px;padding:9px 12px;color:#fff;font-size:.85rem;outline:none;font-family:'Inter',sans-serif">
+          </div>
+        </div>
+        <button onclick="createCupon(this)" style="background:var(--red);border:none;border-radius:7px;padding:10px 24px;color:#fff;font-weight:700;font-size:.85rem;cursor:pointer;letter-spacing:.04em">+ Crear código</button>
+        <span id="cuponCreateMsg" style="margin-left:12px;font-size:.78rem"></span>
+      </div>
+
+      <!-- Codes table -->
+      <div class="table-wrap">
+        <table>
+          <thead><tr>
+            <th>Código</th><th>Tipo</th><th>%</th><th>Categoría</th>
+            <th>Usos / Límite</th><th>Estado</th><th></th>
+          </tr></thead>
+          <tbody id="tbodyCupones"><tr><td colspan="7" class="empty-row">Cargando…</td></tr></tbody>
         </table>
       </div>
 
@@ -530,6 +594,116 @@ function switchTab(tab, btn) {
   document.getElementById('tab-' + tab).classList.add('active');
   btn.classList.add('active');
   if (tab === 'leads') { renderLeads(); renderPC2(); }
+  if (tab === 'cupones') loadCupones();
+}
+
+// ── CUPONES ──────────────────────────────────────────────────────────────────
+let cuponesData = [];
+
+function toggleDescuentoPct() {
+  document.getElementById('pctField').style.display =
+    document.getElementById('newTipo').value === 'gratis' ? 'none' : 'block';
+}
+
+function autoGenCodigo() {
+  const rand = Math.random().toString(36).substr(2, 7).toUpperCase();
+  document.getElementById('newCodigo').value = 'CSM' + rand;
+}
+
+async function loadCupones() {
+  const key = sessionStorage.getItem('csm_admin_key');
+  const r = await fetch('/api/admin-data?table=csm_codigos_descuento', {
+    headers: { 'x-admin-key': key },
+  });
+  cuponesData = await r.json();
+  renderCupones();
+}
+
+function renderCupones() {
+  const rows = Array.isArray(cuponesData) ? cuponesData : [];
+  document.getElementById('cuponesCount').textContent = rows.length + ' códigos';
+  const tbody = document.getElementById('tbodyCupones');
+  if (!rows.length) { tbody.innerHTML = '<tr><td colspan="7" class="empty-row">Sin códigos</td></tr>'; return; }
+  tbody.innerHTML = rows.map(c => {
+    const tierLabel = { all:'Todos', general:'General', vip:'VIP', full:'Full' }[c.tier] || c.tier;
+    const tipoLabel = c.tipo === 'gratis' ? '<span class="tipo-chip gratis">gratis</span>' : '<span class="tipo-chip descuento">%</span>';
+    const pct = c.tipo === 'gratis' ? '100%' : (c.descuento ? c.descuento + '%' : '—');
+    const usos = `${c.usos || 0} / ${c.usos_max || '∞'}`;
+    const activo = c.activo !== false;
+    const toggleStyle = activo
+      ? 'background:rgba(34,197,94,.12);border:1px solid rgba(34,197,94,.3);color:var(--green)'
+      : 'background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);color:var(--muted)';
+    return `<tr>
+      <td><code style="font-size:.82rem;color:var(--white);letter-spacing:.04em">${esc(c.codigo)}</code></td>
+      <td>${tipoLabel}</td>
+      <td style="color:var(--gold);font-weight:600">${pct}</td>
+      <td style="color:var(--text)">${tierLabel}</td>
+      <td style="color:var(--muted)">${usos}</td>
+      <td><button onclick="toggleActivo('${c.id}',${!activo},this)" style="${toggleStyle};border-radius:20px;padding:3px 12px;font-size:.72rem;font-weight:700;cursor:pointer">${activo ? '● Activo' : '○ Inactivo'}</button></td>
+      <td><button onclick="deleteCupon('${c.id}',this)" style="background:rgba(229,39,43,.08);border:1px solid rgba(229,39,43,.2);border-radius:6px;padding:4px 10px;color:var(--red);font-size:.72rem;cursor:pointer">Eliminar</button></td>
+    </tr>`;
+  }).join('');
+}
+
+async function createCupon(btn) {
+  const codigo = document.getElementById('newCodigo').value.trim().toUpperCase();
+  const tipo   = document.getElementById('newTipo').value;
+  const descuento = tipo === 'gratis' ? 100 : parseInt(document.getElementById('newDescuento').value) || 50;
+  const tier   = document.getElementById('newTier').value;
+  const usos_max = parseInt(document.getElementById('newUsosMax').value) || 0;
+  const msg    = document.getElementById('cuponCreateMsg');
+
+  if (!codigo) { msg.textContent = 'Ingresa un código'; msg.style.color = 'var(--red)'; return; }
+
+  btn.disabled = true; btn.textContent = 'Creando…';
+  const key = sessionStorage.getItem('csm_admin_key');
+  try {
+    const r = await fetch('/api/admin-data?table=csm_codigos_descuento', {
+      method: 'POST',
+      headers: { 'x-admin-key': key, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ codigo, tipo, descuento, tier, usos_max, usos: 0, activo: true }),
+    });
+    if (!r.ok) throw new Error();
+    msg.textContent = '✓ Código creado';
+    msg.style.color = 'var(--green)';
+    document.getElementById('newCodigo').value = '';
+    await loadCupones();
+  } catch(e) {
+    msg.textContent = 'Error — el código puede ya existir';
+    msg.style.color = 'var(--red)';
+  }
+  btn.disabled = false; btn.textContent = '+ Crear código';
+  setTimeout(() => { msg.textContent = ''; }, 3000);
+}
+
+async function toggleActivo(id, newVal, btn) {
+  const key = sessionStorage.getItem('csm_admin_key');
+  btn.disabled = true;
+  const r = await fetch('/api/admin-data?table=csm_codigos_descuento', {
+    method: 'PATCH',
+    headers: { 'x-admin-key': key, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ id, field: 'activo', value: newVal }),
+  });
+  if ((await r.json()).ok) {
+    const rec = cuponesData.find(c => c.id === id);
+    if (rec) rec.activo = newVal;
+    renderCupones();
+  } else { btn.disabled = false; }
+}
+
+async function deleteCupon(id, btn) {
+  if (!confirm('¿Eliminar este código?')) return;
+  const key = sessionStorage.getItem('csm_admin_key');
+  btn.disabled = true;
+  const r = await fetch(`/api/admin-data?table=csm_codigos_descuento&id=${id}`, {
+    method: 'DELETE',
+    headers: { 'x-admin-key': key, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ id }),
+  });
+  if ((await r.json()).ok) {
+    cuponesData = cuponesData.filter(c => c.id !== id);
+    renderCupones();
+  } else { btn.disabled = false; }
 }
 
 function getTipo(a) {

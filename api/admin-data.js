@@ -13,7 +13,7 @@ const CV_TABLES = ['miembros'];
 
 module.exports = async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PATCH, OPTIONS');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PATCH, DELETE, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'x-admin-key, Authorization, Content-Type');
   if (req.method === 'OPTIONS') return res.status(200).end();
 
@@ -80,7 +80,7 @@ module.exports = async function handler(req, res) {
   // PATCH: update a field on a row
   if (req.method === 'PATCH') {
     const { id, field, value } = req.body || {};
-    const PATCHABLE = ['asistencia_status', 'check_in', 'notas'];
+    const PATCHABLE = ['asistencia_status', 'check_in', 'notas', 'activo'];
     if (!id || !field || !PATCHABLE.includes(field)) {
       res.status(400).json({ error: 'Parámetros inválidos' }); return;
     }
@@ -91,6 +91,18 @@ module.exports = async function handler(req, res) {
         'Content-Type': 'application/json', Prefer: 'return=minimal',
       },
       body: JSON.stringify({ [field]: value }),
+    });
+    res.status(r.ok ? 200 : 500).json({ ok: r.ok });
+    return;
+  }
+
+  // DELETE: remove a row by id
+  if (req.method === 'DELETE') {
+    const { id } = req.body || req.query;
+    if (!id) { res.status(400).json({ error: 'id requerido' }); return; }
+    const r = await fetch(`${SB_URL}/rest/v1/${table}?id=eq.${id}`, {
+      method: 'DELETE',
+      headers: { apikey: SB_KEY, Authorization: `Bearer ${SB_KEY}`, Prefer: 'return=minimal' },
     });
     res.status(r.ok ? 200 : 500).json({ ok: r.ok });
     return;
