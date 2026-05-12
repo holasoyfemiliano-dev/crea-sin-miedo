@@ -62,9 +62,10 @@ module.exports = async function handler(req, res) {
     proximity_creators: 'select=*&order=nombre',
   };
 
-  // POST: insert a new discount code
-  if (req.method === 'POST' && table === 'csm_codigos_descuento') {
-    const r = await fetch(`${SB_URL}/rest/v1/csm_codigos_descuento`, {
+  // POST: insert a new row (supported tables)
+  const POSTABLE = ['csm_codigos_descuento', 'csm_asistentes', 'csm_invitados'];
+  if (req.method === 'POST' && POSTABLE.includes(table)) {
+    const r = await fetch(`${SB_URL}/rest/v1/${table}`, {
       method: 'POST',
       headers: {
         apikey: SB_KEY, Authorization: `Bearer ${SB_KEY}`,

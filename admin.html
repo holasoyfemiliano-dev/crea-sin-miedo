@@ -109,6 +109,10 @@
     .tipo-chip.invitado { background:rgba(255,255,255,.07); color:var(--muted); }
     .tipo-chip.gratis { background:rgba(59,130,246,.1); color:#60a5fa; }
     .tipo-chip.comunidad { background:rgba(245,197,24,.1); color:var(--gold); }
+    .add-input { background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.1); border-radius:7px; padding:8px 12px; color:#fff; font-size:.82rem; font-family:'Inter',sans-serif; outline:none; min-width:160px; }
+    .add-input:focus { border-color:rgba(229,39,43,.4); }
+    .del-btn { background:none; border:none; color:rgba(229,39,43,.5); font-size:.9rem; cursor:pointer; padding:2px 6px; border-radius:4px; transition:color .15s; }
+    .del-btn:hover { color:var(--red); background:rgba(229,39,43,.08); }
     .code-gen-btn { background:rgba(0,204,82,.08); border:1px solid rgba(0,204,82,.2); border-radius:5px; padding:4px 10px; color:var(--matrix); font-size:.72rem; font-weight:600; cursor:pointer; transition:background .2s; }
     .code-gen-btn:hover { background:rgba(0,204,82,.15); }
     .code-gen-btn:disabled { opacity:.5; cursor:not-allowed; }
@@ -266,36 +270,76 @@
       <!-- General -->
       <div class="sec-head" style="margin-top:20px;margin-bottom:8px">
         <h3 style="font-size:1rem;color:var(--text)">General</h3>
-        <span class="badge" id="leadsCountGen">0</span>
+        <div style="display:flex;align-items:center;gap:8px">
+          <span class="badge" id="leadsCountGen">0</span>
+          <button onclick="toggleAddForm('general')" class="code-gen-btn" style="font-size:.7rem;padding:3px 10px">+ Agregar</button>
+        </div>
+      </div>
+      <div id="addForm-general" style="display:none;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:14px 16px;margin-bottom:10px;display:none">
+        <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:flex-end">
+          <input type="text" id="addNombre-general" placeholder="Nombre completo" class="add-input">
+          <input type="email" id="addEmail-general" placeholder="Email" class="add-input">
+          <input type="tel" id="addTel-general" placeholder="Teléfono" class="add-input">
+          <button onclick="addAsistente('general')" class="code-gen-btn" style="padding:8px 14px">Agregar</button>
+          <button onclick="toggleAddForm('general')" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:.8rem">Cancelar</button>
+        </div>
+        <div id="addMsg-general" style="font-size:.75rem;margin-top:6px"></div>
       </div>
       <div class="table-wrap" style="margin-bottom:28px">
         <table>
-          <thead><tr><th>#</th><th>Nombre</th><th>Correo</th><th>Tipo</th><th>Asistencia</th></tr></thead>
-          <tbody id="tbodyLeadsGen"><tr><td colspan="5" class="empty-row">Cargando…</td></tr></tbody>
+          <thead><tr><th>#</th><th>Nombre</th><th>Correo</th><th>Tipo</th><th>Asistencia</th><th></th></tr></thead>
+          <tbody id="tbodyLeadsGen"><tr><td colspan="6" class="empty-row">Cargando…</td></tr></tbody>
         </table>
       </div>
 
       <!-- VIP -->
       <div class="sec-head" style="margin-top:0;margin-bottom:8px">
         <h3 style="font-size:1rem;color:var(--matrix)">VIP</h3>
-        <span class="badge" id="leadsCountVip">0</span>
+        <div style="display:flex;align-items:center;gap:8px">
+          <span class="badge" id="leadsCountVip">0</span>
+          <button onclick="generateAllPCCodes(this)" class="code-gen-btn" style="font-size:.7rem;padding:3px 10px">⚡ Generar todos</button>
+          <button onclick="toggleAddForm('vip')" class="code-gen-btn" style="font-size:.7rem;padding:3px 10px">+ Agregar</button>
+        </div>
+      </div>
+      <div id="addForm-vip" style="display:none;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:14px 16px;margin-bottom:10px">
+        <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:flex-end">
+          <input type="text" id="addNombre-vip" placeholder="Nombre completo" class="add-input">
+          <input type="email" id="addEmail-vip" placeholder="Email" class="add-input">
+          <input type="tel" id="addTel-vip" placeholder="Teléfono" class="add-input">
+          <button onclick="addAsistente('vip')" class="code-gen-btn" style="padding:8px 14px">Agregar</button>
+          <button onclick="toggleAddForm('vip')" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:.8rem">Cancelar</button>
+        </div>
+        <div id="addMsg-vip" style="font-size:.75rem;margin-top:6px"></div>
       </div>
       <div class="table-wrap" style="margin-bottom:28px">
         <table>
-          <thead><tr><th>#</th><th>Nombre</th><th>Correo</th><th>Tipo</th><th>Asistencia</th><th>Código VIP</th></tr></thead>
-          <tbody id="tbodyLeadsVip"><tr><td colspan="6" class="empty-row">Cargando…</td></tr></tbody>
+          <thead><tr><th>#</th><th>Nombre</th><th>Correo</th><th>Tipo</th><th>Asistencia</th><th>Código VIP</th><th></th></tr></thead>
+          <tbody id="tbodyLeadsVip"><tr><td colspan="7" class="empty-row">Cargando…</td></tr></tbody>
         </table>
       </div>
 
       <!-- Full Experience -->
       <div class="sec-head" style="margin-top:0;margin-bottom:8px">
         <h3 style="font-size:1rem;color:var(--gold)">Full Experience</h3>
-        <span class="badge" id="leadsCountFull">0</span>
+        <div style="display:flex;align-items:center;gap:8px">
+          <span class="badge" id="leadsCountFull">0</span>
+          <button onclick="toggleAddForm('full')" class="code-gen-btn" style="font-size:.7rem;padding:3px 10px">+ Agregar</button>
+        </div>
+      </div>
+      <div id="addForm-full" style="display:none;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:14px 16px;margin-bottom:10px">
+        <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:flex-end">
+          <input type="text" id="addNombre-full" placeholder="Nombre completo" class="add-input">
+          <input type="email" id="addEmail-full" placeholder="Email" class="add-input">
+          <input type="tel" id="addTel-full" placeholder="Teléfono" class="add-input">
+          <button onclick="addAsistente('full')" class="code-gen-btn" style="padding:8px 14px">Agregar</button>
+          <button onclick="toggleAddForm('full')" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:.8rem">Cancelar</button>
+        </div>
+        <div id="addMsg-full" style="font-size:.75rem;margin-top:6px"></div>
       </div>
       <div class="table-wrap" style="margin-bottom:40px">
         <table>
-          <thead><tr><th>#</th><th>Nombre</th><th>Correo</th><th>Tipo</th><th>Asistencia</th></tr></thead>
-          <tbody id="tbodyLeadsFull"><tr><td colspan="5" class="empty-row">Cargando…</td></tr></tbody>
+          <thead><tr><th>#</th><th>Nombre</th><th>Correo</th><th>Tipo</th><th>Asistencia</th><th></th></tr></thead>
+          <tbody id="tbodyLeadsFull"><tr><td colspan="6" class="empty-row">Cargando…</td></tr></tbody>
         </table>
       </div>
 
@@ -597,6 +641,69 @@ function switchTab(tab, btn) {
   if (tab === 'cupones') loadCupones();
 }
 
+// ── AGREGAR / ELIMINAR ASISTENTES ────────────────────────────────────────────
+function toggleAddForm(tier) {
+  const el = document.getElementById('addForm-' + tier);
+  el.style.display = el.style.display === 'none' ? 'flex' : 'none';
+  el.style.flexDirection = 'column';
+}
+
+async function addAsistente(tier) {
+  const nombre   = document.getElementById('addNombre-' + tier).value.trim();
+  const email    = document.getElementById('addEmail-' + tier).value.trim();
+  const telefono = document.getElementById('addTel-' + tier).value.trim();
+  const msg      = document.getElementById('addMsg-' + tier);
+  if (!nombre || !email) { msg.textContent = 'Nombre y email requeridos'; msg.style.color = 'var(--red)'; return; }
+  const key = sessionStorage.getItem('csm_admin_key');
+  try {
+    const r = await fetch('/api/admin-data?table=csm_asistentes', {
+      method: 'POST',
+      headers: { 'x-admin-key': key, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ nombre, email, telefono, tipo: tier, monto: 0, pagado: false }),
+    });
+    if (!r.ok) throw new Error();
+    msg.textContent = '✓ Agregado'; msg.style.color = 'var(--green)';
+    document.getElementById('addNombre-' + tier).value = '';
+    document.getElementById('addEmail-' + tier).value = '';
+    document.getElementById('addTel-' + tier).value = '';
+    await loadData();
+    setTimeout(() => { msg.textContent = ''; toggleAddForm(tier); }, 1500);
+  } catch(e) {
+    msg.textContent = 'Error al agregar'; msg.style.color = 'var(--red)';
+  }
+}
+
+async function deleteAsistente(id, btn) {
+  if (!confirm('¿Eliminar este asistente?')) return;
+  const key = sessionStorage.getItem('csm_admin_key');
+  btn.disabled = true;
+  try {
+    const r = await fetch(`/api/admin-data?table=csm_asistentes&id=${id}`, {
+      method: 'DELETE',
+      headers: { 'x-admin-key': key, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id }),
+    });
+    if (!(await r.json()).ok) throw new Error();
+    allData = allData.filter(a => String(a.id) !== String(id));
+    renderLeads(); renderKPIs();
+  } catch(e) { btn.disabled = false; }
+}
+
+// Bulk generate VIP codes for all PC members
+async function generateAllPCCodes(btn) {
+  const pcMembers = allData.filter(a => a.es_pc && !pcCodes[a.id]);
+  if (!pcMembers.length) { btn.textContent = '✓ Ya generados'; setTimeout(() => { btn.textContent = '⚡ Generar todos'; }, 2000); return; }
+  btn.disabled = true; btn.textContent = `Generando ${pcMembers.length}…`;
+  for (const m of pcMembers) {
+    const fakeBtn = { disabled: false, textContent: '', parentElement: null };
+    await generatePCCode(m.id, m.nombre, fakeBtn);
+    await new Promise(r => setTimeout(r, 150));
+  }
+  btn.disabled = false; btn.textContent = '✓ Todos generados';
+  renderLeads();
+  setTimeout(() => { btn.textContent = '⚡ Generar todos'; }, 3000);
+}
+
 // ── CUPONES ──────────────────────────────────────────────────────────────────
 let cuponesData = [];
 
@@ -717,7 +824,7 @@ function getTipo(a) {
 
 function renderAsistentesSection(rows, tbodyId, countId) {
   const isVip = tbodyId === 'tbodyLeadsVip';
-  const cols = isVip ? 6 : 5;
+  const cols = isVip ? 7 : 6;
   document.getElementById(countId).textContent = rows.length;
   const tbody = document.getElementById(tbodyId);
   if (!rows.length) { tbody.innerHTML = `<tr><td colspan="${cols}" class="empty-row">Sin registros</td></tr>`; return; }
@@ -742,6 +849,9 @@ function renderAsistentesSection(rows, tbodyId, countId) {
           }</td>`
         : '<td style="color:var(--muted)">—</td>'
       : '';
+    const delCell = a.es_pc
+      ? '<td></td>'
+      : `<td><button class="del-btn" onclick="deleteAsistente('${esc(String(a.id))}',this)" title="Eliminar">×</button></td>`;
     return `<tr>
       <td style="color:var(--muted)">${i+1}</td>
       <td><strong>${esc(a.nombre||'—')}</strong>${pcBadge}</td>
@@ -749,6 +859,7 @@ function renderAsistentesSection(rows, tbodyId, countId) {
       <td><span class="tipo-chip ${tipo}">${tipo}</span></td>
       <td>${selHtml}</td>
       ${codeCell}
+      ${delCell}
     </tr>`;
   }).join('');
 }
@@ -817,11 +928,7 @@ async function generatePCCode(pcId, nombre, btn) {
     const r = await fetch('/api/admin-data?table=csm_codigos_descuento', {
       method: 'POST',
       headers: { 'x-admin-key': key, 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        codigo: code, tipo: 'gratis', tier: 'vip',
-        usos_max: 1, usos: 0, activo: true,
-        notas: `Acceso PC: ${nombre}`,
-      }),
+      body: JSON.stringify({ codigo: code, tipo: 'gratis', tier: 'vip', usos_max: 1, usos: 0, activo: true }),
     });
     if (!r.ok) throw new Error();
     pcCodes[pcId] = code;
