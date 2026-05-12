@@ -252,63 +252,63 @@
   <!-- ASISTENTES TAB -->
   <div id="tab-leads" class="tab-view">
     <div class="content">
-      <div class="tables-grid">
 
-        <!-- ASISTENTES -->
-        <div>
-          <div class="leads-header">
-            <span class="leads-title">Asistentes</span>
-            <div class="leads-filters">
-              <button class="filter-btn active" data-lf="todos" onclick="setLeadsFilter('todos',this)">Todos</button>
-              <button class="filter-btn" data-lf="general" onclick="setLeadsFilter('general',this)">General</button>
-              <button class="filter-btn" data-lf="vip" onclick="setLeadsFilter('vip',this)">VIP</button>
-              <button class="filter-btn" data-lf="full" onclick="setLeadsFilter('full',this)">Full</button>
-            </div>
-          </div>
-          <div class="table-wrap">
-            <div class="table-toolbar">
-              <input type="text" id="leadsSearch" placeholder="Buscar nombre, email…" oninput="renderLeads()">
-              <span id="leadsCount" style="color:var(--muted);font-size:.78rem;margin-left:8px">— leads</span>
-            </div>
-            <table>
-              <thead><tr>
-                <th>#</th><th>Nombre</th><th>Correo</th><th>Categoría</th><th>Tipo</th><th>Asistencia</th>
-              </tr></thead>
-              <tbody id="tbodyLeads"><tr><td colspan="6" class="empty-row">Cargando…</td></tr></tbody>
-            </table>
-            <div class="pagination">
-              <span id="leadsPgInfo">—</span>
-              <button class="pg-btn" id="leadsPrev" onclick="leadsPageChange(-1)">← Ant</button>
-              <button class="pg-btn" id="leadsNext" onclick="leadsPageChange(1)">Sig →</button>
-            </div>
-          </div>
+      <!-- ASISTENTES -->
+      <div class="leads-header">
+        <span class="leads-title">Asistentes</span>
+        <div class="leads-filters">
+          <button class="filter-btn active" data-lf="todos" onclick="setLeadsFilter('todos',this)">Todos</button>
+          <button class="filter-btn" data-lf="general" onclick="setLeadsFilter('general',this)">General</button>
+          <button class="filter-btn" data-lf="vip" onclick="setLeadsFilter('vip',this)">VIP</button>
+          <button class="filter-btn" data-lf="full" onclick="setLeadsFilter('full',this)">Full Experience</button>
         </div>
-
-        <!-- PROXIMITY CREATORS -->
-        <div>
-          <div class="leads-header">
-            <span class="leads-title">Proximity Creators</span>
-            <span class="badge" id="pcCount2">0 miembros</span>
-          </div>
-          <div class="table-wrap">
-            <div class="table-toolbar">
-              <input type="text" id="pcSearch2" placeholder="Buscar miembro…" oninput="renderPC2()">
-            </div>
-            <table>
-              <thead><tr>
-                <th>#</th><th>Nombre</th><th>Email</th><th>Teléfono</th><th>Nivel</th>
-              </tr></thead>
-              <tbody id="tbodyPC2"><tr><td colspan="5" class="empty-row">Cargando…</td></tr></tbody>
-            </table>
-            <div class="pagination">
-              <span id="pcPg2Info">—</span>
-              <button class="pg-btn" id="pcPrev2" onclick="pcChange2(-1)">← Ant</button>
-              <button class="pg-btn" id="pcNext2" onclick="pcChange2(1)">Sig →</button>
-            </div>
-          </div>
+      </div>
+      <div class="table-wrap" style="margin-bottom:36px">
+        <div class="table-toolbar">
+          <input type="text" id="leadsSearch" placeholder="Buscar nombre, email…" oninput="renderLeads()">
+          <span id="leadsCount" style="color:var(--muted);font-size:.78rem;margin-left:8px">— leads</span>
         </div>
+        <table>
+          <thead><tr>
+            <th>#</th><th>Nombre</th><th>Correo</th><th>Categoría</th><th>Tipo</th><th>Asistencia</th>
+          </tr></thead>
+          <tbody id="tbodyLeads"><tr><td colspan="6" class="empty-row">Cargando…</td></tr></tbody>
+        </table>
+        <div class="pagination">
+          <span id="leadsPgInfo">—</span>
+          <button class="pg-btn" id="leadsPrev" onclick="leadsPageChange(-1)">← Ant</button>
+          <button class="pg-btn" id="leadsNext" onclick="leadsPageChange(1)">Sig →</button>
+        </div>
+      </div>
 
-      </div><!-- /tables-grid -->
+      <!-- PROXIMITY CREATORS -->
+      <div class="leads-header">
+        <span class="leads-title">Proximity Creators</span>
+        <div class="leads-filters">
+          <button class="filter-btn active" data-pc2f="todos" onclick="setPCFilter('todos',this)">Todos</button>
+          <button class="filter-btn" data-pc2f="general" onclick="setPCFilter('general',this)">General</button>
+          <button class="filter-btn" data-pc2f="vip" onclick="setPCFilter('vip',this)">VIP</button>
+          <button class="filter-btn" data-pc2f="full" onclick="setPCFilter('full',this)">Full Experience</button>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <div class="table-toolbar">
+          <input type="text" id="pcSearch2" placeholder="Buscar miembro…" oninput="renderPC2()">
+          <span id="pcCount2" style="color:var(--muted);font-size:.78rem;margin-left:8px">— miembros</span>
+        </div>
+        <table>
+          <thead><tr>
+            <th>#</th><th>Nombre</th><th>Email</th><th>Teléfono</th><th>Nivel</th>
+          </tr></thead>
+          <tbody id="tbodyPC2"><tr><td colspan="5" class="empty-row">Cargando…</td></tr></tbody>
+        </table>
+        <div class="pagination">
+          <span id="pcPg2Info">—</span>
+          <button class="pg-btn" id="pcPrev2" onclick="pcChange2(-1)">← Ant</button>
+          <button class="pg-btn" id="pcNext2" onclick="pcChange2(1)">Sig →</button>
+        </div>
+      </div>
+
     </div>
   </div>
 
@@ -504,9 +504,22 @@ function renderPC() {
 function pcChange(dir) { pcPage += dir; renderPC(); }
 
 let pcPage2 = 0;
+let pcFilter2 = 'todos';
+function setPCFilter(f, btn) {
+  pcFilter2 = f;
+  pcPage2 = 0;
+  document.querySelectorAll('[data-pc2f]').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderPC2();
+}
 function renderPC2() {
   const q = (document.getElementById('pcSearch2')?.value || '').toLowerCase();
-  let rows = pcData.filter(m => !q || (`${m.nombre||''} ${m.email||''}`).toLowerCase().includes(q));
+  let rows = pcData.filter(m => {
+    const nivel = (m.nivel || m.tier || '').toLowerCase();
+    if (pcFilter2 !== 'todos' && nivel !== pcFilter2) return false;
+    if (q && !(`${m.nombre||''} ${m.email||''}`).toLowerCase().includes(q)) return false;
+    return true;
+  });
   document.getElementById('pcCount2').textContent = rows.length + ' miembros';
   const total = rows.length;
   const start = pcPage2 * PER_PAGE;
