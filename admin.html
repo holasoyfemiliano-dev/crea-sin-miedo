@@ -236,9 +236,9 @@
       </div>
       <table>
         <thead><tr>
-          <th>#</th><th>Nombre</th><th>Email</th><th>Teléfono</th><th>Nivel</th>
+          <th>#</th><th>Nombre</th><th>Email</th><th>Teléfono</th><th>Monto</th><th>Tipo acceso</th>
         </tr></thead>
-        <tbody id="tbodyPC"><tr><td colspan="5" class="empty-row">Cargando…</td></tr></tbody>
+        <tbody id="tbodyPC"><tr><td colspan="6" class="empty-row">Cargando…</td></tr></tbody>
       </table>
       <div class="pagination">
         <span id="pcPgInfo">—</span>
@@ -292,15 +292,15 @@
         </table>
       </div>
 
-      <!-- PROXIMITY CREATORS (solo liquidados) -->
+      <!-- PROXIMITY CREATORS -->
       <div class="sec-head" style="margin-top:8px;margin-bottom:8px">
         <h3>Proximity Creators</h3>
         <span class="badge" id="pcCountAll">0 miembros</span>
       </div>
       <div class="table-wrap" style="margin-bottom:40px">
         <table>
-          <thead><tr><th>#</th><th>Nombre</th><th>Email</th><th>Teléfono</th></tr></thead>
-          <tbody id="tbodyPCAll"><tr><td colspan="4" class="empty-row">Cargando…</td></tr></tbody>
+          <thead><tr><th>#</th><th>Nombre</th><th>Email</th><th>Teléfono</th><th>Monto</th><th>Tipo acceso</th><th>Ingreso</th></tr></thead>
+          <tbody id="tbodyPCAll"><tr><td colspan="7" class="empty-row">Cargando…</td></tr></tbody>
         </table>
       </div>
 
@@ -367,7 +367,7 @@ async function loadData() {
     const [asistentes, invitados, pc] = await Promise.all([
       apiFetch('table=csm_asistentes'),
       apiFetch('table=csm_invitados'),
-      apiFetch('table=proximity_creators'),
+      apiFetch('table=miembros'),
     ]);
     allData = [
       ...(Array.isArray(asistentes) ? asistentes : []),
@@ -482,7 +482,7 @@ function renderPC() {
 
   const tbody = document.getElementById('tbodyPC');
   if (slice.length === 0) {
-    tbody.innerHTML = '<tr><td colspan="5" class="empty-row">Sin miembros</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="6" class="empty-row">Sin miembros</td></tr>';
     return;
   }
   tbody.innerHTML = slice.map((m, i) => `
@@ -490,8 +490,9 @@ function renderPC() {
       <td style="color:var(--muted)">${start + i + 1}</td>
       <td><strong>${esc(m.nombre || '—')}</strong></td>
       <td style="color:var(--text);font-size:.78rem">${esc(m.email || '—')}</td>
-      <td style="color:var(--text);font-size:.78rem">${esc(m.telefono || m.phone || '—')}</td>
-      <td><span class="tier-chip ${(m.nivel||m.tier||'').toLowerCase()}">${esc(m.nivel || m.tier || '—')}</span></td>
+      <td style="color:var(--text);font-size:.78rem">${esc(m.phone || '—')}</td>
+      <td style="color:var(--gold);font-weight:600">${m.monto_pagado ? '$'+Number(m.monto_pagado).toLocaleString('es-MX') : '—'}</td>
+      <td style="color:var(--text);font-size:.78rem">${esc(m.tipo_acceso || '—')}</td>
     </tr>
   `).join('');
 }
@@ -545,12 +546,15 @@ function renderAsistentesSection(rows, tbodyId, countId) {
 function renderPCSection(rows, tbodyId, countId) {
   document.getElementById(countId).textContent = rows.length + ' miembros';
   const tbody = document.getElementById(tbodyId);
-  if (!rows.length) { tbody.innerHTML = '<tr><td colspan="4" class="empty-row">Sin miembros</td></tr>'; return; }
+  if (!rows.length) { tbody.innerHTML = '<tr><td colspan="7" class="empty-row">Sin miembros</td></tr>'; return; }
   tbody.innerHTML = rows.map((m, i) => `<tr>
     <td style="color:var(--muted)">${i+1}</td>
     <td><strong>${esc(m.nombre||'—')}</strong></td>
     <td style="color:var(--text);font-size:.78rem">${esc(m.email||'—')}</td>
-    <td style="color:var(--text);font-size:.78rem">${esc(m.telefono||m.phone||'—')}</td>
+    <td style="color:var(--text);font-size:.78rem">${esc(m.phone||'—')}</td>
+    <td style="color:var(--gold);font-weight:600">${m.monto_pagado ? '$'+Number(m.monto_pagado).toLocaleString('es-MX') : '—'}</td>
+    <td style="color:var(--text);font-size:.78rem">${esc(m.tipo_acceso||'—')}</td>
+    <td style="color:var(--muted);font-size:.75rem">${m.fecha_ingreso ? m.fecha_ingreso.slice(0,10) : '—'}</td>
   </tr>`).join('');
 }
 

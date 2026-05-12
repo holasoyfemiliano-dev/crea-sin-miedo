@@ -1,5 +1,7 @@
 const SB_URL  = process.env.SB_URL;
 const SB_KEY  = process.env.SB_SERVICE;
+const CV_URL  = process.env.CV_SB_URL;
+const CV_KEY  = process.env.CV_SB_SERVICE;
 const ADMIN_KEY = process.env.ADMIN_KEY || 'CSM2026';
 
 const ALLOWED_TABLES = [
@@ -7,16 +9,31 @@ const ALLOWED_TABLES = [
   'csm_cronograma', 'csm_codigos_descuento', 'proximity_creators',
 ];
 
+// Tables that live in the Clase Viral Supabase project
+const CV_TABLES = ['miembros'];
+
 module.exports = async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'x-admin-key, Authorization');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS, PATCH');
+  res.setHeader('Access-Control-Allow-Headers', 'x-admin-key, Authorization, Content-Type');
   if (req.method === 'OPTIONS') return res.status(200).end();
 
   const k = req.headers['x-admin-key'] || req.query.key;
   if (k !== ADMIN_KEY) { res.status(401).json({ error: 'No autorizado' }); return; }
 
   const table = req.query.table;
+
+  // Route Clase Viral tables to their own Supabase project
+  if (CV_TABLES.includes(table)) {
+    const qs = req.query.qs || 'select=*&order=fecha_ingreso.desc';
+    const r = await fetch(`${CV_URL}/rest/v1/${table}?${qs}`, {
+      headers: { apikey: CV_KEY, Authorization: `Bearer ${CV_KEY}` },
+    });
+    const data = await r.json();
+    res.json(data);
+    return;
+  }
+
   if (!ALLOWED_TABLES.includes(table)) {
     res.status(400).json({ error: 'Tabla no permitida' }); return;
   }
