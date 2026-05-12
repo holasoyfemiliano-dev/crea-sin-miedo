@@ -86,6 +86,29 @@
     .tier-bar-card.vip .progress-fill { background:var(--matrix); }
     .tier-bar-card.full .progress-fill { background:var(--gold); }
 
+    /* Tab navigation */
+    .tab-nav { background:rgba(0,0,0,.6); border-bottom:1px solid rgba(255,255,255,.07); padding:0 28px; display:flex; gap:0; position:sticky; top:57px; z-index:40; backdrop-filter:blur(12px); }
+    .tab-btn { background:none; border:none; border-bottom:2px solid transparent; color:var(--muted); font-size:.82rem; font-weight:600; letter-spacing:.06em; text-transform:uppercase; padding:14px 20px; cursor:pointer; transition:all .2s; font-family:'Inter',sans-serif; }
+    .tab-btn:hover { color:var(--white); }
+    .tab-btn.active { color:var(--white); border-bottom-color:var(--red); }
+    .tab-view { display:none; }
+    .tab-view.active { display:block; }
+
+    /* Leads view */
+    .leads-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:20px; flex-wrap:wrap; gap:12px; }
+    .leads-title { font-family:'Oswald',sans-serif; font-weight:700; font-size:1.6rem; }
+    .leads-filters { display:flex; gap:8px; flex-wrap:wrap; }
+    .asistencia-sel { background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.1); border-radius:6px; padding:5px 10px; color:var(--white); font-size:.75rem; font-family:'Inter',sans-serif; cursor:pointer; outline:none; transition:border-color .2s; }
+    .asistencia-sel:focus { border-color:rgba(229,39,43,.5); }
+    .asistencia-sel.por-confirmar { border-color:rgba(255,255,255,.15); color:var(--muted); }
+    .asistencia-sel.confirmo { border-color:rgba(34,197,94,.4); color:var(--green); background:rgba(34,197,94,.06); }
+    .asistencia-sel.no-va { border-color:rgba(229,39,43,.35); color:var(--red); background:rgba(229,39,43,.05); }
+    .tipo-chip { display:inline-block; border-radius:4px; padding:2px 9px; font-size:.68rem; font-weight:700; text-transform:uppercase; letter-spacing:.04em; }
+    .tipo-chip.pagado { background:rgba(34,197,94,.1); color:var(--green); }
+    .tipo-chip.descuento { background:rgba(245,197,24,.1); color:var(--gold); }
+    .tipo-chip.invitado { background:rgba(255,255,255,.07); color:var(--muted); }
+    .tipo-chip.gratis { background:rgba(59,130,246,.1); color:#60a5fa; }
+
     /* Two-column tables layout */
     .tables-grid { display:grid; grid-template-columns:1fr 1fr; gap:20px; align-items:start; }
     @media(max-width:900px){.tables-grid{grid-template-columns:1fr;}}
@@ -140,6 +163,14 @@
     </div>
   </header>
 
+  <!-- TAB NAVIGATION -->
+  <div class="tab-nav">
+    <button class="tab-btn active" onclick="switchTab('dashboard',this)">Dashboard</button>
+    <button class="tab-btn" onclick="switchTab('leads',this)">Leads</button>
+  </div>
+
+  <!-- DASHBOARD TAB -->
+  <div id="tab-dashboard" class="tab-view active">
   <div class="content">
 
     <!-- TOP: Asistentes totales + confirmados -->
@@ -253,7 +284,40 @@
 
     </div><!-- /tables-grid -->
   </div>
-</div>
+
+  <!-- LEADS TAB -->
+  <div id="tab-leads" class="tab-view">
+    <div class="content">
+      <div class="leads-header">
+        <span class="leads-title">Leads</span>
+        <div class="leads-filters">
+          <button class="filter-btn active" data-lf="todos" onclick="setLeadsFilter('todos',this)">Todos</button>
+          <button class="filter-btn" data-lf="general" onclick="setLeadsFilter('general',this)">General</button>
+          <button class="filter-btn" data-lf="vip" onclick="setLeadsFilter('vip',this)">VIP</button>
+          <button class="filter-btn" data-lf="full" onclick="setLeadsFilter('full',this)">Full Experience</button>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <div class="table-toolbar">
+          <input type="text" id="leadsSearch" placeholder="Buscar nombre, email…" oninput="renderLeads()">
+          <span id="leadsCount" style="color:var(--muted);font-size:.78rem;margin-left:8px">— leads</span>
+        </div>
+        <table>
+          <thead><tr>
+            <th>#</th><th>Nombre</th><th>Correo</th><th>Categoría</th><th>Tipo</th><th>Asistencia</th>
+          </tr></thead>
+          <tbody id="tbodyLeads"><tr><td colspan="6" class="empty-row">Cargando…</td></tr></tbody>
+        </table>
+        <div class="pagination">
+          <span id="leadsPgInfo">—</span>
+          <button class="pg-btn" id="leadsPrev" onclick="leadsPageChange(-1)">← Ant</button>
+          <button class="pg-btn" id="leadsNext" onclick="leadsPageChange(1)">Sig →</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /app -->
 
 <script>
 let PRICES = { general: 2997, vip: 4997, full: 14997 };
@@ -443,6 +507,103 @@ function renderPC() {
 function pcChange(dir) { pcPage += dir; renderPC(); }
 
 function esc(s) { return String(s).replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+// Tab switching
+function switchTab(tab, btn) {
+  document.querySelectorAll('.tab-view').forEach(v => v.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + tab).classList.add('active');
+  btn.classList.add('active');
+  if (tab === 'leads') renderLeads();
+}
+
+// Leads tab
+let leadsFilter = 'todos';
+let leadsPage = 0;
+
+function setLeadsFilter(f, btn) {
+  leadsFilter = f;
+  leadsPage = 0;
+  document.querySelectorAll('[data-lf]').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderLeads();
+}
+
+function getTipo(a) {
+  if (a.es_invitado) return 'invitado';
+  if (!a.monto || a.monto === 0) return 'gratis';
+  const tierPrice = PRICES[a.tipo];
+  if (tierPrice && a.monto < tierPrice) return 'descuento';
+  return 'pagado';
+}
+
+function renderLeads() {
+  const q = (document.getElementById('leadsSearch')?.value || '').toLowerCase();
+  let rows = allData.filter(a => {
+    if (leadsFilter !== 'todos' && a.tipo !== leadsFilter) return false;
+    if (q && !(`${a.nombre || ''} ${a.email || ''}`).toLowerCase().includes(q)) return false;
+    return true;
+  });
+  document.getElementById('leadsCount').textContent = rows.length + ' leads';
+  const total = rows.length;
+  const start = leadsPage * PER_PAGE;
+  const slice = rows.slice(start, start + PER_PAGE);
+  document.getElementById('leadsPgInfo').textContent = total
+    ? `${start + 1}–${Math.min(start + PER_PAGE, total)} de ${total}`
+    : '0 resultados';
+  document.getElementById('leadsPrev').disabled = leadsPage === 0;
+  document.getElementById('leadsNext').disabled = start + PER_PAGE >= total;
+
+  const tbody = document.getElementById('tbodyLeads');
+  if (slice.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="6" class="empty-row">Sin resultados</td></tr>';
+    return;
+  }
+  tbody.innerHTML = slice.map((a, i) => {
+    const tipo = getTipo(a);
+    const status = a.asistencia_status || 'por_confirmar';
+    const selClass = status === 'confirmo' ? 'confirmo' : status === 'no_va' ? 'no-va' : 'por-confirmar';
+    const selHtml = a.es_invitado
+      ? '<span style="color:var(--muted);font-size:.75rem">—</span>'
+      : `<select class="asistencia-sel ${selClass}" onchange="updateAsistencia('${esc(String(a.id))}',this)">
+           <option value="por_confirmar"${status==='por_confirmar'?' selected':''}>Por confirmar</option>
+           <option value="confirmo"${status==='confirmo'?' selected':''}>Confirmó</option>
+           <option value="no_va"${status==='no_va'?' selected':''}>No va asistir</option>
+         </select>`;
+    return `
+      <tr>
+        <td style="color:var(--muted)">${start + i + 1}</td>
+        <td><strong>${esc(a.nombre || '—')}</strong></td>
+        <td style="color:var(--text);font-size:.78rem">${esc(a.email || '—')}</td>
+        <td><span class="tier-chip ${esc(a.tipo || '')}">${esc(a.tipo || '—')}</span></td>
+        <td><span class="tipo-chip ${tipo}">${tipo}</span></td>
+        <td>${selHtml}</td>
+      </tr>`;
+  }).join('');
+}
+
+function leadsPageChange(dir) { leadsPage += dir; renderLeads(); }
+
+async function updateAsistencia(id, sel) {
+  const value = sel.value;
+  sel.className = 'asistencia-sel ' + (value === 'confirmo' ? 'confirmo' : value === 'no_va' ? 'no-va' : 'por-confirmar');
+  const key = sessionStorage.getItem('csm_admin_key');
+  const prevValue = allData.find(a => String(a.id) === String(id))?.asistencia_status || 'por_confirmar';
+  try {
+    const r = await fetch('/api/admin-data?table=csm_asistentes', {
+      method: 'PATCH',
+      headers: { 'x-admin-key': key, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id, field: 'asistencia_status', value }),
+    });
+    const d = await r.json();
+    if (!d.ok) throw new Error('patch failed');
+    const rec = allData.find(a => String(a.id) === String(id));
+    if (rec) rec.asistencia_status = value;
+  } catch(e) {
+    sel.value = prevValue;
+    sel.className = 'asistencia-sel ' + (prevValue === 'confirmo' ? 'confirmo' : prevValue === 'no_va' ? 'no-va' : 'por-confirmar');
+  }
+}
 
 // Check if already authed
 if (sessionStorage.getItem('csm_admin_key')) {

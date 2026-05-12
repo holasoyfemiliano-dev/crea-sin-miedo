@@ -32,6 +32,25 @@ module.exports = async function handler(req, res) {
 
   const qs = req.query.qs || queryMap[table] || 'select=*';
 
+  // PATCH: update a single field on a row
+  if (req.method === 'PATCH') {
+    const { id, field, value } = req.body || {};
+    const PATCHABLE = ['asistencia_status', 'check_in', 'notas'];
+    if (!id || !field || !PATCHABLE.includes(field)) {
+      res.status(400).json({ error: 'Parámetros inválidos' }); return;
+    }
+    const r = await fetch(`${SB_URL}/rest/v1/${table}?id=eq.${id}`, {
+      method: 'PATCH',
+      headers: {
+        apikey: SB_KEY, Authorization: `Bearer ${SB_KEY}`,
+        'Content-Type': 'application/json', Prefer: 'return=minimal',
+      },
+      body: JSON.stringify({ [field]: value }),
+    });
+    res.status(r.ok ? 200 : 500).json({ ok: r.ok });
+    return;
+  }
+
   const r = await fetch(`${SB_URL}/rest/v1/${table}?${qs}`, {
     headers: { apikey: SB_KEY, Authorization: `Bearer ${SB_KEY}` },
   });
