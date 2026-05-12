@@ -5,31 +5,31 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Admin — Crea sin Miedo</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Antonio:wght@400;700&family=Oswald:wght@600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
     :root {
-      --dark:#06090f; --card:rgba(255,255,255,0.04); --border:rgba(249,115,22,0.15);
-      --orange:#f97316; --gold:#fbbf24; --green:#22c55e; --red:#ef4444; --blue:#3b82f6;
-      --white:#ffffff; --text:#c8cfe0; --muted:#6a7590; --sidebar:#0a0f1a;
+      --dark:#06090f; --card:rgba(255,255,255,0.04); --border:rgba(229,39,43,0.15);
+      --red:#e5272b; --matrix:#00cc52; --gold:#f5c518; --green:#22c55e; --blue:#3b82f6;
+      --white:#ffffff; --text:#cccccc; --muted:#9ca3af; --sidebar:#0a0f1a;
     }
     body { background:var(--dark); color:var(--white); font-family:'Inter',sans-serif; min-height:100vh; }
 
     /* Password Gate */
     #gate { position:fixed; inset:0; z-index:999; background:var(--dark); display:flex; align-items:center; justify-content:center; }
-    .gate-card { background:rgba(255,255,255,.04); border:1px solid rgba(249,115,22,.2); border-radius:16px; padding:40px; width:360px; text-align:center; }
-    .gate-card h2 { font-family:'Bebas Neue',sans-serif; font-size:2rem; margin-bottom:6px; }
+    .gate-card { background:rgba(255,255,255,.04); border:1px solid rgba(229,39,43,.2); border-radius:16px; padding:40px; width:360px; text-align:center; }
+    .gate-card h2 { font-family:'Oswald',sans-serif; font-weight:700; font-size:2rem; margin-bottom:6px; }
     .gate-card p { font-size:.82rem; color:var(--muted); margin-bottom:24px; }
     .gate-card input { width:100%; background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.1); border-radius:8px; padding:12px 16px; color:var(--white); font-size:1rem; outline:none; text-align:center; letter-spacing:.1em; margin-bottom:12px; }
-    .gate-card input:focus { border-color:rgba(249,115,22,.5); }
-    .gate-btn { width:100%; background:var(--orange); color:#000; border:none; border-radius:8px; padding:13px; font-weight:800; font-size:.9rem; letter-spacing:.06em; text-transform:uppercase; cursor:pointer; }
+    .gate-card input:focus { border-color:rgba(229,39,43,.5); }
+    .gate-btn { width:100%; background:var(--red); color:#fff; border:none; border-radius:6px; padding:13px; font-weight:800; font-size:.9rem; letter-spacing:.06em; text-transform:uppercase; cursor:pointer; }
     .gate-err { font-size:.78rem; color:var(--red); margin-top:8px; display:none; }
 
     /* Layout */
     #app { display:none; min-height:100vh; }
-    header { background:rgba(10,15,26,.98); border-bottom:1px solid rgba(249,115,22,.12); padding:14px 28px; display:flex; align-items:center; justify-content:space-between; position:sticky; top:0; z-index:50; }
-    .h-logo { font-family:'Bebas Neue',sans-serif; font-size:1.3rem; letter-spacing:.06em; }
-    .h-logo span { color:var(--orange); }
+    header { background:rgba(0,0,0,.97); border-bottom:1px solid rgba(229,39,43,.12); padding:14px 28px; display:flex; align-items:center; justify-content:space-between; position:sticky; top:0; z-index:50; backdrop-filter:blur(16px); }
+    .h-logo { font-family:'Oswald',sans-serif; font-weight:700; font-size:1.3rem; letter-spacing:.06em; }
+    .h-logo span { color:var(--red); }
     .h-right { display:flex; align-items:center; gap:16px; font-size:.78rem; color:var(--muted); }
     .h-badge { background:rgba(34,197,94,.12); border:1px solid rgba(34,197,94,.3); color:var(--green); border-radius:20px; padding:3px 12px; font-size:.7rem; font-weight:600; }
     .reload-btn { background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.1); border-radius:6px; padding:6px 14px; color:var(--text); font-size:.78rem; cursor:pointer; transition:background .2s; }
@@ -41,30 +41,30 @@
     .kpi-grid { display:grid; grid-template-columns:repeat(auto-fit, minmax(180px,1fr)); gap:16px; margin-bottom:28px; }
     .kpi { background:var(--card); border:1px solid rgba(255,255,255,.06); border-radius:14px; padding:20px; }
     .kpi-label { font-size:.7rem; letter-spacing:.12em; text-transform:uppercase; color:var(--muted); margin-bottom:6px; }
-    .kpi-value { font-family:'Bebas Neue',sans-serif; font-size:2.2rem; line-height:1; }
+    .kpi-value { font-family:'Antonio',sans-serif; font-size:2.2rem; line-height:1; }
     .kpi-sub { font-size:.74rem; color:var(--muted); margin-top:4px; }
-    .kpi.orange .kpi-value { color:var(--orange); }
+    .kpi.red .kpi-value { color:var(--red); }
     .kpi.green .kpi-value { color:var(--green); }
     .kpi.gold .kpi-value { color:var(--gold); }
     .kpi.blue .kpi-value { color:var(--blue); }
 
     /* Section header */
     .sec-head { display:flex; align-items:center; justify-content:space-between; margin:28px 0 14px; }
-    .sec-head h3 { font-family:'Bebas Neue',sans-serif; font-size:1.4rem; letter-spacing:.04em; }
-    .sec-head .badge { background:rgba(249,115,22,.12); border:1px solid rgba(249,115,22,.2); color:var(--orange2,#fb923c); border-radius:20px; padding:3px 12px; font-size:.72rem; font-weight:600; }
+    .sec-head h3 { font-family:'Oswald',sans-serif; font-weight:700; font-size:1.4rem; letter-spacing:.04em; }
+    .sec-head .badge { background:rgba(229,39,43,.1); border:1px solid rgba(229,39,43,.2); color:var(--red); border-radius:20px; padding:3px 12px; font-size:.72rem; font-weight:600; }
 
     /* Tier bars */
     .tier-bars { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-bottom:28px; }
     @media(max-width:640px){.tier-bars{grid-template-columns:1fr;}}
     .tier-bar-card { background:var(--card); border:1px solid rgba(255,255,255,.06); border-radius:14px; padding:20px; }
     .tier-bar-card h4 { font-size:.72rem; letter-spacing:.15em; text-transform:uppercase; color:var(--muted); margin-bottom:10px; }
-    .tier-bar-card .amount { font-family:'Bebas Neue',sans-serif; font-size:1.8rem; color:var(--orange); }
-    .tier-bar-card.vip .amount { color:#fb923c; }
+    .tier-bar-card .amount { font-family:'Antonio',sans-serif; font-size:1.8rem; color:var(--red); }
+    .tier-bar-card.vip .amount { color:var(--matrix); }
     .tier-bar-card.full .amount { color:var(--gold); }
     .tier-bar-card .count { font-size:.8rem; color:var(--text); margin-bottom:10px; }
     .progress-bg { background:rgba(255,255,255,.06); border-radius:4px; height:6px; }
-    .progress-fill { height:6px; border-radius:4px; background:var(--orange); transition:width .6s ease; }
-    .tier-bar-card.vip .progress-fill { background:#fb923c; }
+    .progress-fill { height:6px; border-radius:4px; background:var(--red); transition:width .6s ease; }
+    .tier-bar-card.vip .progress-fill { background:var(--matrix); }
     .tier-bar-card.full .progress-fill { background:var(--gold); }
 
     /* Table */
@@ -73,7 +73,7 @@
     .table-toolbar input { background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.08); border-radius:7px; padding:8px 14px; color:var(--white); font-size:.83rem; outline:none; flex:1; max-width:280px; }
     .table-toolbar input::placeholder { color:var(--muted); }
     .filter-btn { background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.08); border-radius:7px; padding:7px 14px; color:var(--muted); font-size:.78rem; cursor:pointer; transition:all .2s; }
-    .filter-btn.active { background:rgba(249,115,22,.12); border-color:rgba(249,115,22,.3); color:var(--orange); }
+    .filter-btn.active { background:rgba(229,39,43,.1); border-color:rgba(229,39,43,.3); color:var(--red); }
     table { width:100%; border-collapse:collapse; }
     th { padding:10px 16px; text-align:left; font-size:.68rem; letter-spacing:.12em; text-transform:uppercase; color:var(--muted); border-bottom:1px solid rgba(255,255,255,.06); white-space:nowrap; }
     td { padding:12px 16px; font-size:.83rem; border-bottom:1px solid rgba(255,255,255,.04); vertical-align:middle; }
@@ -81,7 +81,7 @@
     tr:hover td { background:rgba(255,255,255,.02); }
     .tier-chip { display:inline-block; border-radius:20px; padding:2px 10px; font-size:.68rem; font-weight:700; text-transform:uppercase; }
     .tier-chip.general { background:rgba(255,255,255,.08); color:var(--text); }
-    .tier-chip.vip { background:rgba(249,115,22,.15); color:var(--orange); }
+    .tier-chip.vip { background:rgba(0,204,82,.12); color:var(--matrix); }
     .tier-chip.full { background:rgba(251,191,36,.15); color:var(--gold); }
     .check-chip { display:inline-block; border-radius:20px; padding:2px 10px; font-size:.68rem; font-weight:700; }
     .check-chip.si { background:rgba(34,197,94,.12); color:var(--green); }
@@ -120,7 +120,7 @@
   <div class="content">
     <!-- KPIs -->
     <div class="kpi-grid" id="kpiGrid">
-      <div class="kpi orange"><div class="kpi-label">Ingresos totales</div><div class="kpi-value" id="kTotal">—</div><div class="kpi-sub">MXN pagado</div></div>
+      <div class="kpi red"><div class="kpi-label">Ingresos totales</div><div class="kpi-value" id="kTotal">—</div><div class="kpi-sub">MXN pagado</div></div>
       <div class="kpi green"><div class="kpi-label">Boletos vendidos</div><div class="kpi-value" id="kBoletos">—</div><div class="kpi-sub" id="kBoletosCapacity">de — confirmados</div></div>
       <div class="kpi blue"><div class="kpi-label">Check-in realizados</div><div class="kpi-value" id="kCheckin">—</div><div class="kpi-sub" id="kCheckinPct">—% del total</div></div>
       <div class="kpi gold"><div class="kpi-label">Full Experience</div><div class="kpi-value" id="kFull">—</div><div class="kpi-sub">de 10 cupos</div></div>
@@ -180,7 +180,9 @@
 </div>
 
 <script>
-const ADMIN_KEY = sessionStorage.getItem('csm_admin_key');
+let PRICES = { general: 2997, vip: 4997, full: 14997 };
+fetch('/api/prices').then(r => r.json()).then(d => { Object.keys(d).forEach(k => { if(d[k].price) PRICES[k] = d[k].price; }); }).catch(()=>{});
+
 let allData = [];
 let filterTier = 'todos';
 let page = 0;
@@ -265,7 +267,7 @@ function renderKPIs() {
   document.getElementById('kInvitados').textContent = inv;
 
   // Tier bars
-  const tiers = { general: 2999, vip: 5000, full: 9997 };
+  const tiers = PRICES;
   Object.entries(tiers).forEach(([t, price]) => {
     const rows = pagados.filter(a => a.tipo === t);
     const ingreso = rows.reduce((s, a) => s + (a.monto || 0), 0);
