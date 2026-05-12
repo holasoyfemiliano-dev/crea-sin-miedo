@@ -38,7 +38,25 @@
 
     .content { max-width:1300px; margin:0 auto; padding:28px 24px; }
 
-    /* KPI row */
+    /* Top summary (asistentes totales / confirmados) */
+    .summary-top { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:24px; }
+    .summary-big { background:var(--card); border:1px solid rgba(255,255,255,.06); border-radius:14px; padding:28px 24px; text-align:center; }
+    .summary-big .sb-label { display:block; font-size:.68rem; letter-spacing:.16em; text-transform:uppercase; color:var(--muted); margin-bottom:8px; }
+    .summary-big .sb-num { font-family:'Antonio',sans-serif; font-size:4rem; line-height:1; display:block; }
+    .summary-big .sb-sub { font-size:.75rem; color:var(--muted); margin-top:6px; display:block; }
+    .summary-big.totales .sb-num { color:var(--white); }
+    .summary-big.confirmados .sb-num { color:var(--green); }
+
+    /* Boletos vendidos */
+    .boletos-section { margin-bottom:28px; }
+    .boletos-total-card { background:var(--card); border:1px solid rgba(229,39,43,.2); border-radius:14px; padding:20px 24px; display:flex; align-items:center; justify-content:space-between; margin-bottom:14px; }
+    .bt-left .bt-label { font-size:.68rem; letter-spacing:.16em; text-transform:uppercase; color:var(--muted); margin-bottom:4px; }
+    .bt-left .bt-num { font-family:'Antonio',sans-serif; font-size:2.4rem; line-height:1; color:var(--red); }
+    .bt-right { text-align:right; }
+    .bt-ing-label { font-size:.68rem; letter-spacing:.12em; text-transform:uppercase; color:var(--muted); margin-bottom:4px; }
+    .bt-ing { font-family:'Antonio',sans-serif; font-size:2rem; color:var(--white); }
+
+    /* KPI row (kept for compatibility) */
     .kpi-grid { display:grid; grid-template-columns:repeat(auto-fit, minmax(180px,1fr)); gap:16px; margin-bottom:28px; }
     .kpi { background:var(--card); border:1px solid rgba(255,255,255,.06); border-radius:14px; padding:20px; }
     .kpi-label { font-size:.7rem; letter-spacing:.12em; text-transform:uppercase; color:var(--muted); margin-bottom:6px; }
@@ -67,6 +85,10 @@
     .progress-fill { height:6px; border-radius:4px; background:var(--red); transition:width .6s ease; }
     .tier-bar-card.vip .progress-fill { background:var(--matrix); }
     .tier-bar-card.full .progress-fill { background:var(--gold); }
+
+    /* Two-column tables layout */
+    .tables-grid { display:grid; grid-template-columns:1fr 1fr; gap:20px; align-items:start; }
+    @media(max-width:900px){.tables-grid{grid-template-columns:1fr;}}
 
     /* Table */
     .table-wrap { background:var(--card); border:1px solid rgba(255,255,255,.06); border-radius:14px; overflow:hidden; margin-bottom:28px; }
@@ -119,64 +141,117 @@
   </header>
 
   <div class="content">
-    <!-- KPIs -->
-    <div class="kpi-grid" id="kpiGrid">
-      <div class="kpi red"><div class="kpi-label">Ingresos totales</div><div class="kpi-value" id="kTotal">—</div><div class="kpi-sub">MXN pagado</div></div>
-      <div class="kpi green"><div class="kpi-label">Boletos vendidos</div><div class="kpi-value" id="kBoletos">—</div><div class="kpi-sub" id="kBoletosCapacity">de — confirmados</div></div>
-      <div class="kpi blue"><div class="kpi-label">Check-in realizados</div><div class="kpi-value" id="kCheckin">—</div><div class="kpi-sub" id="kCheckinPct">—% del total</div></div>
-      <div class="kpi gold"><div class="kpi-label">Full Experience</div><div class="kpi-value" id="kFull">—</div><div class="kpi-sub">de 10 cupos</div></div>
-      <div class="kpi"><div class="kpi-label">Invitados gratis</div><div class="kpi-value" id="kInvitados">—</div><div class="kpi-sub">en lista</div></div>
-    </div>
 
-    <!-- Tier bars -->
-    <div class="tier-bars">
-      <div class="tier-bar-card general">
-        <h4>General</h4>
-        <div class="amount" id="tbGenIng">$0</div>
-        <div class="count" id="tbGenCount">0 boletos</div>
-        <div class="progress-bg"><div class="progress-fill" id="tbGenBar" style="width:0%"></div></div>
+    <!-- TOP: Asistentes totales + confirmados -->
+    <div class="summary-top">
+      <div class="summary-big totales">
+        <span class="sb-label">Asistentes totales</span>
+        <span class="sb-num" id="kAsistentesTotales">—</span>
+        <span class="sb-sub" id="kAsistentesTotalesSub">pagados + invitados</span>
       </div>
-      <div class="tier-bar-card vip">
-        <h4>VIP</h4>
-        <div class="amount" id="tbVipIng">$0</div>
-        <div class="count" id="tbVipCount">0 boletos</div>
-        <div class="progress-bg"><div class="progress-fill" id="tbVipBar" style="width:0%"></div></div>
-      </div>
-      <div class="tier-bar-card full">
-        <h4>Full Experience</h4>
-        <div class="amount" id="tbFullIng">$0</div>
-        <div class="count" id="tbFullCount">0 / 10 boletos</div>
-        <div class="progress-bg"><div class="progress-fill" id="tbFullBar" style="width:0%"></div></div>
+      <div class="summary-big confirmados">
+        <span class="sb-label">Asistentes confirmados</span>
+        <span class="sb-num" id="kConfirmados">—</span>
+        <span class="sb-sub" id="kConfirmadosPct">check-in realizados</span>
       </div>
     </div>
 
-    <!-- Asistentes table -->
+    <!-- BOLETOS VENDIDOS -->
     <div class="sec-head">
-      <h3>Asistentes</h3>
-      <span class="badge" id="tableCount">0 registros</span>
+      <h3>Boletos vendidos</h3>
+      <span class="badge" id="kBoletosTotal">0 boletos</span>
     </div>
-    <div class="table-wrap">
-      <div class="table-toolbar">
-        <input type="text" id="searchInput" placeholder="Buscar por nombre, email…" oninput="renderTable()">
-        <button class="filter-btn active" data-f="todos" onclick="setFilter('todos',this)">Todos</button>
-        <button class="filter-btn" data-f="general" onclick="setFilter('general',this)">General</button>
-        <button class="filter-btn" data-f="vip" onclick="setFilter('vip',this)">VIP</button>
-        <button class="filter-btn" data-f="full" onclick="setFilter('full',this)">Full</button>
-        <button class="filter-btn" data-f="checkin" onclick="setFilter('checkin',this)">Check-in ✓</button>
+    <div class="boletos-section">
+      <div class="boletos-total-card">
+        <div class="bt-left">
+          <div class="bt-label">Total boletos</div>
+          <div class="bt-num" id="kBoletosNum">—</div>
+        </div>
+        <div class="bt-right">
+          <div class="bt-ing-label">Ingresos totales</div>
+          <div class="bt-ing" id="kIngresosTotal">—</div>
+        </div>
       </div>
-      <table>
-        <thead><tr>
-          <th>#</th><th>Nombre</th><th>Email</th><th>Teléfono</th>
-          <th>Tipo</th><th>Monto</th><th>Check-in</th><th>Fecha registro</th>
-        </tr></thead>
-        <tbody id="tbodyAsistentes"><tr><td colspan="8" class="empty-row">Cargando…</td></tr></tbody>
-      </table>
-      <div class="pagination">
-        <span id="pgInfo">—</span>
-        <button class="pg-btn" id="pgPrev" onclick="pgChange(-1)">← Anterior</button>
-        <button class="pg-btn" id="pgNext" onclick="pgChange(1)">Siguiente →</button>
+      <div class="tier-bars">
+        <div class="tier-bar-card general">
+          <h4>General</h4>
+          <div class="amount" id="tbGenIng">$0</div>
+          <div class="count" id="tbGenCount">0 boletos</div>
+          <div class="progress-bg"><div class="progress-fill" id="tbGenBar" style="width:0%"></div></div>
+        </div>
+        <div class="tier-bar-card vip">
+          <h4>VIP</h4>
+          <div class="amount" id="tbVipIng">$0</div>
+          <div class="count" id="tbVipCount">0 boletos</div>
+          <div class="progress-bg"><div class="progress-fill" id="tbVipBar" style="width:0%"></div></div>
+        </div>
+        <div class="tier-bar-card full">
+          <h4>Full Experience</h4>
+          <div class="amount" id="tbFullIng">$0</div>
+          <div class="count" id="tbFullCount">0 / 10 boletos</div>
+          <div class="progress-bg"><div class="progress-fill" id="tbFullBar" style="width:0%"></div></div>
+        </div>
       </div>
     </div>
+
+    <!-- TABLES: Asistentes + Proximity Creators -->
+    <div class="tables-grid">
+
+      <!-- ASISTENTES -->
+      <div>
+        <div class="sec-head">
+          <h3>Asistentes</h3>
+          <span class="badge" id="tableCount">0 registros</span>
+        </div>
+        <div class="table-wrap">
+          <div class="table-toolbar">
+            <input type="text" id="searchInput" placeholder="Buscar nombre, email…" oninput="renderTable()">
+            <button class="filter-btn active" data-f="todos" onclick="setFilter('todos',this)">Todos</button>
+            <button class="filter-btn" data-f="general" onclick="setFilter('general',this)">General</button>
+            <button class="filter-btn" data-f="vip" onclick="setFilter('vip',this)">VIP</button>
+            <button class="filter-btn" data-f="full" onclick="setFilter('full',this)">Full</button>
+            <button class="filter-btn" data-f="checkin" onclick="setFilter('checkin',this)">✓ Check-in</button>
+          </div>
+          <table>
+            <thead><tr>
+              <th>#</th><th>Nombre</th><th>Email</th>
+              <th>Tipo</th><th>Monto</th><th>Check-in</th>
+            </tr></thead>
+            <tbody id="tbodyAsistentes"><tr><td colspan="6" class="empty-row">Cargando…</td></tr></tbody>
+          </table>
+          <div class="pagination">
+            <span id="pgInfo">—</span>
+            <button class="pg-btn" id="pgPrev" onclick="pgChange(-1)">← Ant</button>
+            <button class="pg-btn" id="pgNext" onclick="pgChange(1)">Sig →</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- PROXIMITY CREATORS -->
+      <div>
+        <div class="sec-head">
+          <h3>Proximity Creators</h3>
+          <span class="badge" id="pcCount">0 miembros</span>
+        </div>
+        <div class="table-wrap">
+          <div class="table-toolbar">
+            <input type="text" id="pcSearch" placeholder="Buscar miembro…" oninput="renderPC()">
+          </div>
+          <table>
+            <thead><tr>
+              <th>#</th><th>Nombre</th><th>Email</th><th>Teléfono</th><th>Nivel</th>
+            </tr></thead>
+            <tbody id="tbodyPC"><tr><td colspan="5" class="empty-row">Cargando…</td></tr></tbody>
+          </table>
+          <div class="pagination">
+            <span id="pcPgInfo">—</span>
+            <button class="pg-btn" id="pcPrev" onclick="pcChange(-1)">← Ant</button>
+            <button class="pg-btn" id="pcNext" onclick="pcChange(1)">Sig →</button>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /tables-grid -->
   </div>
 </div>
 
@@ -185,8 +260,9 @@ let PRICES = { general: 2997, vip: 4997, full: 14997 };
 fetch('/api/prices').then(r => r.json()).then(d => { Object.keys(d).forEach(k => { if(d[k].price) PRICES[k] = d[k].price; }); }).catch(()=>{});
 
 let allData = [];
+let pcData  = [];
 let filterTier = 'todos';
-let page = 0;
+let page = 0, pcPage = 0;
 const PER_PAGE = 20;
 
 function checkPw() {
@@ -234,16 +310,19 @@ async function loadData() {
   if (!key) return;
   document.getElementById('lastUpdate').textContent = 'Cargando…';
   try {
-    const [asistentes, invitados] = await Promise.all([
+    const [asistentes, invitados, pc] = await Promise.all([
       apiFetch('table=csm_asistentes'),
       apiFetch('table=csm_invitados'),
+      apiFetch('table=proximity_creators'),
     ]);
     allData = [
       ...(Array.isArray(asistentes) ? asistentes : []),
       ...(Array.isArray(invitados) ? invitados.map(i => ({ ...i, tipo: i.tier || 'invitado', es_invitado: true })) : []),
     ];
+    pcData = Array.isArray(pc) ? pc : [];
     renderKPIs();
     renderTable();
+    renderPC();
     document.getElementById('lastUpdate').textContent = 'Actualizado ' + new Date().toLocaleTimeString('es-MX');
   } catch(e) {
     document.getElementById('lastUpdate').textContent = 'Error al cargar';
@@ -254,18 +333,23 @@ function fmt(n) { return '$' + Number(n || 0).toLocaleString('es-MX'); }
 
 function renderKPIs() {
   const pagados = allData.filter(a => !a.es_invitado && a.pagado);
-  const total = pagados.reduce((s, a) => s + (a.monto || 0), 0);
+  const inv     = allData.filter(a => a.es_invitado).length;
+  const total   = pagados.reduce((s, a) => s + (a.monto || 0), 0);
   const checkin = allData.filter(a => a.check_in).length;
-  const full = pagados.filter(a => a.tipo === 'full').length;
-  const inv = allData.filter(a => a.es_invitado).length;
+  const totalAsistentes = pagados.length + inv;
 
-  document.getElementById('kTotal').textContent = fmt(total);
-  document.getElementById('kBoletos').textContent = pagados.length;
-  document.getElementById('kBoletosCapacity').textContent = `de ${pagados.length + inv} confirmados`;
-  document.getElementById('kCheckin').textContent = checkin;
-  document.getElementById('kCheckinPct').textContent = allData.length ? Math.round(checkin / allData.length * 100) + '% del total' : '0%';
-  document.getElementById('kFull').textContent = full;
-  document.getElementById('kInvitados').textContent = inv;
+  // Top summary
+  document.getElementById('kAsistentesTotales').textContent = totalAsistentes;
+  document.getElementById('kAsistentesTotalesSub').textContent = `${pagados.length} pagados + ${inv} invitados`;
+  document.getElementById('kConfirmados').textContent = checkin;
+  document.getElementById('kConfirmadosPct').textContent = totalAsistentes
+    ? Math.round(checkin / totalAsistentes * 100) + '% del total'
+    : 'check-in realizados';
+
+  // Boletos vendidos
+  document.getElementById('kBoletosTotal').textContent = pagados.length + ' boletos';
+  document.getElementById('kBoletosNum').textContent = pagados.length;
+  document.getElementById('kIngresosTotal').textContent = fmt(total);
 
   // Tier bars
   const tiers = PRICES;
@@ -313,18 +397,51 @@ function renderTable() {
   tbody.innerHTML = slice.map((a, i) => `
     <tr>
       <td style="color:var(--muted)">${start + i + 1}</td>
-      <td><strong>${esc(a.nombre || '—')}</strong>${a.es_invitado ? ' <span style="font-size:.65rem;color:var(--muted)">(invitado)</span>' : ''}</td>
-      <td style="color:var(--text)">${esc(a.email || '—')}</td>
-      <td style="color:var(--text)">${esc(a.telefono || '—')}</td>
+      <td><strong>${esc(a.nombre || '—')}</strong>${a.es_invitado ? '<br><span style="font-size:.65rem;color:var(--muted)">invitado</span>' : ''}</td>
+      <td style="color:var(--text);font-size:.78rem">${esc(a.email || '—')}</td>
       <td><span class="tier-chip ${a.tipo}">${a.tipo || '—'}</span></td>
       <td style="font-weight:600">${a.es_invitado ? '<span style="color:var(--muted)">Gratis</span>' : fmt(a.monto)}</td>
-      <td><span class="check-chip ${a.check_in ? 'si' : 'no'}">${a.check_in ? '✓ Sí' : 'No'}</span></td>
-      <td style="color:var(--muted);font-size:.78rem">${a.fecha_registro ? new Date(a.fecha_registro).toLocaleDateString('es-MX') : '—'}</td>
+      <td><span class="check-chip ${a.check_in ? 'si' : 'no'}">${a.check_in ? '✓' : '—'}</span></td>
     </tr>
   `).join('');
 }
 
 function pgChange(dir) { page += dir; renderTable(); }
+
+// Proximity Creators table
+function renderPC() {
+  const q = document.getElementById('pcSearch').value.toLowerCase();
+  let rows = pcData.filter(m =>
+    !q || (`${m.nombre || ''} ${m.email || ''}`).toLowerCase().includes(q)
+  );
+  document.getElementById('pcCount').textContent = rows.length + ' miembros';
+  const total = rows.length;
+  const start = pcPage * PER_PAGE;
+  const slice = rows.slice(start, start + PER_PAGE);
+  document.getElementById('pcPgInfo').textContent = total
+    ? `${start + 1}–${Math.min(start + PER_PAGE, total)} de ${total}`
+    : '0 resultados';
+  document.getElementById('pcPrev').disabled = pcPage === 0;
+  document.getElementById('pcNext').disabled = start + PER_PAGE >= total;
+
+  const tbody = document.getElementById('tbodyPC');
+  if (slice.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="5" class="empty-row">Sin miembros</td></tr>';
+    return;
+  }
+  tbody.innerHTML = slice.map((m, i) => `
+    <tr>
+      <td style="color:var(--muted)">${start + i + 1}</td>
+      <td><strong>${esc(m.nombre || '—')}</strong></td>
+      <td style="color:var(--text);font-size:.78rem">${esc(m.email || '—')}</td>
+      <td style="color:var(--text);font-size:.78rem">${esc(m.telefono || m.phone || '—')}</td>
+      <td><span class="tier-chip ${(m.nivel||m.tier||'').toLowerCase()}">${esc(m.nivel || m.tier || '—')}</span></td>
+    </tr>
+  `).join('');
+}
+
+function pcChange(dir) { pcPage += dir; renderPC(); }
+
 function esc(s) { return String(s).replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
 // Check if already authed

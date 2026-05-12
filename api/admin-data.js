@@ -4,7 +4,7 @@ const ADMIN_KEY = process.env.ADMIN_KEY || 'CSM2026';
 
 const ALLOWED_TABLES = [
   'csm_asistentes', 'csm_invitados', 'csm_staff',
-  'csm_cronograma', 'csm_codigos_descuento',
+  'csm_cronograma', 'csm_codigos_descuento', 'proximity_creators',
 ];
 
 module.exports = async function handler(req, res) {
@@ -27,6 +27,7 @@ module.exports = async function handler(req, res) {
     csm_staff:      'select=*&order=horario_entrada',
     csm_cronograma: 'select=*&order=hora',
     csm_codigos_descuento: 'select=*&order=created_at.desc',
+    proximity_creators: 'select=*&order=nombre',
   };
 
   const qs = req.query.qs || queryMap[table] || 'select=*';
