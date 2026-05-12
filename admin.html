@@ -109,6 +109,11 @@
     .tipo-chip.invitado { background:rgba(255,255,255,.07); color:var(--muted); }
     .tipo-chip.gratis { background:rgba(59,130,246,.1); color:#60a5fa; }
     .tipo-chip.comunidad { background:rgba(245,197,24,.1); color:var(--gold); }
+    .code-gen-btn { background:rgba(0,204,82,.08); border:1px solid rgba(0,204,82,.2); border-radius:5px; padding:4px 10px; color:var(--matrix); font-size:.72rem; font-weight:600; cursor:pointer; transition:background .2s; }
+    .code-gen-btn:hover { background:rgba(0,204,82,.15); }
+    .code-gen-btn:disabled { opacity:.5; cursor:not-allowed; }
+    .code-copy-btn { background:rgba(245,197,24,.08); border:1px solid rgba(245,197,24,.2); border-radius:5px; padding:3px 8px; color:var(--gold); font-size:.68rem; cursor:pointer; transition:background .2s; }
+    .code-copy-btn:hover { background:rgba(245,197,24,.15); }
 
     /* Two-column tables layout */
     .tables-grid { display:grid; grid-template-columns:1fr 1fr; gap:20px; align-items:start; }
@@ -276,8 +281,8 @@
       </div>
       <div class="table-wrap" style="margin-bottom:28px">
         <table>
-          <thead><tr><th>#</th><th>Nombre</th><th>Correo</th><th>Tipo</th><th>Asistencia</th></tr></thead>
-          <tbody id="tbodyLeadsVip"><tr><td colspan="5" class="empty-row">Cargando…</td></tr></tbody>
+          <thead><tr><th>#</th><th>Nombre</th><th>Correo</th><th>Tipo</th><th>Asistencia</th><th>Código VIP</th></tr></thead>
+          <tbody id="tbodyLeadsVip"><tr><td colspan="6" class="empty-row">Cargando…</td></tr></tbody>
         </table>
       </div>
 
@@ -319,6 +324,7 @@ let pcData  = [];
 let filterTier = 'todos';
 let page = 0, pcPage = 0;
 const PER_PAGE = 20;
+const pcCodes = {};
 
 function checkPw() {
   const v = document.getElementById('pwInput').value.trim();
@@ -536,14 +542,17 @@ function getTipo(a) {
 }
 
 function renderAsistentesSection(rows, tbodyId, countId) {
+  const isVip = tbodyId === 'tbodyLeadsVip';
+  const cols = isVip ? 6 : 5;
   document.getElementById(countId).textContent = rows.length;
   const tbody = document.getElementById(tbodyId);
-  if (!rows.length) { tbody.innerHTML = '<tr><td colspan="5" class="empty-row">Sin registros</td></tr>'; return; }
+  if (!rows.length) { tbody.innerHTML = `<tr><td colspan="${cols}" class="empty-row">Sin registros</td></tr>`; return; }
   tbody.innerHTML = rows.map((a, i) => {
     const tipo = getTipo(a);
     const status = a.asistencia_status || 'por_confirmar';
     const selClass = status === 'confirmo' ? 'confirmo' : status === 'no_va' ? 'no-va' : 'por-confirmar';
-    const selHtml = a.es_invitado
+    // PC members and paid members both get the dropdown
+    const selHtml = (a.es_invitado && !a.es_pc)
       ? '<span style="color:var(--muted);font-size:.75rem">—</span>'
       : `<select class="asistencia-sel ${selClass}" onchange="updateAsistencia('${esc(String(a.id))}',this)">
            <option value="por_confirmar"${status==='por_confirmar'?' selected':''}>Por confirmar</option>
@@ -551,12 +560,21 @@ function renderAsistentesSection(rows, tbodyId, countId) {
            <option value="no_va"${status==='no_va'?' selected':''}>No va asistir</option>
          </select>`;
     const pcBadge = a.es_pc ? ' <span style="font-size:.6rem;background:rgba(245,197,24,.15);color:var(--gold);border-radius:3px;padding:1px 5px;vertical-align:middle">PC</span>' : '';
+    const codeCell = isVip
+      ? a.es_pc
+        ? `<td>${pcCodes[a.id]
+            ? `<code style="font-size:.74rem;color:var(--gold);letter-spacing:.04em">${pcCodes[a.id]}</code> <button onclick="copyPCCode('${pcCodes[a.id]}',this)" class="code-copy-btn">Copiar</button>`
+            : `<button onclick="generatePCCode('${esc(String(a.id))}','${esc(a.nombre||'')}',this)" class="code-gen-btn">Generar código</button>`
+          }</td>`
+        : '<td style="color:var(--muted)">—</td>'
+      : '';
     return `<tr>
       <td style="color:var(--muted)">${i+1}</td>
       <td><strong>${esc(a.nombre||'—')}</strong>${pcBadge}</td>
       <td style="color:var(--text);font-size:.78rem">${esc(a.email||'—')}</td>
       <td><span class="tipo-chip ${tipo}">${tipo}</span></td>
       <td>${selHtml}</td>
+      ${codeCell}
     </tr>`;
   }).join('');
 }
@@ -590,21 +608,62 @@ async function updateAsistencia(id, sel) {
   const value = sel.value;
   sel.className = 'asistencia-sel ' + (value === 'confirmo' ? 'confirmo' : value === 'no_va' ? 'no-va' : 'por-confirmar');
   const key = sessionStorage.getItem('csm_admin_key');
-  const prevValue = allData.find(a => String(a.id) === String(id))?.asistencia_status || 'por_confirmar';
+  const rec = allData.find(a => String(a.id) === String(id));
+  const prevValue = rec?.asistencia_status || 'por_confirmar';
+
+  // PC members → Clase Viral miembros table (strip 'pc-' prefix for real UUID)
+  const isPc = String(id).startsWith('pc-');
+  const realId = isPc ? id.replace('pc-', '') : id;
+  const table = isPc ? 'miembros' : 'csm_asistentes';
+
   try {
-    const r = await fetch('/api/admin-data?table=csm_asistentes', {
+    const r = await fetch(`/api/admin-data?table=${table}`, {
       method: 'PATCH',
       headers: { 'x-admin-key': key, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ id, field: 'asistencia_status', value }),
+      body: JSON.stringify({ id: realId, field: 'asistencia_status', value }),
     });
     const d = await r.json();
     if (!d.ok) throw new Error('patch failed');
-    const rec = allData.find(a => String(a.id) === String(id));
     if (rec) rec.asistencia_status = value;
   } catch(e) {
     sel.value = prevValue;
     sel.className = 'asistencia-sel ' + (prevValue === 'confirmo' ? 'confirmo' : prevValue === 'no_va' ? 'no-va' : 'por-confirmar');
   }
+}
+
+
+async function generatePCCode(pcId, nombre, btn) {
+  btn.disabled = true;
+  btn.textContent = 'Generando…';
+  const rand = Math.random().toString(36).substr(2, 5).toUpperCase();
+  const initials = (nombre || '').replace(/\s+/g,' ').split(' ').slice(0,2).map(w => w[0]||'').join('').toUpperCase();
+  const code = 'PC' + (initials || 'VIP') + rand;
+  const key = sessionStorage.getItem('csm_admin_key');
+  try {
+    const r = await fetch('/api/admin-data?table=csm_codigos_descuento', {
+      method: 'POST',
+      headers: { 'x-admin-key': key, 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        codigo: code, tipo: 'gratis', tier: 'vip',
+        usos_max: 1, usos: 0, activo: true,
+        notas: `Acceso PC: ${nombre}`,
+      }),
+    });
+    if (!r.ok) throw new Error();
+    pcCodes[pcId] = code;
+    const cell = btn.parentElement;
+    cell.innerHTML = `<code style="font-size:.74rem;color:var(--gold);letter-spacing:.04em">${code}</code> <button onclick="copyPCCode('${code}',this)" class="code-copy-btn">Copiar</button>`;
+  } catch(e) {
+    btn.disabled = false;
+    btn.textContent = 'Error — reintentar';
+  }
+}
+
+function copyPCCode(code, btn) {
+  navigator.clipboard.writeText(code).then(() => {
+    btn.textContent = '✓ Copiado';
+    setTimeout(() => btn.textContent = 'Copiar', 2000);
+  });
 }
 
 // Check if already authed

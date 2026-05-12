@@ -9,12 +9,11 @@ const ALLOWED_TABLES = [
   'csm_cronograma', 'csm_codigos_descuento', 'proximity_creators',
 ];
 
-// Tables that live in the Clase Viral Supabase project
 const CV_TABLES = ['miembros'];
 
 module.exports = async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS, PATCH');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PATCH, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'x-admin-key, Authorization, Content-Type');
   if (req.method === 'OPTIONS') return res.status(200).end();
 
@@ -23,17 +22,33 @@ module.exports = async function handler(req, res) {
 
   const table = req.query.table;
 
-  // Route Clase Viral tables to their own Supabase project
+  // ── Clase Viral tables ──────────────────────────────────────────────────────
   if (CV_TABLES.includes(table)) {
+    // PATCH: update asistencia_status on a miembro
+    if (req.method === 'PATCH') {
+      const { id, field, value } = req.body || {};
+      if (!id || !field) { res.status(400).json({ error: 'Parámetros inválidos' }); return; }
+      const r = await fetch(`${CV_URL}/rest/v1/${table}?id=eq.${id}`, {
+        method: 'PATCH',
+        headers: {
+          apikey: CV_KEY, Authorization: `Bearer ${CV_KEY}`,
+          'Content-Type': 'application/json', Prefer: 'return=minimal',
+        },
+        body: JSON.stringify({ [field]: value }),
+      });
+      res.status(r.ok ? 200 : 500).json({ ok: r.ok });
+      return;
+    }
+    // GET
     const qs = req.query.qs || 'select=*&order=fecha_ingreso.desc';
     const r = await fetch(`${CV_URL}/rest/v1/${table}?${qs}`, {
       headers: { apikey: CV_KEY, Authorization: `Bearer ${CV_KEY}` },
     });
-    const data = await r.json();
-    res.json(data);
+    res.json(await r.json());
     return;
   }
 
+  // ── CSM tables ──────────────────────────────────────────────────────────────
   if (!ALLOWED_TABLES.includes(table)) {
     res.status(400).json({ error: 'Tabla no permitida' }); return;
   }
@@ -47,9 +62,22 @@ module.exports = async function handler(req, res) {
     proximity_creators: 'select=*&order=nombre',
   };
 
-  const qs = req.query.qs || queryMap[table] || 'select=*';
+  // POST: insert a new discount code
+  if (req.method === 'POST' && table === 'csm_codigos_descuento') {
+    const r = await fetch(`${SB_URL}/rest/v1/csm_codigos_descuento`, {
+      method: 'POST',
+      headers: {
+        apikey: SB_KEY, Authorization: `Bearer ${SB_KEY}`,
+        'Content-Type': 'application/json', Prefer: 'return=representation',
+      },
+      body: JSON.stringify(req.body),
+    });
+    const data = await r.json();
+    res.status(r.ok ? 201 : 500).json(data);
+    return;
+  }
 
-  // PATCH: update a single field on a row
+  // PATCH: update a field on a row
   if (req.method === 'PATCH') {
     const { id, field, value } = req.body || {};
     const PATCHABLE = ['asistencia_status', 'check_in', 'notas'];
@@ -68,9 +96,10 @@ module.exports = async function handler(req, res) {
     return;
   }
 
+  // GET
+  const qs = req.query.qs || queryMap[table] || 'select=*';
   const r = await fetch(`${SB_URL}/rest/v1/${table}?${qs}`, {
     headers: { apikey: SB_KEY, Authorization: `Bearer ${SB_KEY}` },
   });
-  const data = await r.json();
-  res.json(data);
+  res.json(await r.json());
 };
