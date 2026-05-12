@@ -108,6 +108,7 @@
     .tipo-chip.descuento { background:rgba(245,197,24,.1); color:var(--gold); }
     .tipo-chip.invitado { background:rgba(255,255,255,.07); color:var(--muted); }
     .tipo-chip.gratis { background:rgba(59,130,246,.1); color:#60a5fa; }
+    .tipo-chip.comunidad { background:rgba(245,197,24,.1); color:var(--gold); }
 
     /* Two-column tables layout */
     .tables-grid { display:grid; grid-template-columns:1fr 1fr; gap:20px; align-items:start; }
@@ -526,6 +527,7 @@ function switchTab(tab, btn) {
 }
 
 function getTipo(a) {
+  if (a.es_pc) return 'comunidad';
   if (a.es_invitado) return 'invitado';
   if (!a.monto || a.monto === 0) return 'gratis';
   const tierPrice = PRICES[a.tipo];
