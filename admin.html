@@ -369,11 +369,26 @@ async function loadData() {
       apiFetch('table=csm_invitados'),
       apiFetch('table=miembros'),
     ]);
+    pcData = Array.isArray(pc) ? pc : [];
+
+    // Merge PC members as VIP invitados in allData
+    const pcAsVip = pcData.map(m => ({
+      id: 'pc-' + m.id,
+      nombre: m.nombre,
+      email: m.email,
+      telefono: m.phone,
+      tipo: 'vip',
+      monto: m.monto_pagado || 0,
+      es_invitado: true,
+      es_pc: true,
+      asistencia_status: m.asistencia_status || null,
+    }));
     allData = [
       ...(Array.isArray(asistentes) ? asistentes : []),
       ...(Array.isArray(invitados) ? invitados.map(i => ({ ...i, tipo: i.tier || 'invitado', es_invitado: true })) : []),
+      ...pcAsVip,
     ];
-    pcData = Array.isArray(pc) ? pc : [];
+
     renderKPIs();
     renderTable();
     renderPC();
@@ -533,9 +548,10 @@ function renderAsistentesSection(rows, tbodyId, countId) {
            <option value="confirmo"${status==='confirmo'?' selected':''}>Confirmó</option>
            <option value="no_va"${status==='no_va'?' selected':''}>No va asistir</option>
          </select>`;
+    const pcBadge = a.es_pc ? ' <span style="font-size:.6rem;background:rgba(245,197,24,.15);color:var(--gold);border-radius:3px;padding:1px 5px;vertical-align:middle">PC</span>' : '';
     return `<tr>
       <td style="color:var(--muted)">${i+1}</td>
-      <td><strong>${esc(a.nombre||'—')}</strong></td>
+      <td><strong>${esc(a.nombre||'—')}</strong>${pcBadge}</td>
       <td style="color:var(--text);font-size:.78rem">${esc(a.email||'—')}</td>
       <td><span class="tipo-chip ${tipo}">${tipo}</span></td>
       <td>${selHtml}</td>
