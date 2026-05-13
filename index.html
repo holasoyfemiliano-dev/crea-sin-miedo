@@ -97,6 +97,8 @@
     #hero .container { position:relative; z-index:1; }
     .sec-eyebrow { display:flex; align-items:center; gap:10px; font-size:.62rem; letter-spacing:.26em; text-transform:uppercase; color:var(--gold); margin-bottom:14px; }
     .sec-eyebrow::before { content:''; display:inline-block; width:28px; height:1px; background:var(--gold); flex-shrink:0; }
+    .sec-eyebrow.center { display:block; text-align:center; }
+    .sec-eyebrow.center::before { display:none; }
     .sec-title { font-family:'Oswald','Impact',sans-serif; font-size:clamp(2.6rem,5vw,4.8rem); line-height:1.02; margin-bottom:0; letter-spacing:.02em; }
     .divider { width:100%; height:1px; background:linear-gradient(90deg, rgba(229,39,43,.6) 0%, rgba(255,255,255,.08) 25%, transparent 65%); margin:22px 0 52px; }
     .divider-center { background:linear-gradient(90deg, transparent 0%, rgba(229,39,43,.4) 30%, rgba(229,39,43,.4) 70%, transparent 100%); margin:20px auto 48px; }
@@ -435,7 +437,7 @@
 <section class="section" id="boletos" style="background:rgba(255,255,255,.012);position:relative;overflow:hidden">
   <canvas data-wave="right" style="position:absolute;top:0;right:0;width:260px;height:100%;pointer-events:none;z-index:0;opacity:.4"></canvas>
   <div class="container">
-    <span class="sec-eyebrow" style="text-align:center;display:block">Elige tu experiencia</span>
+    <span class="sec-eyebrow center">Elige tu experiencia</span>
     <h2 class="sec-title" style="text-align:center">ASEGURA TU<br>LUGAR HOY</h2>
     <div class="divider divider-center"></div>
     <div class="pricing-grid">
@@ -512,7 +514,7 @@
 <!-- FAQ -->
 <section class="section">
   <div class="container" style="max-width:720px">
-    <span class="sec-eyebrow" style="text-align:center;display:block">Preguntas frecuentes</span>
+    <span class="sec-eyebrow center">Preguntas frecuentes</span>
     <h2 class="sec-title" style="text-align:center">RESOLVEMOS TUS<br>DUDAS</h2>
     <div class="divider divider-center"></div>
     <div class="faq-list">
@@ -531,7 +533,7 @@
   <canvas data-wave="right" style="position:absolute;top:0;right:0;width:260px;height:100%;pointer-events:none;z-index:0;opacity:.45"></canvas>
   <div class="container" style="position:relative;z-index:1">
     <div class="cta-card">
-      <span class="sec-eyebrow" style="display:block;text-align:center;margin-bottom:16px">El momento es ahora</span>
+      <span class="sec-eyebrow center" style="margin-bottom:16px">El momento es ahora</span>
       <h2 style="font-family:'Antonio',sans-serif;font-size:clamp(2.4rem,5vw,3.8rem);text-align:center;margin-bottom:16px;line-height:1">
         TU MARCA PERSONAL<br><span style="color:var(--red)">EMPIEZA EL 1 DE AGOSTO</span>
       </h2>
