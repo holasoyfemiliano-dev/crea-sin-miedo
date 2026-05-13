@@ -486,12 +486,12 @@
 
       <!-- FULL EXPERIENCE -->
       <div class="price-card elite fadein">
-        <div class="price-badge gold">Solo 10 cupos</div>
+        <div class="price-badge gold">Acceso exclusivo</div>
         <div class="price-tier">Tier 3</div>
         <div class="price-name">Full Experience</div>
         <div class="price-amount">$14,997</div>
         <div class="price-currency">MXN · pago único</div>
-        <div class="price-cupos" id="fullCuposText">Quedan pocos lugares disponibles</div>
+        <div class="price-cupos" id="fullCuposText">Cupo muy limitado — acceso exclusivo</div>
         <ul class="price-features">
           <li>Todo lo del boleto VIP</li>
           <li>Grabaciones completas del evento Crea sin Miedo</li>
@@ -562,7 +562,7 @@
 <script>
 
   // Live cupos
-  const TOTAL_CUPOS = 200;
+  const TOTAL_CUPOS = 80;
   const FULL_CUPOS  = 10;
 
   async function loadCupos() {
@@ -593,11 +593,11 @@
         if (disponibles <= 0) {
           noteEl.textContent = '¡Cupo agotado! Únete a la lista de espera';
           noteEl.style.color = 'var(--red)';
-        } else if (disponibles <= 30) {
-          noteEl.textContent = `¡Solo quedan ${disponibles} lugares disponibles!`;
+        } else if (disponibles <= 10) {
+          noteEl.textContent = '¡Últimos lugares disponibles!';
           noteEl.style.color = 'var(--gold)';
         } else {
-          noteEl.textContent = `${disponibles} lugares disponibles · los precios suben conforme avanza la fecha`;
+          noteEl.textContent = 'Cupo limitado · los precios suben conforme avanza la fecha';
         }
       }
 
@@ -611,8 +611,11 @@
         if (fullRestantes <= 0) {
           fullText.textContent = 'Cupo agotado';
           fullText.style.color = 'var(--red)';
+        } else if (fullRestantes <= 3) {
+          fullText.textContent = '¡Últimos lugares!';
+          fullText.style.color = 'var(--gold)';
         } else {
-          fullText.textContent = `Quedan ${fullRestantes} de ${FULL_CUPOS} lugares`;
+          fullText.textContent = 'Cupo muy limitado — acceso exclusivo';
         }
       }
     } catch(e) {
