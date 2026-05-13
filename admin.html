@@ -518,15 +518,18 @@ async function loadData() {
 function fmt(n) { return '$' + Number(n || 0).toLocaleString('es-MX'); }
 
 function renderKPIs() {
-  const pagados = allData.filter(a => !a.es_invitado && a.pagado);
-  const inv     = allData.filter(a => a.es_invitado).length;
-  const total   = pagados.reduce((s, a) => s + (a.monto || 0), 0);
-  const checkin = allData.filter(a => a.check_in).length;
-  const totalAsistentes = pagados.length + inv;
+  const pagados   = allData.filter(a => !a.es_invitado && a.pagado);
+  const comunidad = allData.filter(a => a.es_pc).length;
+  const inv       = allData.filter(a => a.es_invitado && !a.es_pc).length;
+  const total     = pagados.reduce((s, a) => s + (a.monto || 0), 0);
+  const checkin   = allData.filter(a => a.check_in).length;
+  const totalAsistentes = pagados.length + comunidad + inv;
 
   // Top summary
   document.getElementById('kAsistentesTotales').textContent = totalAsistentes;
-  document.getElementById('kAsistentesTotalesSub').textContent = `${pagados.length} pagados + ${inv} invitados`;
+  const subParts = [`${pagados.length} pagados`, `${comunidad} comunidad`];
+  if (inv > 0) subParts.push(`${inv} invitado${inv > 1 ? 's' : ''}`);
+  document.getElementById('kAsistentesTotalesSub').textContent = subParts.join(' + ');
   document.getElementById('kConfirmados').textContent = checkin;
   document.getElementById('kConfirmadosPct').textContent = totalAsistentes
     ? Math.round(checkin / totalAsistentes * 100) + '% del total'
@@ -583,7 +586,7 @@ function renderTable() {
   tbody.innerHTML = slice.map((a, i) => `
     <tr>
       <td style="color:var(--muted)">${start + i + 1}</td>
-      <td><strong>${esc(a.nombre || '—')}</strong>${a.es_invitado ? '<br><span style="font-size:.65rem;color:var(--muted)">invitado</span>' : ''}</td>
+      <td><strong>${esc(a.nombre || '—')}</strong>${a.es_pc ? '<br><span style="font-size:.65rem;color:var(--gold)">comunidad</span>' : a.es_invitado ? '<br><span style="font-size:.65rem;color:var(--muted)">invitado</span>' : ''}</td>
       <td style="color:var(--text);font-size:.78rem">${esc(a.email || '—')}</td>
       <td><span class="tier-chip ${a.tipo}">${a.tipo || '—'}</span></td>
       <td style="font-weight:600">${a.es_invitado ? '<span style="color:var(--muted)">Gratis</span>' : fmt(a.monto)}</td>
