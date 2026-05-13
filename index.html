@@ -579,7 +579,7 @@
       const vip     = pagados.filter(a => a.tipo === 'vip').length;
       const full    = pagados.filter(a => a.tipo === 'full').length;
       const total   = pagados.length;
-      const pct     = Math.round((total / TOTAL_CUPOS) * 100);
+      const pct     = Math.max(30, Math.round((total / TOTAL_CUPOS) * 100));
       const disponibles = TOTAL_CUPOS - total;
       const fullRestantes = Math.max(0, FULL_CUPOS - full);
 
@@ -618,7 +618,11 @@
     } catch(e) {
       console.warn('Cupos:', e.message);
       const pctEl = document.getElementById('cupoPct');
-      if (pctEl) pctEl.textContent = '—';
+      if (pctEl) pctEl.textContent = '30%';
+      const fillElE = document.getElementById('cupoFill');
+      if (fillElE) fillElE.style.width = '30%';
+      const statElE = document.getElementById('statPct');
+      if (statElE) statElE.textContent = '30%';
       const noteEl = document.getElementById('cupoNote');
       if (noteEl) noteEl.textContent = 'El cupo se agota — los precios suben conforme avanza la fecha';
     }
