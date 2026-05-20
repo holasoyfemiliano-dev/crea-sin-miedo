@@ -9,8 +9,8 @@ async function sendTicket({ nombre, email, telefono, tier, paymentId }) {
 
   const pid      = String(paymentId);
   const tierName = TIER_NAMES[tier] || 'General';
-  const qrData   = `CSM-${pid}`;
-  const qrUrl    = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(qrData)}`;
+  const qrData   = `${BASE}/gracias?status=approved&tier=${tier}&payment_id=${encodeURIComponent(pid)}`;
+  const qrUrl    = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(qrData)}&bgcolor=ffffff&color=000000&margin=8`;
   const boletoUrl = `${BASE}/gracias?status=approved&tier=${tier}&payment_id=${encodeURIComponent(pid)}`;
 
   const parts     = (nombre || '').trim().split(/\s+/);
@@ -67,81 +67,150 @@ async function sendTicket({ nombre, email, telefono, tier, paymentId }) {
 }
 
 function buildEmailHTML({ nombre, tierName, pid, qrUrl, boletoUrl }) {
+  const shortId = pid.replace('FREE-','').replace('TEST-','').slice(-8).toUpperCase();
   return `<!DOCTYPE html>
 <html lang="es">
 <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Tu boleto — Crea sin Miedo</title></head>
-<body style="margin:0;padding:0;background:#06090f;font-family:Arial,sans-serif;">
-<div style="max-width:600px;margin:0 auto;padding:40px 24px;">
+<body style="margin:0;padding:0;background:#0d0d0d;font-family:'Helvetica Neue',Arial,sans-serif;">
 
-  <div style="text-align:center;margin-bottom:32px;">
-    <div style="font-size:2.5rem;font-weight:900;letter-spacing:2px;color:#ffffff;">CREA <span style="color:#e5272b">SIN</span> MIEDO</div>
-    <div style="font-size:.85rem;color:#6a7590;margin-top:6px;">Taller presencial de marca personal</div>
-  </div>
+<!-- Wrapper -->
+<table width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#0d0d0d;">
+<tr><td align="center" style="padding:40px 16px;">
+<table width="600" cellpadding="0" cellspacing="0" border="0" style="max-width:600px;width:100%;">
 
-  <div style="background:rgba(34,197,94,.08);border:1.5px solid rgba(34,197,94,.3);border-radius:16px;padding:24px;text-align:center;margin-bottom:24px;">
-    <div style="font-size:2rem;margin-bottom:8px;">✓</div>
-    <div style="font-size:1.3rem;font-weight:800;color:#ffffff;margin-bottom:4px;">¡Tu lugar está confirmado, ${nombre}!</div>
-    <div style="font-size:.85rem;color:#c8cfe0;">Boleto: <strong style="color:#e5272b">${tierName}</strong></div>
-  </div>
+  <!-- HEADER LOGO -->
+  <tr><td align="center" style="padding-bottom:32px;">
+    <div style="font-size:28px;font-weight:900;letter-spacing:6px;color:#ffffff;text-transform:uppercase;">CREA <span style="color:#e5272b">SIN</span> MIEDO</div>
+    <div style="font-size:11px;letter-spacing:3px;text-transform:uppercase;color:#555;margin-top:6px;">Taller presencial · Guadalajara 2026</div>
+  </td></tr>
 
-  <div style="background:rgba(255,255,255,.04);border:1.5px solid rgba(229,39,43,.3);border-radius:16px;padding:28px;margin-bottom:24px;">
-    <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:16px;">
-      <div>
-        <div style="font-size:.7rem;letter-spacing:.15em;text-transform:uppercase;color:#6a7590;margin-bottom:4px;">Evento</div>
-        <div style="font-size:1.1rem;font-weight:800;color:#ffffff;">Crea sin Miedo</div>
-        <div style="margin-top:12px;">
-          <div style="font-size:.7rem;letter-spacing:.12em;text-transform:uppercase;color:#6a7590;margin-bottom:2px;">Fecha</div>
-          <div style="font-size:.9rem;color:#ffffff;font-weight:600;">Sábado 1 de Agosto, 2026</div>
-        </div>
-        <div style="margin-top:10px;">
-          <div style="font-size:.7rem;letter-spacing:.12em;text-transform:uppercase;color:#6a7590;margin-bottom:2px;">Lugar</div>
-          <div style="font-size:.9rem;color:#ffffff;font-weight:600;">Guadalajara, Jalisco</div>
-        </div>
-        <div style="margin-top:10px;">
-          <div style="font-size:.7rem;letter-spacing:.12em;text-transform:uppercase;color:#6a7590;margin-bottom:2px;">Tipo de boleto</div>
-          <div style="display:inline-block;background:#e5272b;color:#fff;border-radius:20px;padding:3px 14px;font-size:.75rem;font-weight:800;text-transform:uppercase;">${tierName}</div>
-        </div>
-        <div style="margin-top:10px;">
-          <div style="font-size:.7rem;letter-spacing:.12em;text-transform:uppercase;color:#6a7590;margin-bottom:2px;">ID de entrada</div>
-          <div style="font-size:.78rem;color:#6a7590;font-family:monospace;">${pid}</div>
-        </div>
-      </div>
-      <div style="text-align:center;">
-        <img src="${qrUrl}" alt="QR de entrada" width="130" height="130" style="border-radius:10px;background:#fff;padding:6px;display:block;">
-        <div style="font-size:.62rem;color:#6a7590;margin-top:6px;font-family:monospace;">CSM-${pid}</div>
-      </div>
+  <!-- CONFIRMED BANNER -->
+  <tr><td style="padding-bottom:20px;">
+    <table width="100%" cellpadding="0" cellspacing="0" border="0">
+    <tr><td style="background:#0f2a18;border:1px solid #1a5c2e;border-radius:12px;padding:20px 24px;text-align:center;">
+      <div style="font-size:22px;color:#22c55e;font-weight:900;margin-bottom:4px;">✓ &nbsp;¡Tu lugar está confirmado!</div>
+      <div style="font-size:14px;color:#aaa;">Hola <strong style="color:#fff">${nombre}</strong> — aquí está tu entrada para el evento</div>
+    </td></tr>
+    </table>
+  </td></tr>
+
+  <!-- TICKET CARD -->
+  <tr><td style="padding-bottom:24px;">
+    <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#141414;border:1px solid #2a2a2a;border-radius:16px;overflow:hidden;">
+
+      <!-- Ticket top red stripe -->
+      <tr><td style="background:linear-gradient(90deg,#e5272b,#c01e21);height:5px;font-size:0;">&nbsp;</td></tr>
+
+      <!-- Ticket header -->
+      <tr><td style="padding:24px 28px 0;">
+        <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td>
+            <div style="font-size:11px;letter-spacing:3px;text-transform:uppercase;color:#555;margin-bottom:4px;">Evento</div>
+            <div style="font-size:22px;font-weight:900;letter-spacing:2px;color:#fff;text-transform:uppercase;">Crea Sin Miedo</div>
+          </td>
+          <td align="right">
+            <div style="display:inline-block;background:#e5272b;color:#fff;font-size:11px;font-weight:800;letter-spacing:2px;text-transform:uppercase;padding:6px 16px;border-radius:20px;">${tierName}</div>
+          </td>
+        </tr>
+        </table>
+      </td></tr>
+
+      <!-- Divider dashed -->
+      <tr><td style="padding:16px 28px;">
+        <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr><td style="border-top:1px dashed #2a2a2a;font-size:0;">&nbsp;</td></tr>
+        </table>
+      </td></tr>
+
+      <!-- Ticket body: info + QR -->
+      <tr><td style="padding:0 28px 24px;">
+        <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr valign="top">
+          <td style="width:60%;">
+            <table cellpadding="0" cellspacing="0" border="0">
+              <tr><td style="padding-bottom:16px;">
+                <div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#555;margin-bottom:4px;">Titular</div>
+                <div style="font-size:16px;font-weight:700;color:#fff;">${nombre}</div>
+              </td></tr>
+              <tr><td style="padding-bottom:16px;">
+                <div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#555;margin-bottom:4px;">Fecha</div>
+                <div style="font-size:14px;font-weight:600;color:#fff;">Sábado 1 de Agosto, 2026</div>
+              </td></tr>
+              <tr><td style="padding-bottom:16px;">
+                <div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#555;margin-bottom:4px;">Lugar</div>
+                <div style="font-size:14px;font-weight:600;color:#fff;">Guadalajara, Jalisco</div>
+                <div style="font-size:12px;color:#666;margin-top:2px;">Dirección exacta próximamente</div>
+              </td></tr>
+              <tr><td>
+                <div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#555;margin-bottom:4px;">Horario</div>
+                <div style="font-size:13px;color:#aaa;">Registro 8:30 AM · Inicio 9:00 AM</div>
+              </td></tr>
+            </table>
+          </td>
+          <td style="width:40%;text-align:center;padding-left:16px;">
+            <div style="background:#fff;border-radius:12px;padding:10px;display:inline-block;">
+              <img src="${qrUrl}" alt="QR de entrada" width="140" height="140" style="display:block;">
+            </div>
+            <div style="font-size:10px;color:#555;margin-top:8px;font-family:monospace;letter-spacing:1px;">#${shortId}</div>
+            <div style="font-size:10px;color:#444;margin-top:2px;">Escanea en la entrada</div>
+          </td>
+        </tr>
+        </table>
+      </td></tr>
+
+      <!-- Ticket footer -->
+      <tr><td style="background:#0f0f0f;border-top:1px dashed #2a2a2a;padding:14px 28px;text-align:center;">
+        <div style="font-size:11px;color:#555;letter-spacing:1px;">Entrada personal e intransferible · No reembolsable</div>
+      </td></tr>
+
+    </table>
+  </td></tr>
+
+  <!-- INFO CARDS -->
+  <tr><td style="padding-bottom:24px;">
+    <table width="100%" cellpadding="0" cellspacing="0" border="0">
+    <tr>
+      <td style="width:50%;padding-right:8px;">
+        <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#141414;border:1px solid #222;border-radius:12px;">
+        <tr><td style="padding:18px 20px;">
+          <div style="font-size:18px;margin-bottom:8px;">📱</div>
+          <div style="font-size:13px;font-weight:700;color:#fff;margin-bottom:4px;">Guarda tu QR</div>
+          <div style="font-size:12px;color:#777;line-height:1.6;">Toma screenshot de este correo. Lo escaneamos en la entrada.</div>
+        </td></tr>
+        </table>
+      </td>
+      <td style="width:50%;padding-left:8px;">
+        <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#141414;border:1px solid #222;border-radius:12px;">
+        <tr><td style="padding:18px 20px;">
+          <div style="font-size:18px;margin-bottom:8px;">🔗</div>
+          <div style="font-size:13px;font-weight:700;color:#fff;margin-bottom:4px;">Boleto digital</div>
+          <div style="font-size:12px;color:#777;line-height:1.6;">También puedes acceder a tu boleto online en cualquier momento.</div>
+        </td></tr>
+        </table>
+      </td>
+    </tr>
+    </table>
+  </td></tr>
+
+  <!-- CTA BUTTON -->
+  <tr><td align="center" style="padding-bottom:36px;">
+    <a href="${boletoUrl}" style="display:inline-block;background:#e5272b;color:#ffffff;text-decoration:none;border-radius:8px;padding:16px 40px;font-size:14px;font-weight:900;letter-spacing:3px;text-transform:uppercase;">VER MI BOLETO →</a>
+  </td></tr>
+
+  <!-- FOOTER -->
+  <tr><td align="center" style="border-top:1px solid #1a1a1a;padding-top:24px;">
+    <div style="font-size:12px;color:#444;line-height:1.8;">
+      <strong style="color:#666;letter-spacing:2px;">CREA SIN MIEDO</strong> · Guadalajara 2026<br>
+      ¿Dudas? <a href="mailto:brandproximity@gmail.com" style="color:#e5272b;text-decoration:none;">brandproximity@gmail.com</a>
     </div>
-    <div style="border-top:1px solid rgba(255,255,255,.07);margin-top:20px;padding-top:14px;text-align:center;font-size:.75rem;color:#6a7590;">
-      Muestra este QR en la entrada el día del evento · No es transferible
-    </div>
-  </div>
+  </td></tr>
 
-  <div style="display:grid;gap:12px;margin-bottom:24px;">
-    <div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:10px;padding:14px;">
-      <div style="font-weight:700;color:#ffffff;margin-bottom:4px;">📱 Guarda tu QR</div>
-      <div style="font-size:.82rem;color:#c8cfe0;">Toma screenshot de este correo. Escanearemos el QR en la entrada el 1 de agosto.</div>
-    </div>
-    <div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:10px;padding:14px;">
-      <div style="font-weight:700;color:#ffffff;margin-bottom:4px;">🕘 Horario</div>
-      <div style="font-size:.82rem;color:#c8cfe0;">Registro: 8:30 AM · Inicio: 9:00 AM · Full day hasta ~7 PM</div>
-    </div>
-    <div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:10px;padding:14px;">
-      <div style="font-weight:700;color:#ffffff;margin-bottom:4px;">📍 Venue</div>
-      <div style="font-size:.82rem;color:#c8cfe0;">Guadalajara, Jalisco · Dirección exacta próximamente por email y WhatsApp.</div>
-    </div>
-  </div>
+</table>
+</td></tr>
+</table>
 
-  <div style="text-align:center;margin-bottom:32px;">
-    <a href="${boletoUrl}" style="display:inline-block;background:#e5272b;color:#fff;text-decoration:none;border-radius:10px;padding:16px 32px;font-weight:900;font-size:.95rem;letter-spacing:.06em;text-transform:uppercase;">Ver mi boleto online →</a>
-  </div>
-
-  <div style="text-align:center;font-size:.72rem;color:#6a7590;line-height:1.7;border-top:1px solid rgba(255,255,255,.06);padding-top:20px;">
-    Crea sin Miedo · Guadalajara 2026<br>
-    ¿Preguntas? Escríbenos a brandproximity@gmail.com
-  </div>
-
-</div>
 </body>
 </html>`;
 }
