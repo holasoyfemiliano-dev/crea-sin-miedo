@@ -475,7 +475,6 @@ async function apiFetch(path) {
 async function loadData() {
   const key = sessionStorage.getItem('csm_admin_key');
   if (!key) return;
-  document.getElementById('lastUpdate').textContent = 'Cargando…';
   try {
     const [asistentes, invitados, pc] = await Promise.all([
       apiFetch('table=csm_asistentes'),
@@ -507,9 +506,8 @@ async function loadData() {
     renderPC();
     renderLeads();
     renderPC2();
-    document.getElementById('lastUpdate').textContent = 'Actualizado ' + new Date().toLocaleTimeString('es-MX');
   } catch(e) {
-    document.getElementById('lastUpdate').textContent = 'Error al cargar';
+    console.error('Error al cargar datos:', e);
   }
 }
 
