@@ -1,5 +1,6 @@
 const { MercadoPagoConfig, Preference } = require('mercadopago');
 const TIERS = require('./_tiers');
+const { sendTicket } = require('./_ticket');
 
 const SB_URL  = process.env.SB_URL;
 const SB_KEY  = process.env.SB_SERVICE;
@@ -76,9 +77,11 @@ module.exports = async function handler(req, res) {
 
   // If free ticket (100% discount), skip MercadoPago and register directly
   if (precio === 0) {
-    await registrarAsistente({ tier, nombre, email, telefono, monto: 0, mp_payment_id: 'FREE-' + Date.now(), codigo_id: codigoValido });
+    const freeId = 'FREE-' + Date.now();
+    await registrarAsistente({ tier, nombre, email, telefono, monto: 0, mp_payment_id: freeId, codigo_id: codigoValido });
     if (codigoValido) await incrementarUsos(codigoValido);
-    res.json({ init_point: `${BASE}/gracias?status=approved&tier=${tier}&payment_id=FREE` });
+    await sendTicket({ nombre, email, telefono, tier, paymentId: freeId }).catch(() => {});
+    res.json({ init_point: `${BASE}/gracias?status=approved&tier=${tier}&payment_id=${encodeURIComponent(freeId)}` });
     return;
   }
 
