@@ -43,7 +43,7 @@ async function sendTicket({ nombre, email, telefono, tier, paymentId }) {
     }),
   });
   const contact = await createRes.json();
-  const contactId = contact?.contact?.id || contact?.id;
+  const contactId = contact?.contact?.id || contact?.id || contact?.meta?.contactId;
   if (!contactId) return;
 
   // 2. Send ticket email via GHL

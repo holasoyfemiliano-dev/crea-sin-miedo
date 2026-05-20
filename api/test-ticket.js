@@ -35,7 +35,7 @@ module.exports = async function handler(req, res) {
     debug.contactStatus = contactRes.status;
     debug.contactData = contactData;
 
-    const contactId = contactData?.contact?.id || contactData?.id;
+    const contactId = contactData?.contact?.id || contactData?.id || contactData?.meta?.contactId;
     if (!contactId) {
       return res.json({ ok: false, debug, error: 'No contactId returned' });
     }
