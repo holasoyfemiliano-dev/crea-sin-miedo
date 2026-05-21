@@ -126,7 +126,8 @@
     .speakers-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:20px; }
     .speaker-card { background:rgba(255,255,255,.03); backdrop-filter:blur(16px); -webkit-backdrop-filter:blur(16px); border:1px solid rgba(255,255,255,.08); border-radius:12px; padding:32px 28px; text-align:center; transition:all .25s; }
     .speaker-card:hover { border-color:rgba(229,39,43,.3); transform:translateY(-4px); box-shadow:0 12px 40px rgba(0,0,0,.4); }
-    .speaker-avatar { width:80px; height:80px; border-radius:50%; background:rgba(229,39,43,.08); border:1.5px solid rgba(229,39,43,.3); margin:0 auto 16px; display:flex; align-items:center; justify-content:center; font-family:'Impact',sans-serif; font-size:1.5rem; color:var(--red); letter-spacing:.04em; box-shadow:0 0 24px rgba(229,39,43,.15); }
+    .speaker-avatar { width:80px; height:80px; border-radius:50%; background:rgba(229,39,43,.08); border:1.5px solid rgba(229,39,43,.3); margin:0 auto 16px; display:flex; align-items:center; justify-content:center; font-family:'Impact',sans-serif; font-size:1.5rem; color:var(--red); letter-spacing:.04em; box-shadow:0 0 24px rgba(229,39,43,.15); overflow:hidden; }
+    .speaker-avatar img { width:100%; height:100%; object-fit:cover; object-position:center top; border-radius:50%; }
     .speaker-name { font-weight:800; color:var(--white); margin-bottom:4px; }
     .speaker-role { font-size:.75rem; color:var(--gold); margin-bottom:10px; letter-spacing:.04em; }
     .speaker-desc { font-size:.9rem; color:var(--text); line-height:1.6; }
@@ -418,7 +419,7 @@
         <p class="speaker-desc">Creador de Proximity Brand. Construye marcas personales que posicionan, conectan y venden. Lleva el día completo.</p>
       </div>
       <div class="speaker-card fadein">
-        <div class="speaker-avatar">ZP</div>
+        <div class="speaker-avatar"><img src="/recursos/zupy.jpg" alt="Zupy"></div>
         <div class="speaker-name">Zupy</div>
         <div class="speaker-role">Invitado Especial</div>
         <p class="speaker-desc">Referente del contenido y la marca personal en México. Suma su visión y experiencia real al taller.</p>
