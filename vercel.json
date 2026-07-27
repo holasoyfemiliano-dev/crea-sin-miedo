@@ -3,6 +3,7 @@
   "routes": [
     { "src": "/api/(.*)", "dest": "/api/$1" },
     { "src": "/checkout",  "dest": "/checkout.html" },
+    { "src": "/registro",  "dest": "/registro.html" },
     { "src": "/gracias",   "dest": "/gracias.html" },
     { "src": "/admin",     "dest": "/admin.html" },
     { "src": "/checkin",   "dest": "/checkin.html" },

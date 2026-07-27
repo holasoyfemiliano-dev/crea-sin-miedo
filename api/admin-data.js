@@ -7,6 +7,7 @@ const ADMIN_KEY = process.env.ADMIN_KEY || 'CSM2026';
 const ALLOWED_TABLES = [
   'csm_asistentes', 'csm_invitados', 'csm_staff',
   'csm_cronograma', 'csm_codigos_descuento', 'proximity_creators',
+  'csm_registro_taller',
 ];
 
 const CV_TABLES = ['miembros'];
@@ -60,6 +61,7 @@ module.exports = async function handler(req, res) {
     csm_cronograma: 'select=*&order=hora',
     csm_codigos_descuento: 'select=*&order=created_at.desc',
     proximity_creators: 'select=*&order=nombre',
+    csm_registro_taller: 'select=*&order=fecha_registro.desc',
   };
 
   // POST: insert a new row (supported tables)

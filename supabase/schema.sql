@@ -22,6 +22,18 @@ create index if not exists csm_asistentes_email_idx on csm_asistentes(email);
 create index if not exists csm_asistentes_tipo_idx  on csm_asistentes(tipo);
 create index if not exists csm_asistentes_pagado_idx on csm_asistentes(pagado);
 
+-- Registro simple al taller (invitación, sin pago)
+create table if not exists csm_registro_taller (
+  id               uuid primary key default gen_random_uuid(),
+  nombre           text not null,
+  email            text not null unique,
+  telefono         text,
+  ocupacion        text,
+  fecha_registro   timestamptz default now()
+);
+
+create index if not exists csm_registro_taller_email_idx on csm_registro_taller(email);
+
 -- Invitados gratis (manually added)
 create table if not exists csm_invitados (
   id             uuid primary key default gen_random_uuid(),
@@ -86,6 +98,7 @@ alter table csm_invitados         disable row level security;
 alter table csm_codigos_descuento disable row level security;
 alter table csm_staff             disable row level security;
 alter table csm_cronograma        disable row level security;
+alter table csm_registro_taller   disable row level security;
 
 -- Sample discount codes (optional)
 insert into csm_codigos_descuento (codigo, tipo, descuento, tier, usos_max)

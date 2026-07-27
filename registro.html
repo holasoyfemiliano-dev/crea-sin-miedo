@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Regístrate — Crea sin Miedo · Taller · Zapopan, Jal. · 2 Agosto 2026</title>
+  <meta name="description" content="Te invitamos al taller Crea sin Miedo. Zapopan, Jalisco, 2 de agosto 2026. Regístrate y te contamos todos los detalles.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Antonio:wght@400;700&family=Oswald:wght@600;700&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+    :root {
+      --dark:#0a0806; --card:rgba(255,255,255,.05); --border:rgba(229,39,43,.25);
+      --red:#e5272b; --red2:#ef3535; --gold:#f5c518; --amber:#ff9f43; --matrix:#00cc52;
+      --white:#ffffff; --text:#d9d2c8; --muted:#b3a89c;
+    }
+    html { scroll-behavior:smooth; }
+    body {
+      min-height:100vh; background:var(--dark);
+      background-image:
+        radial-gradient(ellipse 75% 55% at 8% 4%, rgba(229,39,43,.16) 0%, transparent 58%),
+        radial-gradient(ellipse 65% 50% at 95% 12%, rgba(245,197,24,.10) 0%, transparent 60%),
+        radial-gradient(ellipse 70% 55% at 50% 105%, rgba(255,159,67,.09) 0%, transparent 62%);
+      color:var(--white); font-family:'Inter',sans-serif;
+      display:flex; align-items:center; justify-content:center; padding:40px 20px;
+    }
+    .wrap { max-width:480px; width:100%; }
+    .eyebrow { text-align:center; font-size:.7rem; letter-spacing:.28em; text-transform:uppercase; color:var(--gold); margin-bottom:16px; }
+    .logo { text-align:center; font-family:'Oswald',sans-serif; font-weight:700; font-size:clamp(2.4rem,7.5vw,3.4rem); line-height:1; letter-spacing:.02em; margin-bottom:8px; text-shadow:0 0 60px rgba(229,39,43,.25); }
+    .logo .red { color:var(--red); text-shadow:0 0 50px rgba(229,39,43,.65), 0 0 100px rgba(229,39,43,.3); }
+    .taller-tag { text-align:center; font-family:'Antonio',sans-serif; font-size:1.05rem; letter-spacing:.1em; text-transform:uppercase; color:var(--text); margin-bottom:14px; }
+    .taller-rule { width:56px; height:3px; margin:0 auto 30px; background:linear-gradient(90deg, var(--red), var(--gold)); border-radius:3px; }
+
+    .meta { display:flex; justify-content:center; gap:10px; flex-wrap:wrap; margin-bottom:30px; }
+    .meta-pill { border-radius:999px; padding:9px 18px; font-size:.8rem; color:var(--white); font-weight:500; }
+    .meta-pill.loc { background:rgba(229,39,43,.13); border:1px solid rgba(229,39,43,.35); }
+    .meta-pill.date { background:rgba(245,197,24,.13); border:1px solid rgba(245,197,24,.4); }
+
+    .copy { text-align:center; color:var(--text); font-size:.97rem; line-height:1.6; margin-bottom:30px; }
+    .copy strong { color:var(--white); }
+
+    .card {
+      background:linear-gradient(180deg, rgba(255,255,255,.055), rgba(255,255,255,.03));
+      border:1.5px solid var(--border); border-radius:18px; padding:28px;
+      backdrop-filter:blur(16px); box-shadow:0 20px 50px -20px rgba(229,39,43,.25);
+    }
+
+    .details { display:flex; flex-direction:column; gap:12px; margin-bottom:26px; }
+    .detail-item {
+      display:flex; gap:14px; padding:18px; border-radius:16px;
+      background:linear-gradient(135deg, rgba(255,255,255,.05), rgba(255,255,255,.02));
+      border:1px solid rgba(255,255,255,.08);
+    }
+    .detail-item.loc  { background:linear-gradient(135deg, rgba(229,39,43,.11), rgba(255,255,255,.02)); border-color:rgba(229,39,43,.28); }
+    .detail-item.time { background:linear-gradient(135deg, rgba(245,197,24,.11), rgba(255,255,255,.02)); border-color:rgba(245,197,24,.3); }
+    .detail-item.tip  { background:linear-gradient(135deg, rgba(255,159,67,.11), rgba(255,255,255,.02)); border-color:rgba(255,159,67,.3); }
+
+    .icon-badge { width:40px; height:40px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:1.1rem; flex-shrink:0; }
+    .icon-badge.red   { background:rgba(229,39,43,.16); border:1px solid rgba(229,39,43,.4); }
+    .icon-badge.gold  { background:rgba(245,197,24,.16); border:1px solid rgba(245,197,24,.45); }
+    .icon-badge.amber { background:rgba(255,159,67,.16); border:1px solid rgba(255,159,67,.45); }
+
+    .detail-title { font-weight:700; font-size:.87rem; margin-bottom:4px; color:var(--white); }
+    .detail-text { font-size:.84rem; color:var(--text); line-height:1.55; }
+    .detail-text a { color:var(--gold); text-decoration:none; font-weight:600; }
+    .detail-text a:hover { text-decoration:underline; }
+
+    .timeline { margin-top:6px; display:flex; flex-direction:column; gap:6px; }
+    .timeline-row { display:flex; gap:10px; align-items:center; }
+    .timeline-time {
+      font-family:'Oswald',sans-serif; font-weight:600; font-size:.76rem; color:var(--gold);
+      background:rgba(245,197,24,.13); border:1px solid rgba(245,197,24,.3); border-radius:6px;
+      padding:3px 9px; width:76px; text-align:center; flex-shrink:0;
+    }
+    .timeline-label { font-size:.85rem; color:var(--text); }
+
+    label { display:block; font-size:.72rem; letter-spacing:.06em; text-transform:uppercase; color:var(--muted); margin-bottom:6px; }
+    .field { margin-bottom:16px; }
+    input {
+      width:100%; background:rgba(255,255,255,.045); border:1.5px solid rgba(255,255,255,.14);
+      border-radius:8px; padding:13px 14px; color:var(--white); font-family:'Inter',sans-serif; font-size:.95rem;
+      transition:border-color .15s, background .15s;
+    }
+    input::placeholder { color:#8a8078; }
+    input:focus { outline:none; border-color:var(--red); background:rgba(255,255,255,.07); }
+    input.error { border-color:var(--red2); }
+
+    .btn-red {
+      width:100%; background:linear-gradient(135deg, var(--red2), var(--red)); color:#fff; border:none; border-radius:8px;
+      padding:16px; font-size:.85rem; font-weight:800; letter-spacing:.06em; text-transform:uppercase;
+      cursor:pointer; transition:transform .15s, box-shadow .15s; margin-top:6px;
+      box-shadow:0 12px 30px -10px rgba(229,39,43,.55);
+    }
+    .btn-red:hover { transform:translateY(-1px); box-shadow:0 16px 34px -10px rgba(229,39,43,.7); }
+    .btn-red:disabled { opacity:.6; cursor:default; transform:none; box-shadow:none; }
+
+    .form-error { display:none; color:var(--red2); font-size:.82rem; margin-top:12px; text-align:center; }
+    .note { text-align:center; font-size:.74rem; color:var(--muted); margin-top:18px; }
+
+    /* Success state */
+    .success { display:none; text-align:center; }
+    .success .check {
+      width:56px; height:56px; border-radius:50%; background:rgba(245,197,24,.15); border:1.5px solid var(--gold);
+      display:flex; align-items:center; justify-content:center; margin:0 auto 18px; font-size:1.6rem; color:var(--gold);
+    }
+    .success h2 { font-family:'Oswald',sans-serif; font-weight:700; font-size:1.5rem; margin-bottom:10px; }
+    .success p { color:var(--text); font-size:.92rem; line-height:1.55; }
+
+    footer { text-align:center; margin-top:30px; font-size:.74rem; color:var(--muted); }
+    footer .red { color:var(--red); font-weight:700; }
+  </style>
+</head>
+<body>
+
+<div class="wrap">
+  <div class="eyebrow">Tienes una invitación</div>
+  <div class="logo">CREA<br><span class="red">SIN MIEDO</span></div>
+  <div class="taller-tag">Taller práctico de creación de contenido</div>
+  <div class="taller-rule"></div>
+
+  <div class="meta">
+    <div class="meta-pill loc">📍 Zapopan, Jalisco</div>
+    <div class="meta-pill date">📅 Domingo 2 de Agosto, 2026</div>
+  </div>
+
+  <p class="copy">
+    Nos encantaría que nos acompañes. <strong>Crea sin Miedo</strong> es un día para conectar con tu marca
+    personal, perderle el miedo a crear contenido y salir con resultados que se sienten tuyos.
+    Solo necesitamos tus datos para guardarte tu lugar.
+  </p>
+
+  <div class="details">
+    <div class="detail-item loc">
+      <div class="icon-badge red">📍</div>
+      <div>
+        <div class="detail-title">Así llegas</div>
+        <div class="detail-text">
+          C. Colima 130, El Mante, 45235 Zapopan, Jal.<br>
+          <a href="https://maps.google.com/?q=C.+Colima+130%2C+El+Mante%2C+45235+Zapopan%2C+Jal." target="_blank" rel="noopener">Cómo llegar →</a>
+        </div>
+      </div>
+    </div>
+    <div class="detail-item time">
+      <div class="icon-badge gold">🕘</div>
+      <div>
+        <div class="detail-title">Así va el día</div>
+        <div class="timeline">
+          <div class="timeline-row"><span class="timeline-time">9:30 AM</span><span class="timeline-label">Te esperamos con café</span></div>
+          <div class="timeline-row"><span class="timeline-time">10:00 AM</span><span class="timeline-label">¡Arrancamos!</span></div>
+          <div class="timeline-row"><span class="timeline-time">2:00 PM</span><span class="timeline-label">Pausa para comer</span></div>
+          <div class="timeline-row"><span class="timeline-time">7:00 PM</span><span class="timeline-label">Cerramos el día</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="detail-item tip">
+      <div class="icon-badge amber">💡</div>
+      <div>
+        <div class="detail-title">Para que la pases fácil</div>
+        <div class="detail-text">No te preocupes por el coche, hay estacionamiento justo en el lugar. Y a la hora de la comida vas a tener varias opciones cerquita para escoger.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <form id="regForm">
+      <div class="field">
+        <label for="nombre">¿Cómo te llamas?</label>
+        <input type="text" id="nombre" autocomplete="name" placeholder="Tu nombre">
+      </div>
+      <div class="field">
+        <label for="email">Tu correo</label>
+        <input type="email" id="email" autocomplete="email" placeholder="tu@correo.com">
+      </div>
+      <div class="field">
+        <label for="telefono">Tu teléfono (opcional)</label>
+        <input type="tel" id="telefono" autocomplete="tel" placeholder="33 1234 5678">
+      </div>
+      <div class="field">
+        <label for="ocupacion">¿A qué te dedicas?</label>
+        <input type="text" id="ocupacion" autocomplete="organization-title" placeholder="Ej. Emprendedor(a), diseñador(a), estudiante...">
+      </div>
+      <button type="submit" class="btn-red" id="submitBtn">Confirmar lugar →</button>
+      <div class="form-error" id="formError"></div>
+    </form>
+
+    <div class="success" id="success">
+      <div class="check">✓</div>
+      <h2>¡Listo, ya tienes tu lugar!</h2>
+      <p>Gracias por registrarte, nos da mucho gusto. Te vamos a escribir por correo con todos los detalles antes del 2 de agosto. ¡Nos vemos ahí!</p>
+    </div>
+  </div>
+
+  <p class="note">Al registrarte nos das luz verde para escribirte sobre este evento, nada más.</p>
+
+  <footer><span class="red">Crea sin Miedo</span> · 2 Agosto · Zapopan, Jal.</footer>
+</div>
+
+<script>
+document.getElementById('regForm').addEventListener('submit', async function(e) {
+  e.preventDefault();
+
+  const nombreEl = document.getElementById('nombre');
+  const emailEl = document.getElementById('email');
+  const telefonoEl = document.getElementById('telefono');
+  const ocupacionEl = document.getElementById('ocupacion');
+  const nombre = nombreEl.value.trim();
+  const email = emailEl.value.trim();
+  const telefono = telefonoEl.value.trim();
+  const ocupacion = ocupacionEl.value.trim();
+
+  let valid = true;
+  if (!nombre) { nombreEl.classList.add('error'); valid = false; } else nombreEl.classList.remove('error');
+  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { emailEl.classList.add('error'); valid = false; } else emailEl.classList.remove('error');
+  if (!valid) return;
+
+  const btn = document.getElementById('submitBtn');
+  const formError = document.getElementById('formError');
+  formError.style.display = 'none';
+  btn.disabled = true;
+  btn.textContent = 'Registrando…';
+
+  try {
+    const res = await fetch('/api/registro', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ nombre, email, telefono, ocupacion }),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'No se pudo completar el registro');
+
+    document.getElementById('regForm').style.display = 'none';
+    document.getElementById('success').style.display = 'block';
+  } catch (err) {
+    btn.disabled = false;
+    btn.textContent = 'Confirmar lugar →';
+    formError.textContent = err.message || 'Error al registrar. Intenta de nuevo.';
+    formError.style.display = 'block';
+  }
+});
+</script>
+
+</body>
+</html>
