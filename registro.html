@@ -65,14 +65,31 @@
     .detail-text a { color:var(--gold); text-decoration:none; font-weight:600; }
     .detail-text a:hover { text-decoration:underline; }
 
-    .timeline { margin-top:6px; display:flex; flex-direction:column; gap:8px; }
-    .timeline-row { display:flex; gap:10px; align-items:flex-start; }
-    .timeline-time {
-      font-family:'Oswald',sans-serif; font-weight:600; font-size:.74rem; color:var(--gold);
-      background:rgba(245,197,24,.13); border:1px solid rgba(245,197,24,.3); border-radius:6px;
-      padding:3px 8px; white-space:nowrap; text-align:center; flex-shrink:0; margin-top:1px;
+    /* Calendar-style day timeline */
+    .cal { display:flex; flex-direction:column; margin-bottom:26px; }
+    .cal-heading { font-weight:700; font-size:.87rem; margin-bottom:10px; color:var(--white); }
+    .cal-block { display:flex; gap:10px; }
+    .cal-time-col { width:52px; flex-shrink:0; padding-top:2px; text-align:right; }
+    .cal-time-start { display:block; font-family:'Oswald',sans-serif; font-weight:700; font-size:.76rem; color:var(--gold); line-height:1.2; }
+    .cal-time-end { display:block; font-size:.6rem; color:var(--muted); margin-top:1px; }
+    .cal-rail { width:2px; flex-shrink:0; position:relative; background:linear-gradient(180deg, rgba(245,197,24,.45), rgba(229,39,43,.35)); border-radius:2px; }
+    .cal-rail::before { content:''; position:absolute; left:50%; top:2px; width:9px; height:9px; border-radius:50%; background:var(--gold); border:2px solid var(--dark); transform:translateX(-50%); }
+    .cal-block.break .cal-rail { background:rgba(255,255,255,.15); }
+    .cal-block.break .cal-rail::before { background:var(--muted); width:7px; height:7px; }
+    .cal-card {
+      flex:1; display:flex; flex-direction:column; justify-content:center; gap:3px;
+      background:linear-gradient(135deg, rgba(245,197,24,.09), rgba(255,255,255,.02));
+      border:1px solid rgba(245,197,24,.22); border-radius:10px; padding:9px 13px; margin-bottom:7px;
     }
-    .timeline-label { font-size:.85rem; color:var(--text); line-height:1.4; }
+    .cal-block.break .cal-card {
+      background:rgba(255,255,255,.03); border:1px dashed rgba(255,255,255,.14);
+    }
+    .cal-card-top { display:flex; align-items:center; justify-content:space-between; gap:8px; }
+    .cal-title { font-size:.83rem; font-weight:700; color:var(--white); line-height:1.3; }
+    .cal-block.break .cal-title { font-weight:600; color:var(--text); font-size:.78rem; }
+    .cal-dur { font-size:.62rem; color:var(--gold); background:rgba(245,197,24,.13); border-radius:20px; padding:2px 8px; white-space:nowrap; flex-shrink:0; }
+    .cal-block.break .cal-dur { color:var(--muted); background:rgba(255,255,255,.06); }
+    .cal-notas { font-size:.72rem; color:var(--muted); line-height:1.5; margin-top:1px; }
 
     label { display:block; font-size:.72rem; letter-spacing:.06em; text-transform:uppercase; color:var(--muted); margin-bottom:6px; }
     .field { margin-bottom:16px; }
@@ -129,7 +146,7 @@
     Solo necesitamos tus datos para guardarte tu lugar.
   </p>
 
-  <div class="details" id="detailsWrap">
+  <div class="details" id="detailsWrap" style="margin-bottom:20px">
     <div class="detail-item loc">
       <div class="icon-badge red">📍</div>
       <div>
@@ -137,15 +154,14 @@
         <div class="detail-text" id="addrText">Cargando ubicación…</div>
       </div>
     </div>
-    <div class="detail-item time">
-      <div class="icon-badge gold">🕘</div>
-      <div>
-        <div class="detail-title">Así va el día</div>
-        <div class="timeline" id="timelineList">
-          <div class="timeline-row"><span class="timeline-label" style="color:var(--muted)">Cargando horario…</span></div>
-        </div>
-      </div>
-    </div>
+  </div>
+
+  <div class="cal-heading">🕘 Así va el día</div>
+  <div class="cal" id="timelineList">
+    <div style="color:var(--muted);font-size:.85rem">Cargando horario…</div>
+  </div>
+
+  <div class="details">
     <div class="detail-item tip">
       <div class="icon-badge amber">💡</div>
       <div>
@@ -239,13 +255,44 @@ function renderEvento(ev, cronograma) {
     ? `${esc(addr)}${mapsUrl ? `<br><a href="${mapsUrl}" target="_blank" rel="noopener">Cómo llegar →</a>` : ''}`
     : 'Te avisamos la ubicación exacta por correo.';
 
-  const timelineEl = document.getElementById('timelineList');
-  timelineEl.innerHTML = cronograma.length
-    ? cronograma.map(c => `<div class="timeline-row"><span class="timeline-time">${esc(c.hora || '—')}</span><span class="timeline-label">${esc(c.actividad)}</span></div>`).join('')
-    : '<div class="timeline-row"><span class="timeline-label" style="color:var(--muted)">Muy pronto compartimos el horario del día.</span></div>';
+  document.getElementById('timelineList').innerHTML = renderCal(cronograma);
 }
 
 function esc(s) { return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+
+function splitHora(hora) {
+  const parts = String(hora || '').split(/[–-]/).map(s => s.trim());
+  return parts.length === 2 ? parts : [hora || '—', ''];
+}
+
+const PX_PER_MIN = 2.3;
+const MIN_BLOCK_HEIGHT = 44;
+
+function renderCal(items) {
+  if (!items.length) {
+    return '<div style="color:var(--muted);font-size:.85rem">Muy pronto compartimos el horario del día.</div>';
+  }
+  return items.map(c => {
+    const [start, end] = splitHora(c.hora);
+    const isBreak = c.tipo === 'break';
+    const h = c.duracion_min ? Math.max(MIN_BLOCK_HEIGHT, Math.round(c.duracion_min * PX_PER_MIN)) : MIN_BLOCK_HEIGHT;
+    return `
+      <div class="cal-block${isBreak ? ' break' : ''}" style="min-height:${h}px">
+        <div class="cal-time-col">
+          <span class="cal-time-start">${esc(start)}</span>
+          ${end ? `<span class="cal-time-end">${esc(end)}</span>` : ''}
+        </div>
+        <div class="cal-rail"></div>
+        <div class="cal-card">
+          <div class="cal-card-top">
+            <span class="cal-title">${esc(c.actividad)}</span>
+            ${c.duracion_min ? `<span class="cal-dur">${c.duracion_min} min</span>` : ''}
+          </div>
+          ${!isBreak && c.notas ? `<div class="cal-notas">${esc(c.notas)}</div>` : ''}
+        </div>
+      </div>`;
+  }).join('');
+}
 
 loadEvento();
 

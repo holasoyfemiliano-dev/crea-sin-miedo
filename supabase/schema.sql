@@ -108,7 +108,8 @@ create table if not exists csm_cronograma (
   notas        text,
   tipo         text default 'publico' check (tipo in ('publico','staff','break','fotografia','video','entrega')),
   completado   boolean default false,
-  orden        int default 0
+  orden        int default 0,
+  duracion_min int
 );
 
 create index if not exists csm_cronograma_evento_idx on csm_cronograma(evento_id, orden);

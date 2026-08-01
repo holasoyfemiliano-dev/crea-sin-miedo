@@ -404,7 +404,8 @@
         </div>
         <div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:14px 16px;margin-bottom:14px">
           <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:flex-end">
-            <input type="text" id="crono-hora-publico" placeholder="9:30 AM" class="add-input" style="max-width:110px">
+            <input type="text" id="crono-hora-publico" placeholder="10:00 – 10:20" class="add-input" style="max-width:130px">
+            <input type="number" id="crono-dur-publico" placeholder="Min" class="add-input" style="max-width:70px">
             <input type="text" id="crono-actividad-publico" placeholder="Actividad" class="add-input">
             <select id="crono-tipo-publico" class="add-input" style="max-width:130px">
               <option value="publico">Público</option>
@@ -415,8 +416,8 @@
         </div>
         <div class="table-wrap" style="margin-bottom:40px">
           <table>
-            <thead><tr><th>Hora</th><th>Actividad</th><th>Tipo</th><th></th></tr></thead>
-            <tbody id="tbodyCronoPublico"><tr><td colspan="4" class="empty-row">Cargando…</td></tr></tbody>
+            <thead><tr><th>Hora</th><th>Duración</th><th>Actividad</th><th>Tipo</th><th></th></tr></thead>
+            <tbody id="tbodyCronoPublico"><tr><td colspan="5" class="empty-row">Cargando…</td></tr></tbody>
           </table>
         </div>
       </div>
@@ -429,7 +430,8 @@
         </div>
         <div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:14px 16px;margin-bottom:14px">
           <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:flex-end">
-            <input type="text" id="crono-hora-prod" placeholder="7:00" class="add-input" style="max-width:90px">
+            <input type="text" id="crono-hora-prod" placeholder="7:00 – 7:30" class="add-input" style="max-width:110px">
+            <input type="number" id="crono-dur-prod" placeholder="Min" class="add-input" style="max-width:70px">
             <input type="text" id="crono-actividad-prod" placeholder="Actividad" class="add-input">
             <input type="text" id="crono-resp-prod" placeholder="Responsable" class="add-input">
             <input type="text" id="crono-lugar-prod" placeholder="Lugar" class="add-input">
@@ -444,8 +446,8 @@
         </div>
         <div class="table-wrap" style="margin-bottom:40px">
           <table>
-            <thead><tr><th></th><th>Hora</th><th>Actividad</th><th>Responsable</th><th>Lugar</th><th>Tipo</th><th></th></tr></thead>
-            <tbody id="tbodyCronoProd"><tr><td colspan="7" class="empty-row">Cargando…</td></tr></tbody>
+            <thead><tr><th></th><th>Hora</th><th>Duración</th><th>Actividad</th><th>Responsable</th><th>Lugar</th><th>Tipo</th><th></th></tr></thead>
+            <tbody id="tbodyCronoProd"><tr><td colspan="8" class="empty-row">Cargando…</td></tr></tbody>
           </table>
         </div>
       </div>
@@ -992,22 +994,24 @@ function renderCrono() {
   const tbodyPub = document.getElementById('tbodyCronoPublico');
   tbodyPub.innerHTML = pub.length ? pub.map(c => `<tr>
     <td style="color:var(--gold);font-family:'Oswald',sans-serif">${esc(c.hora || '—')}</td>
+    <td style="font-size:.8rem;color:var(--muted)">${c.duracion_min ? c.duracion_min + ' min' : '—'}</td>
     <td>${esc(c.actividad)}</td>
     <td><span class="tipo-chip">${esc(c.tipo)}</span></td>
     <td><button class="del-btn" onclick="deleteCronoItem('${c.id}')" title="Eliminar">×</button></td>
-  </tr>`).join('') : '<tr><td colspan="4" class="empty-row">Sin items todavía</td></tr>';
+  </tr>`).join('') : '<tr><td colspan="5" class="empty-row">Sin items todavía</td></tr>';
 
   const tipoDot = { staff: 'var(--muted)', video: '#8b5cf6', fotografia: 'var(--gold)', entrega: 'var(--green)' };
   const tbodyProd = document.getElementById('tbodyCronoProd');
   tbodyProd.innerHTML = prod.length ? prod.map(c => `<tr style="${c.completado ? 'opacity:.5' : ''}">
     <td><span onclick="toggleCronoCompletado('${c.id}',${!c.completado})" style="cursor:pointer;font-size:1rem">${c.completado ? '✅' : '○'}</span></td>
     <td style="color:var(--muted);font-size:.8rem">${esc(c.hora || '—')}</td>
+    <td style="font-size:.8rem;color:var(--muted)">${c.duracion_min ? c.duracion_min + ' min' : '—'}</td>
     <td>${esc(c.actividad)}</td>
     <td style="font-size:.8rem;color:var(--text)">${esc(c.responsable || '—')}</td>
     <td style="font-size:.8rem;color:var(--muted)">${esc(c.lugar || '—')}</td>
     <td><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:${tipoDot[c.tipo] || 'var(--muted)'};margin-right:6px;vertical-align:middle"></span>${esc(c.tipo)}</td>
     <td><button class="del-btn" onclick="deleteCronoItem('${c.id}')" title="Eliminar">×</button></td>
-  </tr>`).join('') : '<tr><td colspan="7" class="empty-row">Sin items todavía</td></tr>';
+  </tr>`).join('') : '<tr><td colspan="8" class="empty-row">Sin items todavía</td></tr>';
 }
 
 async function addCronoItem(kind) {
@@ -1016,10 +1020,11 @@ async function addCronoItem(kind) {
   const key = sessionStorage.getItem('csm_admin_key');
   const suffix = kind === 'publico' ? 'publico' : 'prod';
   const hora = document.getElementById(`crono-hora-${suffix}`).value.trim();
+  const duracion_min = document.getElementById(`crono-dur-${suffix}`).value.trim();
   const actividad = document.getElementById(`crono-actividad-${suffix}`).value.trim();
   const tipo = document.getElementById(`crono-tipo-${suffix}`).value;
   if (!actividad) return;
-  const body = { evento_id: evento.id, hora, actividad, tipo, orden: cronoData.length };
+  const body = { evento_id: evento.id, hora, actividad, tipo, orden: cronoData.length, duracion_min: duracion_min || null };
   if (kind === 'prod') {
     body.responsable = document.getElementById('crono-resp-prod').value.trim();
     body.lugar = document.getElementById('crono-lugar-prod').value.trim();
@@ -1029,7 +1034,7 @@ async function addCronoItem(kind) {
     headers: { 'x-admin-key': key, 'Content-Type': 'application/json' },
     body: JSON.stringify(body),
   });
-  ['hora','actividad'].forEach(f => document.getElementById(`crono-${f}-${suffix}`).value = '');
+  ['hora','dur','actividad'].forEach(f => document.getElementById(`crono-${f}-${suffix}`).value = '');
   if (kind === 'prod') { document.getElementById('crono-resp-prod').value = ''; document.getElementById('crono-lugar-prod').value = ''; }
   await loadCronogramaTab();
 }

@@ -172,6 +172,7 @@ function renderTimeline(elId, items, variant) {
           <h4>${esc(item.actividad)}</h4>
           ${item.notas ? `<p>${esc(item.notas)}</p>` : ''}
           <div class="tl-meta">
+            ${item.duracion_min ? `<span class="tl-tag">${item.duracion_min} min</span>` : ''}
             ${item.responsable ? `<span class="tl-tag orange">${esc(item.responsable)}</span>` : ''}
             ${item.lugar ? `<span class="tl-tag blue">${esc(item.lugar)}</span>` : ''}
             ${variant === 'staff' && item.tipo && item.tipo !== 'staff' ? `<span class="tl-tag green">${esc(item.tipo)}</span>` : ''}

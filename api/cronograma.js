@@ -54,7 +54,7 @@ module.exports = async function handler(req, res) {
     if (!auth(req)) { res.status(401).json({ error: 'No autorizado' }); return; }
 
     if (req.method === 'POST') {
-      const { evento_id, hora, actividad, responsable, lugar, notas, tipo, orden } = req.body || {};
+      const { evento_id, hora, actividad, responsable, lugar, notas, tipo, orden, duracion_min } = req.body || {};
       if (!evento_id || !actividad) { res.status(400).json({ error: 'evento_id y actividad requeridos' }); return; }
 
       const r = await fetch(`${SB_URL}/rest/v1/csm_cronograma`, {
@@ -67,6 +67,7 @@ module.exports = async function handler(req, res) {
           evento_id, hora: hora || null, actividad,
           responsable: responsable || null, lugar: lugar || null, notas: notas || null,
           tipo: tipo || 'publico', orden: orden || 0, completado: false,
+          duracion_min: duracion_min ? Number(duracion_min) : null,
         }),
       });
       const data = await r.json();
