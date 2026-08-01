@@ -167,6 +167,9 @@
   <header>
     <div class="h-logo">CREA <span>SIN</span> MIEDO · <span style="color:var(--muted);font-size:.8rem;font-family:'Inter'">Admin</span></div>
     <div class="h-right">
+      <select id="eventoSelect" onchange="onEventoChange()" style="background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:6px;padding:6px 10px;color:var(--white);font-size:.78rem;max-width:220px">
+        <option value="">Cargando eventos…</option>
+      </select>
       <a href="/" target="_blank" style="color:var(--muted);font-size:.78rem;text-decoration:none;opacity:.7;transition:opacity .2s" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=.7">Ver landing ↗</a>
     </div>
   </header>
@@ -176,6 +179,8 @@
     <button class="tab-btn active" onclick="switchTab('dashboard',this)">Dashboard</button>
     <button class="tab-btn" onclick="switchTab('leads',this)">Asistentes</button>
     <button class="tab-btn" onclick="switchTab('registro',this)">Registro Taller</button>
+    <button class="tab-btn" onclick="switchTab('cronograma',this)">Cronograma</button>
+    <button class="tab-btn" onclick="switchTab('eventos',this)">Eventos</button>
     <button class="tab-btn" onclick="switchTab('cupones',this)">Cupones</button>
   </div>
 
@@ -373,6 +378,127 @@
     </div>
   </div>
 
+  <!-- CRONOGRAMA TAB (general + producción, por evento) -->
+  <div id="tab-cronograma" class="tab-view">
+    <div class="content">
+
+      <div class="sec-head" style="margin-top:8px;margin-bottom:8px">
+        <h3>Cronograma general</h3>
+        <span style="font-size:.72rem;color:var(--muted)">Lo que ve el asistente en /registro</span>
+      </div>
+      <div id="cronoAddForm-publico" style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:14px 16px;margin-bottom:14px">
+        <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:flex-end">
+          <input type="text" id="crono-hora-publico" placeholder="9:30 AM" class="add-input" style="max-width:110px">
+          <input type="text" id="crono-actividad-publico" placeholder="Actividad" class="add-input">
+          <select id="crono-tipo-publico" class="add-input" style="max-width:130px">
+            <option value="publico">Público</option>
+            <option value="break">Break</option>
+          </select>
+          <button onclick="addCronoItem('publico')" class="code-gen-btn" style="padding:8px 14px">+ Agregar</button>
+        </div>
+      </div>
+      <div class="table-wrap" style="margin-bottom:32px">
+        <table>
+          <thead><tr><th>Hora</th><th>Actividad</th><th>Tipo</th><th></th></tr></thead>
+          <tbody id="tbodyCronoPublico"><tr><td colspan="4" class="empty-row">Cargando…</td></tr></tbody>
+        </table>
+      </div>
+
+      <div class="sec-head" style="margin-top:8px;margin-bottom:8px">
+        <h3>Cronograma de producción</h3>
+        <span style="font-size:.72rem;color:var(--muted)">Para staff y filmmakers · /staff</span>
+      </div>
+      <div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:14px 16px;margin-bottom:14px">
+        <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:flex-end">
+          <input type="text" id="crono-hora-prod" placeholder="7:00" class="add-input" style="max-width:90px">
+          <input type="text" id="crono-actividad-prod" placeholder="Actividad" class="add-input">
+          <input type="text" id="crono-resp-prod" placeholder="Responsable" class="add-input">
+          <input type="text" id="crono-lugar-prod" placeholder="Lugar" class="add-input">
+          <select id="crono-tipo-prod" class="add-input" style="max-width:130px">
+            <option value="staff">Staff / general</option>
+            <option value="video">Video</option>
+            <option value="fotografia">Fotografía</option>
+            <option value="entrega">Entrega</option>
+          </select>
+          <button onclick="addCronoItem('prod')" class="code-gen-btn" style="padding:8px 14px">+ Agregar</button>
+        </div>
+      </div>
+      <div class="table-wrap" style="margin-bottom:32px">
+        <table>
+          <thead><tr><th></th><th>Hora</th><th>Actividad</th><th>Responsable</th><th>Lugar</th><th>Tipo</th><th></th></tr></thead>
+          <tbody id="tbodyCronoProd"><tr><td colspan="7" class="empty-row">Cargando…</td></tr></tbody>
+        </table>
+      </div>
+
+      <div class="sec-head" style="margin-top:8px;margin-bottom:8px">
+        <h3>Staff / crew</h3>
+        <span class="badge" id="staffCount">0</span>
+      </div>
+      <div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:14px 16px;margin-bottom:14px">
+        <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:flex-end">
+          <input type="text" id="staff-nombre" placeholder="Nombre" class="add-input">
+          <input type="text" id="staff-rol" placeholder="Rol" class="add-input">
+          <input type="text" id="staff-area" placeholder="Área" class="add-input">
+          <input type="text" id="staff-entrada" placeholder="Entrada (7:00)" class="add-input" style="max-width:110px">
+          <input type="text" id="staff-salida" placeholder="Salida (19:00)" class="add-input" style="max-width:110px">
+          <button onclick="addStaff()" class="code-gen-btn" style="padding:8px 14px">+ Agregar</button>
+        </div>
+      </div>
+      <div class="table-wrap" style="margin-bottom:40px">
+        <table>
+          <thead><tr><th>Nombre</th><th>Rol</th><th>Área</th><th>Horario</th><th></th></tr></thead>
+          <tbody id="tbodyStaff"><tr><td colspan="5" class="empty-row">Cargando…</td></tr></tbody>
+        </table>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- EVENTOS TAB (ediciones del taller) -->
+  <div id="tab-eventos" class="tab-view">
+    <div class="content">
+      <div class="sec-head" style="margin-top:8px;margin-bottom:16px">
+        <h3>Eventos</h3>
+        <span class="badge" id="eventosCount">0 ediciones</span>
+      </div>
+
+      <div class="table-wrap" style="margin-bottom:28px;padding:22px 24px">
+        <div style="font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;color:var(--red);margin-bottom:14px">Crear nueva edición</div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:14px">
+          <div>
+            <label style="display:block;font-size:.68rem;color:var(--muted);margin-bottom:4px">Ciudad</label>
+            <input type="text" id="ev-ciudad" placeholder="Ej. CDMX" class="add-input" style="width:100%">
+          </div>
+          <div>
+            <label style="display:block;font-size:.68rem;color:var(--muted);margin-bottom:4px">Fecha</label>
+            <input type="date" id="ev-fecha" class="add-input" style="width:100%">
+          </div>
+          <div>
+            <label style="display:block;font-size:.68rem;color:var(--muted);margin-bottom:4px">Venue</label>
+            <input type="text" id="ev-venue" placeholder="Nombre del lugar" class="add-input" style="width:100%">
+          </div>
+          <div>
+            <label style="display:block;font-size:.68rem;color:var(--muted);margin-bottom:4px">Capacidad</label>
+            <input type="number" id="ev-capacidad" placeholder="80" class="add-input" style="width:100%">
+          </div>
+        </div>
+        <div style="margin-bottom:14px">
+          <label style="display:block;font-size:.68rem;color:var(--muted);margin-bottom:4px">Dirección completa</label>
+          <input type="text" id="ev-direccion" placeholder="Calle, colonia, CP, ciudad" class="add-input" style="width:100%">
+        </div>
+        <button onclick="createEvento()" class="code-gen-btn" style="padding:10px 18px">Crear evento</button>
+        <div id="eventoMsg" style="font-size:.75rem;margin-top:8px"></div>
+      </div>
+
+      <div class="table-wrap" style="margin-bottom:40px">
+        <table>
+          <thead><tr><th>Ciudad</th><th>Fecha</th><th>Slug</th><th>Estado</th><th>Capacidad</th></tr></thead>
+          <tbody id="tbodyEventos"><tr><td colspan="5" class="empty-row">Cargando…</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
   <!-- CUPONES TAB -->
   <div id="tab-cupones" class="tab-view">
     <div class="content">
@@ -465,6 +591,7 @@ function checkPw() {
       document.getElementById('gate').style.display = 'none';
       document.getElementById('app').style.display = 'block';
       loadData();
+      loadEventos();
     }
   }).catch(() => {
     document.getElementById('gateErr').style.display = 'block';
@@ -656,6 +783,8 @@ function switchTab(tab, btn) {
   if (tab === 'leads') { renderLeads(); renderPC2(); }
   if (tab === 'cupones') loadCupones();
   if (tab === 'registro') loadRegistro();
+  if (tab === 'cronograma') loadCronogramaTab();
+  if (tab === 'eventos') loadEventosTab();
 }
 
 // ── AGREGAR / ELIMINAR ASISTENTES ────────────────────────────────────────────
@@ -721,9 +850,241 @@ async function generateAllPCCodes(btn) {
   setTimeout(() => { btn.textContent = '⚡ Generar todos'; }, 3000);
 }
 
+// ── EVENTOS (ediciones del taller, cada 3 meses en otra ciudad) ──────────────
+let eventosData = [];
+let eventoActualId = '';
+
+async function loadEventos() {
+  const key = sessionStorage.getItem('csm_admin_key');
+  try {
+    const r = await fetch('/api/eventos', { headers: { 'x-admin-key': key } });
+    eventosData = await r.json();
+    if (!Array.isArray(eventosData)) eventosData = [];
+  } catch (e) { eventosData = []; }
+
+  const sel = document.getElementById('eventoSelect');
+  if (!eventosData.length) { sel.innerHTML = '<option value="">Sin eventos</option>'; return; }
+
+  const saved = sessionStorage.getItem('csm_evento_id');
+  const activo = eventosData.find(e => e.estado === 'activo')
+    || eventosData.find(e => e.estado === 'proximo')
+    || eventosData[0];
+  eventoActualId = (saved && eventosData.some(e => e.id === saved)) ? saved : activo.id;
+
+  sel.innerHTML = eventosData.map(e =>
+    `<option value="${e.id}"${e.id === eventoActualId ? ' selected' : ''}>${esc(e.ciudad)} · ${fmtFechaCorta(e.fecha)}</option>`
+  ).join('');
+
+  onEventoChange(true);
+}
+
+function fmtFechaCorta(iso) {
+  if (!iso) return '—';
+  return new Date(iso + 'T12:00:00').toLocaleDateString('es-MX', { day: 'numeric', month: 'short', year: 'numeric' });
+}
+
+function getEventoActual() { return eventosData.find(e => e.id === eventoActualId) || null; }
+
+function onEventoChange(skipReload) {
+  eventoActualId = document.getElementById('eventoSelect').value;
+  sessionStorage.setItem('csm_evento_id', eventoActualId);
+  if (skipReload) return;
+  const activeTab = document.querySelector('.tab-btn.active')?.textContent?.trim();
+  const activeView = document.querySelector('.tab-view.active')?.id;
+  if (activeView === 'tab-registro') loadRegistro();
+  if (activeView === 'tab-cronograma') loadCronogramaTab();
+}
+
+async function loadEventosTab() {
+  const tbody = document.getElementById('tbodyEventos');
+  document.getElementById('eventosCount').textContent = eventosData.length + ' ediciones';
+  if (!eventosData.length) { tbody.innerHTML = '<tr><td colspan="5" class="empty-row">Sin eventos todavía</td></tr>'; return; }
+  tbody.innerHTML = eventosData.map(e => `<tr>
+    <td><strong>${esc(e.ciudad)}</strong></td>
+    <td>${fmtFechaCorta(e.fecha)}</td>
+    <td style="color:var(--muted);font-size:.78rem">${esc(e.slug)}</td>
+    <td>${esc(e.estado)}</td>
+    <td>${e.capacidad ?? '—'}</td>
+  </tr>`).join('');
+}
+
+async function createEvento() {
+  const ciudad    = document.getElementById('ev-ciudad').value.trim();
+  const fecha     = document.getElementById('ev-fecha').value;
+  const venue     = document.getElementById('ev-venue').value.trim();
+  const direccion = document.getElementById('ev-direccion').value.trim();
+  const capacidad = document.getElementById('ev-capacidad').value.trim();
+  const msg = document.getElementById('eventoMsg');
+  if (!ciudad || !fecha) { msg.textContent = 'Ciudad y fecha requeridos'; msg.style.color = 'var(--red)'; return; }
+
+  const key = sessionStorage.getItem('csm_admin_key');
+  try {
+    const r = await fetch('/api/eventos', {
+      method: 'POST',
+      headers: { 'x-admin-key': key, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ ciudad, fecha, venue, direccion, capacidad: capacidad ? Number(capacidad) : undefined }),
+    });
+    if (!r.ok) throw new Error();
+    msg.textContent = '✓ Evento creado'; msg.style.color = 'var(--green)';
+    ['ev-ciudad','ev-fecha','ev-venue','ev-direccion','ev-capacidad'].forEach(id => document.getElementById(id).value = '');
+    await loadEventos();
+    loadEventosTab();
+    setTimeout(() => { msg.textContent = ''; }, 2000);
+  } catch (e) {
+    msg.textContent = 'Error al crear el evento'; msg.style.color = 'var(--red)';
+  }
+}
+
+// ── CRONOGRAMA (general + producción) y STAFF, por evento ───────────────────
+let cronoData = [];
+
+async function loadCronogramaTab() {
+  const evento = getEventoActual();
+  const tbodyPub = document.getElementById('tbodyCronoPublico');
+  const tbodyProd = document.getElementById('tbodyCronoProd');
+  if (!evento) {
+    tbodyPub.innerHTML = '<tr><td colspan="4" class="empty-row">Selecciona un evento</td></tr>';
+    tbodyProd.innerHTML = '<tr><td colspan="7" class="empty-row">Selecciona un evento</td></tr>';
+    return;
+  }
+  const key = sessionStorage.getItem('csm_admin_key');
+  const r = await fetch(`/api/cronograma?slug=${encodeURIComponent(evento.slug)}&all=1`, { headers: { 'x-admin-key': key } });
+  cronoData = await r.json();
+  if (!Array.isArray(cronoData)) cronoData = [];
+  renderCrono();
+  loadStaffList();
+}
+
+function renderCrono() {
+  const pub = cronoData.filter(c => c.tipo === 'publico' || c.tipo === 'break');
+  const prod = cronoData.filter(c => c.tipo !== 'publico' && c.tipo !== 'break');
+
+  const tbodyPub = document.getElementById('tbodyCronoPublico');
+  tbodyPub.innerHTML = pub.length ? pub.map(c => `<tr>
+    <td style="color:var(--gold);font-family:'Oswald',sans-serif">${esc(c.hora || '—')}</td>
+    <td>${esc(c.actividad)}</td>
+    <td><span class="tipo-chip">${esc(c.tipo)}</span></td>
+    <td><button class="del-btn" onclick="deleteCronoItem('${c.id}')" title="Eliminar">×</button></td>
+  </tr>`).join('') : '<tr><td colspan="4" class="empty-row">Sin items todavía</td></tr>';
+
+  const tipoDot = { staff: 'var(--muted)', video: '#8b5cf6', fotografia: 'var(--gold)', entrega: 'var(--green)' };
+  const tbodyProd = document.getElementById('tbodyCronoProd');
+  tbodyProd.innerHTML = prod.length ? prod.map(c => `<tr style="${c.completado ? 'opacity:.5' : ''}">
+    <td><span onclick="toggleCronoCompletado('${c.id}',${!c.completado})" style="cursor:pointer;font-size:1rem">${c.completado ? '✅' : '○'}</span></td>
+    <td style="color:var(--muted);font-size:.8rem">${esc(c.hora || '—')}</td>
+    <td>${esc(c.actividad)}</td>
+    <td style="font-size:.8rem;color:var(--text)">${esc(c.responsable || '—')}</td>
+    <td style="font-size:.8rem;color:var(--muted)">${esc(c.lugar || '—')}</td>
+    <td><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:${tipoDot[c.tipo] || 'var(--muted)'};margin-right:6px;vertical-align:middle"></span>${esc(c.tipo)}</td>
+    <td><button class="del-btn" onclick="deleteCronoItem('${c.id}')" title="Eliminar">×</button></td>
+  </tr>`).join('') : '<tr><td colspan="7" class="empty-row">Sin items todavía</td></tr>';
+}
+
+async function addCronoItem(kind) {
+  const evento = getEventoActual();
+  if (!evento) return;
+  const key = sessionStorage.getItem('csm_admin_key');
+  const suffix = kind === 'publico' ? 'publico' : 'prod';
+  const hora = document.getElementById(`crono-hora-${suffix}`).value.trim();
+  const actividad = document.getElementById(`crono-actividad-${suffix}`).value.trim();
+  const tipo = document.getElementById(`crono-tipo-${suffix}`).value;
+  if (!actividad) return;
+  const body = { evento_id: evento.id, hora, actividad, tipo, orden: cronoData.length };
+  if (kind === 'prod') {
+    body.responsable = document.getElementById('crono-resp-prod').value.trim();
+    body.lugar = document.getElementById('crono-lugar-prod').value.trim();
+  }
+  await fetch('/api/cronograma', {
+    method: 'POST',
+    headers: { 'x-admin-key': key, 'Content-Type': 'application/json' },
+    body: JSON.stringify(body),
+  });
+  ['hora','actividad'].forEach(f => document.getElementById(`crono-${f}-${suffix}`).value = '');
+  if (kind === 'prod') { document.getElementById('crono-resp-prod').value = ''; document.getElementById('crono-lugar-prod').value = ''; }
+  await loadCronogramaTab();
+}
+
+async function toggleCronoCompletado(id, completado) {
+  const key = sessionStorage.getItem('csm_admin_key');
+  await fetch('/api/cronograma', {
+    method: 'PATCH',
+    headers: { 'x-admin-key': key, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ id, completado }),
+  });
+  const item = cronoData.find(c => c.id === id);
+  if (item) { item.completado = completado; renderCrono(); }
+}
+
+async function deleteCronoItem(id) {
+  if (!confirm('¿Eliminar este item del cronograma?')) return;
+  const key = sessionStorage.getItem('csm_admin_key');
+  await fetch('/api/cronograma', {
+    method: 'DELETE',
+    headers: { 'x-admin-key': key, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ id }),
+  });
+  cronoData = cronoData.filter(c => c.id !== id);
+  renderCrono();
+}
+
+let staffData = [];
+
+async function loadStaffList() {
+  const evento = getEventoActual();
+  if (!evento) return;
+  staffData = await apiFetch(`table=csm_staff&evento_id=${evento.id}`);
+  if (!Array.isArray(staffData)) staffData = [];
+  renderStaffList();
+}
+
+function renderStaffList() {
+  document.getElementById('staffCount').textContent = staffData.length;
+  const tbody = document.getElementById('tbodyStaff');
+  tbody.innerHTML = staffData.length ? staffData.map(s => `<tr>
+    <td><strong>${esc(s.nombre)}</strong></td>
+    <td>${esc(s.rol || '—')}</td>
+    <td>${esc(s.area || '—')}</td>
+    <td style="font-size:.8rem;color:var(--muted)">${esc(s.horario_entrada || '—')} – ${esc(s.horario_salida || '—')}</td>
+    <td><button class="del-btn" onclick="deleteStaff('${s.id}')" title="Eliminar">×</button></td>
+  </tr>`).join('') : '<tr><td colspan="5" class="empty-row">Sin crew todavía</td></tr>';
+}
+
+async function addStaff() {
+  const evento = getEventoActual();
+  if (!evento) return;
+  const nombre  = document.getElementById('staff-nombre').value.trim();
+  const rol     = document.getElementById('staff-rol').value.trim();
+  const area    = document.getElementById('staff-area').value.trim();
+  const entrada = document.getElementById('staff-entrada').value.trim();
+  const salida  = document.getElementById('staff-salida').value.trim();
+  if (!nombre) return;
+  const key = sessionStorage.getItem('csm_admin_key');
+  await fetch('/api/admin-data?table=csm_staff', {
+    method: 'POST',
+    headers: { 'x-admin-key': key, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ evento_id: evento.id, nombre, rol, area, horario_entrada: entrada, horario_salida: salida }),
+  });
+  ['staff-nombre','staff-rol','staff-area','staff-entrada','staff-salida'].forEach(id => document.getElementById(id).value = '');
+  await loadStaffList();
+}
+
+async function deleteStaff(id) {
+  if (!confirm('¿Eliminar de la lista de staff?')) return;
+  const key = sessionStorage.getItem('csm_admin_key');
+  await fetch(`/api/admin-data?table=csm_staff&id=${id}`, {
+    method: 'DELETE',
+    headers: { 'x-admin-key': key, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ id }),
+  });
+  staffData = staffData.filter(s => s.id !== id);
+  renderStaffList();
+}
+
 // ── REGISTRO TALLER (free invite page) ───────────────────────────────────────
 async function loadRegistro() {
-  const rows = await apiFetch('table=csm_registro_taller');
+  const evento = getEventoActual();
+  const qs = evento ? `table=csm_registro_taller&evento_id=${evento.id}` : 'table=csm_registro_taller';
+  const rows = await apiFetch(qs);
   const data = Array.isArray(rows) ? rows : [];
   document.getElementById('registroCount').textContent = data.length + ' registros';
   const tbody = document.getElementById('tbodyRegistro');
@@ -989,6 +1350,7 @@ if (sessionStorage.getItem('csm_admin_key')) {
   document.getElementById('gate').style.display = 'none';
   document.getElementById('app').style.display = 'block';
   loadData();
+  loadEventos();
 }
 // Auto-refresh every 60s
 setInterval(loadData, 60000);

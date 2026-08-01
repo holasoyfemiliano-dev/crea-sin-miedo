@@ -75,26 +75,8 @@
     .tarea-text { font-size:.78rem; color:var(--text); line-height:1.5; }
     .tarea.done .tarea-text { text-decoration:line-through; color:var(--muted); }
 
-    /* Logistics */
-    .logistics-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(300px, 1fr)); gap:16px; }
-    .logis-card { background:var(--card); border:1px solid rgba(255,255,255,.06); border-radius:14px; padding:20px; }
-    .logis-card h3 { font-family:'Bebas Neue',sans-serif; font-size:1.2rem; margin-bottom:14px; display:flex; align-items:center; gap:8px; }
-    .checklist { list-style:none; display:flex; flex-direction:column; gap:8px; }
-    .checklist li { display:flex; gap:10px; align-items:flex-start; }
-    .checklist li .cb { width:18px; height:18px; border-radius:4px; border:1.5px solid rgba(255,255,255,.2); flex-shrink:0; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:all .2s; }
-    .checklist li .cb.done { background:var(--green); border-color:var(--green); }
-    .checklist li .cb.done::after { content:'✓'; font-size:.65rem; color:#000; font-weight:900; }
-    .checklist li span { font-size:.82rem; color:var(--text); line-height:1.5; transition:color .2s; }
-    .checklist li.done span { text-decoration:line-through; color:var(--muted); }
-
-    /* Contenido team */
-    .contenido-section { display:flex; flex-direction:column; gap:16px; }
-    .cont-card { background:var(--card); border:1px solid rgba(255,255,255,.06); border-radius:14px; padding:20px; }
-    .cont-card h3 { font-family:'Bebas Neue',sans-serif; font-size:1.1rem; margin-bottom:8px; display:flex; align-items:center; gap:8px; }
-    .cont-card p { font-size:.83rem; color:var(--text); line-height:1.7; }
-    .cont-card ul { list-style:none; margin-top:10px; display:flex; flex-direction:column; gap:6px; }
-    .cont-card ul li::before { content:'→ '; color:var(--orange); font-weight:700; }
-    .cont-card ul li { font-size:.82rem; color:var(--text); }
+    /* Notas de producción */
+    .notas-card { background:var(--card); border:1px solid rgba(255,255,255,.06); border-radius:14px; padding:24px; white-space:pre-wrap; font-size:.85rem; color:var(--text); line-height:1.7; }
 
     #app { display:none; }
     .section { display:none; }
@@ -106,7 +88,7 @@
 <div id="gate">
   <div class="gate-card">
     <h2>STAFF</h2>
-    <p>Crea sin Miedo · 1 Agosto 2026</p>
+    <p id="gateSub">Crea sin Miedo</p>
     <input type="password" id="pwInput" placeholder="Clave de staff" onkeydown="if(event.key==='Enter')checkPw()">
     <button class="gate-btn" onclick="checkPw()">Acceder</button>
     <div class="gate-err" id="gateErr">Clave incorrecta</div>
@@ -116,21 +98,20 @@
 <div id="app">
   <header>
     <div class="h-logo">CREA <span>SIN</span> MIEDO · <span style="color:var(--muted);font-size:.75rem;font-family:'Inter'">Staff</span></div>
-    <div class="h-date">Sábado 1 Agosto 2026 · GDL</div>
+    <div class="h-date" id="hDate">Cargando…</div>
   </header>
 
   <div class="content">
     <div class="tabs">
       <div class="tab active" onclick="showSection('cronograma',this)">📅 Cronograma</div>
       <div class="tab" onclick="showSection('equipo',this)">👥 Equipo</div>
-      <div class="tab" onclick="showSection('logistica',this)">📦 Logística</div>
-      <div class="tab" onclick="showSection('contenido',this)">🎬 Contenido</div>
+      <div class="tab" onclick="showSection('notas',this)">📦 Notas de producción</div>
     </div>
 
     <!-- CRONOGRAMA -->
     <div class="section active" id="sec-cronograma">
       <div class="timeline" id="timelinePublico"></div>
-      <div style="margin:24px 0 12px;font-size:.7rem;letter-spacing:.15em;text-transform:uppercase;color:var(--muted)">— Solo staff</div>
+      <div style="margin:24px 0 12px;font-size:.7rem;letter-spacing:.15em;text-transform:uppercase;color:var(--muted)">— Solo staff / producción</div>
       <div class="timeline" id="timelineStaff"></div>
     </div>
 
@@ -141,20 +122,16 @@
       </div>
     </div>
 
-    <!-- LOGÍSTICA -->
-    <div class="section" id="sec-logistica">
-      <div class="logistics-grid" id="logisticsGrid">Loading…</div>
-    </div>
-
-    <!-- CONTENIDO -->
-    <div class="section" id="sec-contenido">
-      <div class="contenido-section" id="contenidoSection">Loading…</div>
+    <!-- NOTAS DE PRODUCCIÓN -->
+    <div class="section" id="sec-notas">
+      <div class="notas-card" id="notasProduccion">Cargando…</div>
     </div>
   </div>
 </div>
 
 <script>
 let adminKey = sessionStorage.getItem('csm_admin_key');
+let eventoActual = null;
 
 function checkPw() {
   const v = document.getElementById('pwInput').value.trim();
@@ -178,208 +155,54 @@ function showSection(id, btn) {
   document.getElementById('sec-' + id).classList.add('active');
 }
 
-// ——— CRONOGRAMA DATA ———
-const CRONOGRAMA_PUBLICO = [
-  { hora: '8:30', actividad: 'Registro y bienvenida', responsable: 'Recepción', lugar: 'Entrada principal', tipo: 'publico' },
-  { hora: '9:00', actividad: 'Apertura — Femiliano', responsable: 'Femiliano', lugar: 'Escenario principal', notas: 'Energía máxima, música de entrada', tipo: 'publico' },
-  { hora: '9:30', actividad: 'Módulo 1: Marca personal desde cero', responsable: 'Femiliano', lugar: 'Escenario principal', notas: 'Ejercicio práctico de posicionamiento', tipo: 'publico' },
-  { hora: '10:30', actividad: 'Coffee break ☕', responsable: 'Logística', lugar: 'Área de catering', tipo: 'break' },
-  { hora: '10:45', actividad: 'Módulo 2: Estrategia de contenido', responsable: 'Femiliano', lugar: 'Escenario principal', notas: 'Workshop con ejercicio individual', tipo: 'publico' },
-  { hora: '12:00', actividad: 'Panel de creadores locales', responsable: 'Moderador', lugar: 'Escenario principal', notas: '3 creadores GDL + Q&A', tipo: 'publico' },
-  { hora: '13:00', actividad: 'Comida 🍽️', responsable: 'Logística', lugar: 'Área comedor', tipo: 'break' },
-  { hora: '14:30', actividad: 'Módulo 3: Cámara, luz y producción', responsable: 'Invitado especial', lugar: 'Escenario principal', notas: 'Práctica con equipo propio', tipo: 'publico' },
-  { hora: '16:00', actividad: 'Módulo 4: Monetización y comunidad', responsable: 'Femiliano', lugar: 'Escenario principal', tipo: 'publico' },
-  { hora: '17:00', actividad: 'Sesión de fotos VIP + Full 📸', responsable: 'Fotógrafo', lugar: 'Área fotográfica', notas: 'Solo boletos VIP y Full Experience', tipo: 'publico' },
-  { hora: '17:30', actividad: 'Cierre y networking', responsable: 'Femiliano', lugar: 'Escenario principal', tipo: 'publico' },
-  { hora: '18:30', actividad: 'Sky Bar — VIP & Full 🥂', responsable: 'Staff VIP', lugar: 'Sky Bar / Rooftop', notas: 'Solo boletos VIP y Full Experience', tipo: 'publico' },
-];
+function esc(s) { return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
 
-const CRONOGRAMA_STAFF = [
-  { hora: '7:00', actividad: 'Montaje y setup general', responsable: 'Todo el equipo', lugar: 'Venue completo', notas: 'Llegada mínima 7AM. Traer ID.' },
-  { hora: '7:30', actividad: 'Setup AV y sonido', responsable: 'Técnico AV', lugar: 'Escenario', notas: 'Prueba de micrófonos y proyector' },
-  { hora: '8:00', actividad: 'Briefing final de staff', responsable: 'Femiliano', lugar: 'Back stage', notas: 'Repasar roles y contingencias' },
-  { hora: '8:15', actividad: 'Apertura de puertas', responsable: 'Recepción', lugar: 'Entrada', notas: 'Activar app de check-in' },
-  { hora: '19:00', actividad: 'Desmontaje y cierre', responsable: 'Logística', lugar: 'Venue completo', tipo: 'staff' },
-];
-
-// ——— STAFF DATA ———
-const STAFF_DATA = [
-  { nombre: 'Femiliano', rol: 'Host / Speaker Principal', area: 'Escenario', horario: '7:00 – 21:00', emoji: '🎤', tareas: ['Apertura del evento', 'Módulos 1, 2 y 4', 'Cierre y llamada a acción'] },
-  { nombre: 'Staff Recepción 1', rol: 'Check-in & Registro', area: 'Entrada', horario: '7:45 – 14:00', emoji: '📋', tareas: ['Escanear QR de asistentes', 'Entregar kits de bienvenida', 'Manejo de lista de invitados'] },
-  { nombre: 'Staff Recepción 2', rol: 'Check-in & Registro', area: 'Entrada', horario: '7:45 – 14:00', emoji: '📋', tareas: ['Apoyo en check-in', 'Atención a dudas', 'Control de aforo'] },
-  { nombre: 'Técnico AV', rol: 'Audio y Video', area: 'Técnica', horario: '7:00 – 19:00', emoji: '🎛️', tareas: ['Setup de sonido y proyección', 'Manejo de slides durante módulos', 'Soporte durante panel de creadores'] },
-  { nombre: 'Fotógrafo', rol: 'Fotografía y Video', area: 'Contenido', horario: '8:30 – 20:00', emoji: '📸', tareas: ['Cobertura general del evento', 'Sesión fotos VIP (5PM)', 'Entrega de selección al día siguiente'] },
-  { nombre: 'Staff Logística', rol: 'Logística y Catering', area: 'Operaciones', horario: '7:00 – 19:30', emoji: '📦', tareas: ['Coordinación catering (coffee y comida)', 'Control de materiales', 'Setup y desmontaje'] },
-  { nombre: 'Staff VIP', rol: 'Atención VIP & Full', area: 'VIP', horario: '16:30 – 22:00', emoji: '✨', tareas: ['Acompañar asistentes VIP en fotos', 'Organizar acceso Sky Bar', 'Coordinar cena Full Experience'] },
-  { nombre: 'Community Manager', rol: 'Redes Sociales en Vivo', area: 'Contenido', horario: '8:00 – 20:00', emoji: '📱', tareas: ['Publicar stories en tiempo real', 'Responder DMs del evento', 'Recolectar testimonios'] },
-];
-
-// ——— LOGISTICS DATA ———
-const LOGISTICS = [
-  {
-    title: '🏛️ Venue', items: [
-      'Confirmar dirección exacta y estacionamiento',
-      'Acceso para montaje desde las 7AM',
-      'Coordinar mesas y sillas (80–120 pax)',
-      'Verificar proyector / pantalla',
-      'Señalética de entrada y registro',
-      'Acceso a Sky Bar para VIP',
-    ]
-  },
-  {
-    title: '🍽️ Catering', items: [
-      'Coffee break 10:30AM (café, agua, snacks)',
-      'Comida 1PM (buffet o cajas — confirmar)',
-      'Agua disponible todo el día',
-      'Mesa de Sky Bar (bebidas VIP 6:30PM)',
-      'Cena Full Experience (lugar y hora)',
-    ]
-  },
-  {
-    title: '📦 Materiales', items: [
-      'Kit bienvenida: cuaderno + bolígrafo + flyer',
-      'Credenciales por tier (color-coded)',
-      'Banners / backdrop para fotos',
-      'Roll-up escenario',
-      'Señalética de áreas VIP',
-      'Extension cords y power strips',
-    ]
-  },
-  {
-    title: '💻 Tech & AV', items: [
-      'Laptop del speaker + HDMI adapter',
-      'Slides de todos los módulos descargadas',
-      'Micrófono de mano + lavalier',
-      'Conexión a internet (hotspot backup)',
-      'App de check-in probada',
-      'Grabación de respaldo (cámara fija)',
-    ]
-  },
-  {
-    title: '🚑 Contingencias', items: [
-      'Número de emergencias del venue',
-      'Kit de primeros auxilios',
-      'Plan B si falla el proyector',
-      'Lista de asistentes impresa (backup)',
-      'Contacto de sustituto para cada rol',
-    ]
-  },
-  {
-    title: '📸 Foto / Video', items: [
-      'Brief a fotógrafo: momentos clave',
-      'Área de fotos VIP montada desde 4:30PM',
-      'Formato de entrega acordado',
-      'Derechos de uso definidos',
-      'Reels del evento para día siguiente',
-    ]
-  },
-];
-
-// ——— CONTENIDO DATA ———
-const CONTENIDO = [
-  {
-    title: '🎬 Cobertura del Evento',
-    desc: 'El equipo de contenido es responsable de documentar cada momento para redes sociales, testimonios y material evergreen.',
-    items: ['Stories en vivo desde las 8AM (apertura de puertas)', 'Reel del evento (30–60s) para publicar 24h después', 'Clips de los mejores momentos de cada módulo', 'Testimonios en cámara al final del día', 'BTS del equipo y backstage'],
-  },
-  {
-    title: '📱 Redes en Tiempo Real',
-    desc: 'El Community Manager publica durante el evento.',
-    items: ['IG Stories cada 30–45 min máximo', 'Quote cards de las frases más potentes', 'Encuestas y stickers interactivos', 'Mención de asistentes que hagan contenido'],
-  },
-  {
-    title: '📹 Setup de Producción',
-    desc: 'Especificaciones técnicas para el equipo de contenido.',
-    items: ['Cámara principal fija para grabar módulos', 'Segunda cámara para B-roll y audiencia', 'Ring light o luz natural para fotos VIP', 'Teleprompter opcional para módulos', 'Discos duros externos para backup inmediato'],
-  },
-  {
-    title: '🗂️ Domingo — Producción Full Experience',
-    desc: 'Sesión exclusiva para asistentes Full Experience el domingo 2 de agosto.',
-    items: ['Producción de 1 video de marca personal por asistente', 'Setup profesional: luz, fondo, audio', 'Edición básica entregada en 48h', 'Sesión de fotos de perfil profesional'],
-  },
-];
-
-function renderCronograma() {
-  const pub = CRONOGRAMA_PUBLICO.filter(i => i.tipo !== 'staff');
-  const sta = CRONOGRAMA_STAFF;
-  document.getElementById('timelinePublico').innerHTML = pub.map(item => `
-    <div class="tl-item ${item.tipo === 'break' ? 'break' : ''}">
-      <div class="tl-time"><span>${item.hora}</span></div>
-      <div class="tl-body">
-        <div class="tl-card ${item.tipo === 'break' ? 'break-card' : ''}">
-          <h4>${item.actividad}</h4>
-          ${item.notas ? `<p>${item.notas}</p>` : ''}
-          <div class="tl-meta">
-            ${item.responsable ? `<span class="tl-tag orange">${item.responsable}</span>` : ''}
-            ${item.lugar ? `<span class="tl-tag blue">${item.lugar}</span>` : ''}
-          </div>
-        </div>
-      </div>
-    </div>
-  `).join('');
-
-  document.getElementById('timelineStaff').innerHTML = sta.map(item => `
-    <div class="tl-item staff">
-      <div class="tl-time"><span>${item.hora}</span></div>
-      <div class="tl-body">
-        <div class="tl-card staff-card">
-          <h4>${item.actividad}</h4>
-          ${item.notas ? `<p>${item.notas}</p>` : ''}
-          <div class="tl-meta">
-            ${item.responsable ? `<span class="tl-tag blue">${item.responsable}</span>` : ''}
-            ${item.lugar ? `<span class="tl-tag">${item.lugar}</span>` : ''}
-          </div>
-        </div>
-      </div>
-    </div>
-  `).join('');
+function fmtFechaCorta(iso) {
+  if (!iso) return '—';
+  return new Date(iso + 'T12:00:00').toLocaleDateString('es-MX', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })
+    .replace(/^\w/, c => c.toUpperCase());
 }
 
-function renderEquipo() {
-  document.getElementById('staffGrid').innerHTML = STAFF_DATA.map(s => `
+function renderTimeline(elId, items, variant) {
+  document.getElementById(elId).innerHTML = items.length ? items.map(item => `
+    <div class="tl-item ${item.tipo === 'break' ? 'break' : variant === 'staff' ? 'staff' : ''}">
+      <div class="tl-time"><span>${esc(item.hora || '—')}</span></div>
+      <div class="tl-body">
+        <div class="tl-card ${item.tipo === 'break' ? 'break-card' : variant === 'staff' ? 'staff-card' : ''}">
+          <h4>${esc(item.actividad)}</h4>
+          ${item.notas ? `<p>${esc(item.notas)}</p>` : ''}
+          <div class="tl-meta">
+            ${item.responsable ? `<span class="tl-tag orange">${esc(item.responsable)}</span>` : ''}
+            ${item.lugar ? `<span class="tl-tag blue">${esc(item.lugar)}</span>` : ''}
+            ${variant === 'staff' && item.tipo && item.tipo !== 'staff' ? `<span class="tl-tag green">${esc(item.tipo)}</span>` : ''}
+          </div>
+        </div>
+      </div>
+    </div>
+  `).join('') : '<div style="color:var(--muted);font-size:.85rem;padding:12px 0">Sin items todavía.</div>';
+}
+
+function renderEquipo(staff) {
+  document.getElementById('staffGrid').innerHTML = staff.length ? staff.map(s => `
     <div class="staff-card">
-      <div class="staff-avatar">${s.emoji}</div>
-      <div class="staff-name">${s.nombre}</div>
-      <div class="staff-rol">${s.rol}</div>
-      <span class="staff-area">${s.area}</span>
-      <div class="staff-horario">⏰ ${s.horario}</div>
-      <div class="staff-tareas">
-        <h5>Responsabilidades</h5>
-        ${s.tareas.map(t => `
-          <div class="tarea">
-            <div class="tarea-check" onclick="toggleCheck(this)"></div>
-            <div class="tarea-text">${t}</div>
-          </div>
-        `).join('')}
-      </div>
+      <div class="staff-avatar">👤</div>
+      <div class="staff-name">${esc(s.nombre)}</div>
+      <div class="staff-rol">${esc(s.rol || '—')}</div>
+      <span class="staff-area">${esc(s.area || '—')}</span>
+      <div class="staff-horario">⏰ ${esc(s.horario_entrada || '—')} – ${esc(s.horario_salida || '—')}</div>
+      ${Array.isArray(s.tareas) && s.tareas.length ? `
+        <div class="staff-tareas">
+          <h5>Responsabilidades</h5>
+          ${s.tareas.map(t => `
+            <div class="tarea">
+              <div class="tarea-check" onclick="toggleCheck(this)"></div>
+              <div class="tarea-text">${esc(t)}</div>
+            </div>
+          `).join('')}
+        </div>
+      ` : ''}
     </div>
-  `).join('');
-}
-
-function renderLogistica() {
-  document.getElementById('logisticsGrid').innerHTML = LOGISTICS.map(sec => `
-    <div class="logis-card">
-      <h3>${sec.title}</h3>
-      <ul class="checklist">
-        ${sec.items.map(item => `
-          <li onclick="toggleListItem(this)">
-            <div class="cb"></div>
-            <span>${item}</span>
-          </li>
-        `).join('')}
-      </ul>
-    </div>
-  `).join('');
-}
-
-function renderContenido() {
-  document.getElementById('contenidoSection').innerHTML = CONTENIDO.map(c => `
-    <div class="cont-card">
-      <h3>${c.title}</h3>
-      <p>${c.desc}</p>
-      <ul>${c.items.map(i => `<li>${i}</li>`).join('')}</ul>
-    </div>
-  `).join('');
+  `).join('') : '<div style="color:var(--muted);font-size:.85rem;padding:20px">Sin crew registrado para este evento todavía.</div>';
 }
 
 function toggleCheck(el) {
@@ -387,16 +210,39 @@ function toggleCheck(el) {
   el.closest('.tarea').classList.toggle('done');
 }
 
-function toggleListItem(li) {
-  li.querySelector('.cb').classList.toggle('done');
-  li.classList.toggle('done');
-}
+async function renderAll() {
+  const params = new URLSearchParams(location.search);
+  const slug = params.get('slug') || 'next';
 
-function renderAll() {
-  renderCronograma();
-  renderEquipo();
-  renderLogistica();
-  renderContenido();
+  try {
+    const evRes = await fetch(`/api/eventos?slug=${encodeURIComponent(slug)}`);
+    if (!evRes.ok) throw new Error('sin evento');
+    eventoActual = await evRes.json();
+  } catch (e) {
+    document.getElementById('hDate').textContent = 'Sin evento próximo';
+    document.getElementById('gateSub').textContent = 'Crea sin Miedo';
+    return;
+  }
+
+  document.getElementById('hDate').textContent = `${fmtFechaCorta(eventoActual.fecha)} · ${eventoActual.ciudad}`;
+  document.getElementById('gateSub').textContent = `Crea sin Miedo · ${eventoActual.ciudad}`;
+
+  const [cronoRes, staffRes] = await Promise.all([
+    fetch(`/api/cronograma?slug=${encodeURIComponent(eventoActual.slug)}&all=1`, { headers: { 'x-admin-key': adminKey } }),
+    fetch(`/api/admin-data?table=csm_staff&evento_id=${eventoActual.id}`, { headers: { 'x-admin-key': adminKey } }),
+  ]);
+  const crono = cronoRes.ok ? await cronoRes.json() : [];
+  const staff = staffRes.ok ? await staffRes.json() : [];
+
+  const pub = Array.isArray(crono) ? crono.filter(c => c.tipo === 'publico' || c.tipo === 'break') : [];
+  const prod = Array.isArray(crono) ? crono.filter(c => c.tipo !== 'publico' && c.tipo !== 'break') : [];
+  renderTimeline('timelinePublico', pub, 'publico');
+  renderTimeline('timelineStaff', prod, 'staff');
+
+  renderEquipo(Array.isArray(staff) ? staff : []);
+
+  document.getElementById('notasProduccion').textContent =
+    eventoActual.notas_produccion || 'Sin notas de producción para este evento todavía — agrégalas desde el admin.';
 }
 
 if (sessionStorage.getItem('csm_admin_key')) {

@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Regístrate — Crea sin Miedo · Taller · Zapopan, Jal. · 2 Agosto 2026</title>
-  <meta name="description" content="Te invitamos al taller Crea sin Miedo. Zapopan, Jalisco, 2 de agosto 2026. Regístrate y te contamos todos los detalles.">
+  <title id="pageTitle">Regístrate — Crea sin Miedo</title>
+  <meta name="description" id="pageDesc" content="Te invitamos al taller Crea sin Miedo. Regístrate y te contamos todos los detalles.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Antonio:wght@400;700&family=Oswald:wght@600;700&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   <style>
@@ -118,9 +118,9 @@
   <div class="taller-tag">Taller práctico de creación de contenido</div>
   <div class="taller-rule"></div>
 
-  <div class="meta">
-    <div class="meta-pill loc">📍 Zapopan, Jalisco</div>
-    <div class="meta-pill date">📅 Domingo 2 de Agosto, 2026</div>
+  <div class="meta" id="metaRow">
+    <div class="meta-pill loc" id="pillLoc">📍 Cargando…</div>
+    <div class="meta-pill date" id="pillDate">📅 —</div>
   </div>
 
   <p class="copy">
@@ -129,26 +129,20 @@
     Solo necesitamos tus datos para guardarte tu lugar.
   </p>
 
-  <div class="details">
+  <div class="details" id="detailsWrap">
     <div class="detail-item loc">
       <div class="icon-badge red">📍</div>
       <div>
         <div class="detail-title">Así llegas</div>
-        <div class="detail-text">
-          C. Colima 130, El Mante, 45235 Zapopan, Jal.<br>
-          <a href="https://maps.google.com/?q=C.+Colima+130%2C+El+Mante%2C+45235+Zapopan%2C+Jal." target="_blank" rel="noopener">Cómo llegar →</a>
-        </div>
+        <div class="detail-text" id="addrText">Cargando ubicación…</div>
       </div>
     </div>
     <div class="detail-item time">
       <div class="icon-badge gold">🕘</div>
       <div>
         <div class="detail-title">Así va el día</div>
-        <div class="timeline">
-          <div class="timeline-row"><span class="timeline-time">9:30 AM</span><span class="timeline-label">Te esperamos con café</span></div>
-          <div class="timeline-row"><span class="timeline-time">10:00 AM</span><span class="timeline-label">¡Arrancamos!</span></div>
-          <div class="timeline-row"><span class="timeline-time">2:00 PM</span><span class="timeline-label">Pausa para comer</span></div>
-          <div class="timeline-row"><span class="timeline-time">7:00 PM</span><span class="timeline-label">Cerramos el día</span></div>
+        <div class="timeline" id="timelineList">
+          <div class="timeline-row"><span class="timeline-label" style="color:var(--muted)">Cargando horario…</span></div>
         </div>
       </div>
     </div>
@@ -156,7 +150,7 @@
       <div class="icon-badge amber">💡</div>
       <div>
         <div class="detail-title">Para que la pases fácil</div>
-        <div class="detail-text">No te preocupes por el coche, hay estacionamiento justo en el lugar. Y a la hora de la comida vas a tener varias opciones cerquita para escoger.</div>
+        <div class="detail-text">Te avisamos por correo antes del evento con cualquier detalle extra (estacionamiento, transporte, qué llevar).</div>
       </div>
     </div>
   </div>
@@ -192,10 +186,69 @@
 
   <p class="note">Al registrarte nos das luz verde para escribirte sobre este evento, nada más.</p>
 
-  <footer><span class="red">Crea sin Miedo</span> · 2 Agosto · Zapopan, Jal.</footer>
+  <footer><span class="red">Crea sin Miedo</span> · <span id="footerText">—</span></footer>
 </div>
 
 <script>
+let currentEvento = null;
+
+function fmtFechaLarga(iso) {
+  if (!iso) return '—';
+  const d = new Date(iso + 'T12:00:00');
+  return d.toLocaleDateString('es-MX', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })
+    .replace(/^\w/, c => c.toUpperCase());
+}
+
+function fmtFechaCorta(iso) {
+  if (!iso) return '—';
+  const d = new Date(iso + 'T12:00:00');
+  return d.toLocaleDateString('es-MX', { day: 'numeric', month: 'short' });
+}
+
+async function loadEvento() {
+  const params = new URLSearchParams(location.search);
+  const slug = params.get('slug') || 'next';
+
+  try {
+    const [evRes, croRes] = await Promise.all([
+      fetch(`/api/eventos?slug=${encodeURIComponent(slug)}`),
+      fetch(`/api/cronograma?slug=${encodeURIComponent(slug)}`),
+    ]);
+    if (!evRes.ok) throw new Error('sin evento');
+    currentEvento = await evRes.json();
+    const cronograma = croRes.ok ? await croRes.json() : [];
+    renderEvento(currentEvento, cronograma);
+  } catch (e) {
+    document.getElementById('metaRow').innerHTML = '';
+    document.getElementById('detailsWrap').innerHTML =
+      '<div class="detail-item"><div>No hay ningún evento próximo abierto para registro ahorita. Vuelve pronto.</div></div>';
+    document.querySelector('.card').style.display = 'none';
+  }
+}
+
+function renderEvento(ev, cronograma) {
+  document.getElementById('pillLoc').textContent = `📍 ${ev.ciudad}`;
+  document.getElementById('pillDate').textContent = `📅 ${fmtFechaLarga(ev.fecha)}`;
+  document.getElementById('footerText').textContent = `${fmtFechaCorta(ev.fecha)} · ${ev.ciudad}`;
+  document.getElementById('pageTitle').textContent = `Regístrate — Crea sin Miedo · ${ev.ciudad} · ${fmtFechaCorta(ev.fecha)}`;
+  document.getElementById('pageDesc').setAttribute('content', `Te invitamos al taller Crea sin Miedo en ${ev.ciudad}, ${fmtFechaLarga(ev.fecha)}. Regístrate y te contamos todos los detalles.`);
+
+  const addr = [ev.direccion || ev.venue].filter(Boolean).join(' — ');
+  const mapsUrl = ev.maps_url || (addr ? `https://maps.google.com/?q=${encodeURIComponent(addr)}` : null);
+  document.getElementById('addrText').innerHTML = addr
+    ? `${esc(addr)}${mapsUrl ? `<br><a href="${mapsUrl}" target="_blank" rel="noopener">Cómo llegar →</a>` : ''}`
+    : 'Te avisamos la ubicación exacta por correo.';
+
+  const timelineEl = document.getElementById('timelineList');
+  timelineEl.innerHTML = cronograma.length
+    ? cronograma.map(c => `<div class="timeline-row"><span class="timeline-time">${esc(c.hora || '—')}</span><span class="timeline-label">${esc(c.actividad)}</span></div>`).join('')
+    : '<div class="timeline-row"><span class="timeline-label" style="color:var(--muted)">Muy pronto compartimos el horario del día.</span></div>';
+}
+
+function esc(s) { return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+
+loadEvento();
+
 document.getElementById('regForm').addEventListener('submit', async function(e) {
   e.preventDefault();
 
@@ -223,7 +276,7 @@ document.getElementById('regForm').addEventListener('submit', async function(e) 
     const res = await fetch('/api/registro', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ nombre, email, telefono, ocupacion }),
+      body: JSON.stringify({ nombre, email, telefono, ocupacion, slug: currentEvento?.slug }),
     });
     const data = await res.json();
     if (!res.ok) throw new Error(data.error || 'No se pudo completar el registro');

@@ -65,7 +65,7 @@ module.exports = async function handler(req, res) {
   };
 
   // POST: insert a new row (supported tables)
-  const POSTABLE = ['csm_codigos_descuento', 'csm_asistentes', 'csm_invitados'];
+  const POSTABLE = ['csm_codigos_descuento', 'csm_asistentes', 'csm_invitados', 'csm_staff'];
   if (req.method === 'POST' && POSTABLE.includes(table)) {
     const r = await fetch(`${SB_URL}/rest/v1/${table}`, {
       method: 'POST',
@@ -112,7 +112,10 @@ module.exports = async function handler(req, res) {
   }
 
   // GET
-  const qs = req.query.qs || queryMap[table] || 'select=*';
+  let qs = req.query.qs || queryMap[table] || 'select=*';
+  if (req.query.evento_id && (table === 'csm_registro_taller' || table === 'csm_staff')) {
+    qs += `&evento_id=eq.${req.query.evento_id}`;
+  }
   const r = await fetch(`${SB_URL}/rest/v1/${table}?${qs}`, {
     headers: { apikey: SB_KEY, Authorization: `Bearer ${SB_KEY}` },
   });
