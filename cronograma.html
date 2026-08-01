@@ -52,14 +52,14 @@
     .detail-text a { color:var(--gold); text-decoration:none; font-weight:600; }
     .detail-text a:hover { text-decoration:underline; }
 
-    .timeline { margin-top:6px; display:flex; flex-direction:column; gap:6px; }
-    .timeline-row { display:flex; gap:10px; align-items:center; }
+    .timeline { margin-top:6px; display:flex; flex-direction:column; gap:8px; }
+    .timeline-row { display:flex; gap:10px; align-items:flex-start; }
     .timeline-time {
-      font-family:'Oswald',sans-serif; font-weight:600; font-size:.76rem; color:var(--gold);
+      font-family:'Oswald',sans-serif; font-weight:600; font-size:.74rem; color:var(--gold);
       background:rgba(245,197,24,.13); border:1px solid rgba(245,197,24,.3); border-radius:6px;
-      padding:3px 9px; width:76px; text-align:center; flex-shrink:0;
+      padding:3px 8px; white-space:nowrap; text-align:center; flex-shrink:0; margin-top:1px;
     }
-    .timeline-label { font-size:.85rem; color:var(--text); }
+    .timeline-label { font-size:.85rem; color:var(--text); line-height:1.4; }
 
     .btn-red {
       display:block; width:100%; text-align:center; background:linear-gradient(135deg, var(--red2), var(--red));
