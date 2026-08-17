@@ -3,8 +3,6 @@
   "routes": [
     { "src": "/api/(.*)", "dest": "/api/$1" },
     { "src": "/checkout",  "dest": "/checkout.html" },
-    { "src": "/registro/(?<slug>[^/]+)",   "dest": "/registro.html?slug=$slug" },
-    { "src": "/registro",  "dest": "/registro.html" },
     { "src": "/cronograma/(?<slug>[^/]+)", "dest": "/cronograma.html?slug=$slug" },
     { "src": "/cronograma", "dest": "/cronograma.html" },
     { "src": "/gracias",   "dest": "/gracias.html" },

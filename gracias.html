@@ -196,7 +196,7 @@ function renderConfirmed(paymentId, tier, evento) {
 }
 
 function renderError(tier, slug) {
-  const retryUrl = tier === 'practico' ? `/registro${slug ? '/' + slug : ''}` : '/checkout';
+  const retryUrl = tier === 'practico' ? '/#boletos' : '/checkout';
   document.getElementById('mainPage').innerHTML = `
     <div class="check-icon" style="background:rgba(239,68,68,.15);border-color:rgba(239,68,68,.4)">✕</div>
     <h1>Pago <span style="color:#ef4444">no completado</span></h1>

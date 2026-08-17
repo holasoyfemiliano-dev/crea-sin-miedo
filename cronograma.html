@@ -116,7 +116,7 @@
     <div style="color:var(--muted);font-size:.85rem">Cargando horario…</div>
   </div>
 
-  <a href="/registro" id="registroLink" class="btn-red">Regístrate →</a>
+  <a href="/#boletos" id="registroLink" class="btn-red">Regístrate →</a>
 
   <footer><span class="red">Crea sin Miedo</span> · <span id="footerText">—</span></footer>
 </div>
@@ -186,7 +186,7 @@ async function loadEvento() {
     document.getElementById('pillDate').textContent = `📅 ${fmtFechaLarga(ev.fecha)}`;
     document.getElementById('footerText').textContent = `${fmtFechaCorta(ev.fecha)} · ${ev.ciudad}`;
     document.getElementById('pageTitle').textContent = `Cronograma — Crea sin Miedo · ${ev.ciudad}`;
-    document.getElementById('registroLink').href = ev.slug ? `/registro/${ev.slug}` : '/registro';
+    document.getElementById('registroLink').href = '/#boletos';
 
     const addr = [ev.direccion || ev.venue].filter(Boolean).join(' — ');
     const mapsUrl = ev.maps_url || (addr ? `https://maps.google.com/?q=${encodeURIComponent(addr)}` : null);

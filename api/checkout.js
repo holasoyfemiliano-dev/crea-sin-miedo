@@ -52,7 +52,7 @@ module.exports = async function handler(req, res) {
   const preference = new Preference(client);
 
   const slugQs = slug ? `&slug=${encodeURIComponent(slug)}` : '';
-  const failureUrl = tier === 'practico' ? `${BASE}/registro${slug ? '/' + slug : ''}?error=1` : `${BASE}/checkout?tier=${tier}&error=1`;
+  const failureUrl = tier === 'practico' ? `${BASE}/?error=1#boletos` : `${BASE}/checkout?tier=${tier}&error=1`;
 
   const body = {
     items: [{

@@ -158,6 +158,21 @@
     .price-card.featured .price-btn { background:var(--red); color:#fff; border:none; }
     .price-card.elite .price-btn { background:var(--gold); color:#000; border:none; }
     .price-btn:hover { filter:brightness(1.1); }
+    .price-btn:disabled { opacity:.6; cursor:default; }
+
+    /* Checkout form (fusionado en la landing) */
+    .checkout-form { text-align:left; margin-top:4px; }
+    .checkout-field { margin-bottom:14px; }
+    .checkout-field label { display:block; font-size:.68rem; letter-spacing:.06em; text-transform:uppercase; color:var(--muted); margin-bottom:6px; }
+    .checkout-field input {
+      width:100%; background:rgba(255,255,255,.045); border:1.5px solid rgba(255,255,255,.14);
+      border-radius:6px; padding:12px 13px; color:var(--white); font-family:'Inter',sans-serif; font-size:.92rem;
+      transition:border-color .15s, background .15s;
+    }
+    .checkout-field input::placeholder { color:#6b6259; }
+    .checkout-field input:focus { outline:none; border-color:var(--red); background:rgba(255,255,255,.07); }
+    .checkout-field input.error { border-color:var(--red2); }
+    .checkout-error { display:none; color:var(--red2); font-size:.8rem; margin-top:10px; text-align:center; }
 
     /* Stats bar */
     .stats-bar { position:relative; z-index:1; border-top:1px solid rgba(255,255,255,.05); border-bottom:1px solid rgba(255,255,255,.05); padding:48px 0; background:rgba(255,255,255,.015); backdrop-filter:blur(8px); }
@@ -273,7 +288,7 @@
       <div class="cupo-bar-note" id="cupoNote" style="margin-top:0">Cargando disponibilidad…</div>
     </div>
     <div class="hero-btns">
-      <a href="/registro" class="btn-red">Consigue tu lugar →</a>
+      <a href="#boletos" class="btn-red">Consigue tu lugar →</a>
       <a href="#que-vas-a-lograr" class="btn-outline">Ver programa</a>
     </div>
   </div>
@@ -452,7 +467,23 @@
           <li>Contenido que posiciona y vende, no genérico</li>
           <li>Grupo reducido, atención personalizada</li>
         </ul>
-        <a href="/registro" class="price-btn" style="display:block;text-align:center;text-decoration:none">Quiero mi lugar →</a>
+        <div class="price-divider"></div>
+        <form class="checkout-form" id="checkoutForm">
+          <div class="checkout-field">
+            <label for="ck-nombre">¿Cómo te llamas?</label>
+            <input type="text" id="ck-nombre" autocomplete="name" placeholder="Tu nombre">
+          </div>
+          <div class="checkout-field">
+            <label for="ck-email">Tu correo</label>
+            <input type="email" id="ck-email" autocomplete="email" placeholder="tu@correo.com">
+          </div>
+          <div class="checkout-field">
+            <label for="ck-telefono">Tu teléfono</label>
+            <input type="tel" id="ck-telefono" autocomplete="tel" placeholder="33 1234 5678">
+          </div>
+          <button type="submit" class="price-btn" id="checkoutBtn">Pagar $3,997 →</button>
+          <div class="checkout-error" id="checkoutError"></div>
+        </form>
       </div>
 
     </div>
@@ -493,7 +524,7 @@
         listas para posicionarte y vender. <span id="ctaFechaCiudad">Cargando fecha…</span>
       </p>
       <div style="text-align:center">
-        <a href="/registro" class="btn-red">Asegurar mi lugar →</a>
+        <a href="#boletos" class="btn-red">Asegurar mi lugar →</a>
       </div>
     </div>
   </div>
@@ -502,7 +533,7 @@
 <!-- STICKY CTA -->
 <div id="stickyCta">
   <div style="font-size:.8rem;color:var(--text)"><strong style="color:var(--white)">Crea sin Miedo</strong> · <span id="stickyFechaCiudad">—</span></div>
-  <a href="/registro" class="nav-cta">Conseguir lugar</a>
+  <a href="#boletos" class="nav-cta">Conseguir lugar</a>
 </div>
 
 <footer>
@@ -523,11 +554,14 @@
     return d.toLocaleDateString('es-MX', { day: 'numeric', month: 'short' }).toUpperCase();
   }
 
+  let currentEvento = null;
+
   async function loadEvento() {
     try {
       const evRes = await fetch('/api/eventos?slug=next');
       if (!evRes.ok) throw new Error('sin evento');
       const ev = await evRes.json();
+      currentEvento = ev;
 
       document.getElementById('pageTitle').textContent = `Crea sin Miedo — Taller Práctico · ${ev.ciudad} · ${fmtFechaCorta(ev.fecha)}`;
       document.getElementById('pageDesc').setAttribute('content', `Taller práctico Crea sin Miedo en ${ev.ciudad}, ${fmtFechaLarga(ev.fecha)}. Sal con ~30 piezas de contenido grabadas. Cupo limitado.`);
@@ -579,6 +613,56 @@
   }
 
   loadEvento();
+
+  if (new URLSearchParams(location.search).get('error') === '1') {
+    const errEl = document.getElementById('checkoutError');
+    if (errEl) {
+      errEl.textContent = 'Tu pago no se completó. No se hizo ningún cargo — puedes intentarlo de nuevo.';
+      errEl.style.display = 'block';
+    }
+  }
+
+  document.getElementById('checkoutForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+
+    const nombreEl = document.getElementById('ck-nombre');
+    const emailEl = document.getElementById('ck-email');
+    const telefonoEl = document.getElementById('ck-telefono');
+    const nombre = nombreEl.value.trim();
+    const email = emailEl.value.trim();
+    const telefono = telefonoEl.value.trim();
+
+    let valid = true;
+    if (!nombre) { nombreEl.classList.add('error'); valid = false; } else nombreEl.classList.remove('error');
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { emailEl.classList.add('error'); valid = false; } else emailEl.classList.remove('error');
+    if (!telefono) { telefonoEl.classList.add('error'); valid = false; } else telefonoEl.classList.remove('error');
+    if (!valid) return;
+
+    const btn = document.getElementById('checkoutBtn');
+    const errEl = document.getElementById('checkoutError');
+    errEl.style.display = 'none';
+    btn.disabled = true;
+    btn.textContent = 'Procesando…';
+
+    try {
+      const res = await fetch('/api/checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          tier: 'practico', nombre, email, telefono,
+          evento_id: currentEvento?.id, slug: currentEvento?.slug,
+        }),
+      });
+      const data = await res.json();
+      if (data.init_point) { window.location.href = data.init_point; return; }
+      throw new Error(data.error || 'No se pudo procesar el pago');
+    } catch (err) {
+      btn.disabled = false;
+      btn.textContent = 'Pagar $3,997 →';
+      errEl.textContent = err.message || 'Error al procesar. Intenta de nuevo.';
+      errEl.style.display = 'block';
+    }
+  });
 
   // Sticky CTA
   const sticky = document.getElementById('stickyCta');
