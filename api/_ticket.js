@@ -2,9 +2,15 @@ const GHL_KEY = process.env.GHL_API_KEY;
 const LOC_ID  = process.env.GHL_LOCATION_ID;
 const BASE    = process.env.BASE_URL || 'https://creasinmiedo.com.mx';
 
-const TIER_NAMES = { general: 'General', vip: 'VIP', full: 'Full Experience' };
+const TIER_NAMES = { general: 'General', vip: 'VIP', full: 'Full Experience', practico: 'Taller Práctico' };
 
-async function sendTicket({ nombre, email, telefono, tier, paymentId }) {
+function fmtFechaLarga(iso) {
+  if (!iso) return null;
+  return new Date(iso + 'T12:00:00').toLocaleDateString('es-MX', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })
+    .replace(/^\w/, c => c.toUpperCase());
+}
+
+async function sendTicket({ nombre, email, telefono, tier, paymentId, evento }) {
   if (!GHL_KEY || !LOC_ID) return;
 
   const pid      = String(paymentId);
@@ -12,6 +18,11 @@ async function sendTicket({ nombre, email, telefono, tier, paymentId }) {
   const qrData   = `${BASE}/gracias?status=approved&tier=${tier}&payment_id=${encodeURIComponent(pid)}`;
   const qrUrl    = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(qrData)}&bgcolor=ffffff&color=000000&margin=8`;
   const boletoUrl = `${BASE}/gracias?status=approved&tier=${tier}&payment_id=${encodeURIComponent(pid)}`;
+
+  const fechaText = evento ? (fmtFechaLarga(evento.fecha) || 'Próximamente') : 'Sábado 1 de Agosto, 2026';
+  const lugarText = evento ? evento.ciudad : 'Guadalajara, Jalisco';
+  const venueText = evento ? [evento.venue, evento.direccion].filter(Boolean).join(' — ') : null;
+  const eventoTag = evento ? `${fechaText} · ${evento.ciudad}` : 'Sábado 1 de Agosto 2026 · Guadalajara';
 
   const parts     = (nombre || '').trim().split(/\s+/);
   const firstName = parts[0] || '';
@@ -38,7 +49,7 @@ async function sendTicket({ nombre, email, telefono, tier, paymentId }) {
         { key: 'csm_payment_id',  field_value: pid },
         { key: 'csm_qr_url',      field_value: qrUrl },
         { key: 'csm_boleto_url',  field_value: boletoUrl },
-        { key: 'csm_evento',      field_value: 'Sábado 1 de Agosto 2026 · Guadalajara' },
+        { key: 'csm_evento',      field_value: eventoTag },
       ],
     }),
   });
@@ -47,7 +58,7 @@ async function sendTicket({ nombre, email, telefono, tier, paymentId }) {
   if (!contactId) return;
 
   // 2. Send ticket email via GHL
-  const html = buildEmailHTML({ nombre, tierName, pid, qrUrl, boletoUrl });
+  const html = buildEmailHTML({ nombre, tierName, pid, qrUrl, boletoUrl, fechaText, lugarText, venueText });
   await fetch('https://services.leadconnectorhq.com/conversations/messages', {
     method: 'POST',
     headers: {
@@ -66,7 +77,7 @@ async function sendTicket({ nombre, email, telefono, tier, paymentId }) {
   });
 }
 
-function buildEmailHTML({ nombre, tierName, pid, qrUrl, boletoUrl }) {
+function buildEmailHTML({ nombre, tierName, pid, qrUrl, boletoUrl, fechaText, lugarText, venueText }) {
   const shortId = pid.replace('FREE-','').replace('TEST-','').slice(-8).toUpperCase();
   return `<!DOCTYPE html>
 <html lang="es">
@@ -82,7 +93,7 @@ function buildEmailHTML({ nombre, tierName, pid, qrUrl, boletoUrl }) {
   <!-- HEADER LOGO -->
   <tr><td align="center" style="padding-bottom:32px;">
     <div style="font-size:28px;font-weight:900;letter-spacing:6px;color:#ffffff;text-transform:uppercase;">CREA <span style="color:#e5272b">SIN</span> MIEDO</div>
-    <div style="font-size:11px;letter-spacing:3px;text-transform:uppercase;color:#555;margin-top:6px;">Taller presencial · Guadalajara 2026</div>
+    <div style="font-size:11px;letter-spacing:3px;text-transform:uppercase;color:#555;margin-top:6px;">Taller presencial · ${lugarText}</div>
   </td></tr>
 
   <!-- CONFIRMED BANNER -->
@@ -136,16 +147,12 @@ function buildEmailHTML({ nombre, tierName, pid, qrUrl, boletoUrl }) {
               </td></tr>
               <tr><td style="padding-bottom:16px;">
                 <div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#555;margin-bottom:4px;">Fecha</div>
-                <div style="font-size:14px;font-weight:600;color:#fff;">Sábado 1 de Agosto, 2026</div>
-              </td></tr>
-              <tr><td style="padding-bottom:16px;">
-                <div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#555;margin-bottom:4px;">Lugar</div>
-                <div style="font-size:14px;font-weight:600;color:#fff;">Guadalajara, Jalisco</div>
-                <div style="font-size:12px;color:#666;margin-top:2px;">Dirección exacta próximamente</div>
+                <div style="font-size:14px;font-weight:600;color:#fff;">${fechaText}</div>
               </td></tr>
               <tr><td>
-                <div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#555;margin-bottom:4px;">Horario</div>
-                <div style="font-size:13px;color:#aaa;">Registro 8:30 AM · Inicio 9:00 AM</div>
+                <div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#555;margin-bottom:4px;">Lugar</div>
+                <div style="font-size:14px;font-weight:600;color:#fff;">${lugarText}</div>
+                <div style="font-size:12px;color:#666;margin-top:2px;">${venueText || 'Dirección exacta próximamente'}</div>
               </td></tr>
             </table>
           </td>
@@ -202,7 +209,7 @@ function buildEmailHTML({ nombre, tierName, pid, qrUrl, boletoUrl }) {
   <!-- FOOTER -->
   <tr><td align="center" style="border-top:1px solid #1a1a1a;padding-top:24px;">
     <div style="font-size:12px;color:#444;line-height:1.8;">
-      <strong style="color:#666;letter-spacing:2px;">CREA SIN MIEDO</strong> · Guadalajara 2026<br>
+      <strong style="color:#666;letter-spacing:2px;">CREA SIN MIEDO</strong> · ${lugarText}<br>
       ¿Dudas? <a href="mailto:brandproximity@gmail.com" style="color:#e5272b;text-decoration:none;">brandproximity@gmail.com</a>
     </div>
   </td></tr>

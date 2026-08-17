@@ -81,9 +81,16 @@
 </div>
 
 <script>
-const TIER_NAMES = { general: 'General', vip: 'VIP', full: 'Full Experience' };
+const TIER_NAMES = { general: 'General', vip: 'VIP', full: 'Full Experience', practico: 'Taller Práctico' };
 
 function fmt(n) { return '$' + Number(n).toLocaleString('es-MX'); }
+function esc(s) { return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+
+function fmtFechaLarga(iso) {
+  if (!iso) return null;
+  return new Date(iso + 'T12:00:00').toLocaleDateString('es-MX', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })
+    .replace(/^\w/, c => c.toUpperCase());
+}
 
 function getParams() {
   const p = new URLSearchParams(window.location.search);
@@ -93,6 +100,7 @@ function getParams() {
     prefId: p.get('preference_id'),
     pending: p.get('pending') === '1',
     tier: p.get('tier'),
+    slug: p.get('slug'),
   };
 }
 
@@ -109,10 +117,14 @@ function renderPending() {
   `;
 }
 
-function renderConfirmed(paymentId, tier) {
+function renderConfirmed(paymentId, tier, evento) {
   const tierName = TIER_NAMES[tier] || 'General';
   const qrData = 'CSM-' + (paymentId || 'TICKET');
   const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(qrData)}&bgcolor=ffffff&color=000000&margin=4`;
+
+  const fechaText = evento ? (fmtFechaLarga(evento.fecha) || 'Próximamente') : 'Sábado 1 de Agosto, 2026';
+  const lugarText = evento ? evento.ciudad : 'Guadalajara, Jalisco';
+  const venueText = evento ? [evento.venue, evento.direccion].filter(Boolean).join(' — ') : null;
 
   document.getElementById('mainPage').innerHTML = `
     <div class="check-icon">✓</div>
@@ -131,11 +143,12 @@ function renderConfirmed(paymentId, tier) {
         <div class="ticket-info">
           <div class="info-row">
             <div class="label">Fecha</div>
-            <div class="value">Sábado 1 de Agosto, 2026</div>
+            <div class="value">${fechaText}</div>
           </div>
           <div class="info-row">
             <div class="label">Lugar</div>
-            <div class="value">Guadalajara, Jalisco</div>
+            <div class="value">${lugarText}</div>
+            ${venueText ? `<div style="font-size:.78rem;color:var(--muted);margin-top:2px">${venueText}</div>` : ''}
           </div>
           <div class="info-row">
             <div class="label">ID de pago</div>
@@ -161,18 +174,18 @@ function renderConfirmed(paymentId, tier) {
       <div class="info-card">
         <div class="ic-icon">📍</div>
         <h4>Venue</h4>
-        <p>Pronto confirmamos el lugar exacto. Te avisamos por email y WhatsApp.</p>
+        <p>${venueText ? `${esc(venueText)}${evento && evento.maps_url ? ` — <a href="${evento.maps_url}" target="_blank" rel="noopener" style="color:var(--red)">Cómo llegar →</a>` : ''}` : 'Pronto confirmamos el lugar exacto. Te avisamos por email y WhatsApp.'}</p>
       </div>
       <div class="ic-icon" style="display:none"></div>
       <div class="info-card">
         <div class="ic-icon">📱</div>
         <h4>Guarda tu QR</h4>
-        <p>Toma screenshot de este boleto. Lo escanearemos en la entrada el 1 de agosto.</p>
+        <p>Toma screenshot de este boleto. Lo escanearemos en la entrada${evento ? '' : ' el 1 de agosto'}.</p>
       </div>
       <div class="info-card">
         <div class="ic-icon">🕘</div>
         <h4>Horario</h4>
-        <p>Registro: 8:30 AM. Inicio: 9:00 AM. Full day hasta las 6–7 PM aproximadamente.</p>
+        <p>${evento && evento.slug ? `Programa completo del día en <a href="/cronograma/${evento.slug}" style="color:var(--red)">/cronograma</a>.` : 'Registro: 8:30 AM. Inicio: 9:00 AM. Full day hasta las 6–7 PM aproximadamente.'}</p>
       </div>
     </div>
 
@@ -182,28 +195,37 @@ function renderConfirmed(paymentId, tier) {
   `;
 }
 
-function renderError() {
+function renderError(tier, slug) {
+  const retryUrl = tier === 'practico' ? `/registro${slug ? '/' + slug : ''}` : '/checkout';
   document.getElementById('mainPage').innerHTML = `
     <div class="check-icon" style="background:rgba(239,68,68,.15);border-color:rgba(239,68,68,.4)">✕</div>
     <h1>Pago <span style="color:#ef4444">no completado</span></h1>
     <p class="subtitle">Hubo un problema con tu pago. No se realizó ningún cargo. Puedes intentarlo de nuevo.</p>
-    <a href="/checkout" class="btn-orange">Intentar de nuevo</a>
+    <a href="${retryUrl}" class="btn-orange">Intentar de nuevo</a>
     <a href="/" class="btn-outline">Volver al inicio</a>
   `;
 }
 
 // Init
-const { status, paymentId, pending, tier } = getParams();
+const { status, paymentId, pending, tier, slug } = getParams();
+
+async function fetchEvento(slug) {
+  if (!slug) return null;
+  try {
+    const r = await fetch(`/api/eventos?slug=${encodeURIComponent(slug)}`);
+    return r.ok ? await r.json() : null;
+  } catch (e) { return null; }
+}
 
 if (pending || status === 'pending' || status === 'in_process') {
   renderPending();
 } else if (status === 'approved' || paymentId) {
-  renderConfirmed(paymentId, tier);
+  fetchEvento(slug).then(evento => renderConfirmed(paymentId, tier, evento));
 } else if (status === 'rejected' || status === 'cancelled') {
-  renderError();
+  renderError(tier, slug);
 } else {
   // No params — direct visit
-  renderConfirmed(null, null);
+  renderConfirmed(null, null, null);
 }
 </script>
 </body>

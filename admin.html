@@ -355,6 +355,31 @@
         </table>
       </div>
 
+      <!-- TALLER PRÁCTICO ($3,997) -->
+      <div class="sec-head" style="margin-top:0;margin-bottom:8px">
+        <h3 style="font-size:1rem;color:var(--amber,#ff9f43)">Taller Práctico</h3>
+        <div style="display:flex;align-items:center;gap:8px">
+          <span class="badge" id="leadsCountPractico">0</span>
+          <button onclick="toggleAddForm('practico')" class="code-gen-btn" style="font-size:.7rem;padding:3px 10px">+ Agregar</button>
+        </div>
+      </div>
+      <div id="addForm-practico" style="display:none;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:14px 16px;margin-bottom:10px">
+        <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:flex-end">
+          <input type="text" id="addNombre-practico" placeholder="Nombre completo" class="add-input">
+          <input type="email" id="addEmail-practico" placeholder="Email" class="add-input">
+          <input type="tel" id="addTel-practico" placeholder="Teléfono" class="add-input">
+          <button onclick="addAsistente('practico')" class="code-gen-btn" style="padding:8px 14px">Agregar</button>
+          <button onclick="toggleAddForm('practico')" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:.8rem">Cancelar</button>
+        </div>
+        <div id="addMsg-practico" style="font-size:.75rem;margin-top:6px"></div>
+      </div>
+      <div class="table-wrap" style="margin-bottom:40px">
+        <table>
+          <thead><tr><th>#</th><th>Nombre</th><th>Correo</th><th>Tipo</th><th>Asistencia</th><th></th></tr></thead>
+          <tbody id="tbodyLeadsPractico"><tr><td colspan="6" class="empty-row">Cargando…</td></tr></tbody>
+        </table>
+      </div>
+
       <!-- PROXIMITY CREATORS -->
       <div class="sec-head" style="margin-top:8px;margin-bottom:8px">
         <h3>Proximity Creators</h3>
@@ -590,7 +615,7 @@
 </div><!-- /app -->
 
 <script>
-let PRICES = { general: 2997, vip: 4997, full: 14997 };
+let PRICES = { general: 2997, vip: 4997, full: 14997, practico: 3997 };
 fetch('/api/prices').then(r => r.json()).then(d => { Object.keys(d).forEach(k => { if(d[k].price) PRICES[k] = d[k].price; }); }).catch(()=>{});
 
 let allData = [];
@@ -1313,9 +1338,10 @@ function renderPCSection(rows, tbodyId, countId) {
 }
 
 function renderLeads() {
-  renderAsistentesSection(allData.filter(a => a.tipo === 'general'), 'tbodyLeadsGen', 'leadsCountGen');
-  renderAsistentesSection(allData.filter(a => a.tipo === 'vip'),     'tbodyLeadsVip', 'leadsCountVip');
-  renderAsistentesSection(allData.filter(a => a.tipo === 'full'),    'tbodyLeadsFull', 'leadsCountFull');
+  renderAsistentesSection(allData.filter(a => a.tipo === 'general'),  'tbodyLeadsGen', 'leadsCountGen');
+  renderAsistentesSection(allData.filter(a => a.tipo === 'vip'),      'tbodyLeadsVip', 'leadsCountVip');
+  renderAsistentesSection(allData.filter(a => a.tipo === 'full'),     'tbodyLeadsFull', 'leadsCountFull');
+  renderAsistentesSection(allData.filter(a => a.tipo === 'practico'), 'tbodyLeadsPractico', 'leadsCountPractico');
 }
 
 function renderPC2() {

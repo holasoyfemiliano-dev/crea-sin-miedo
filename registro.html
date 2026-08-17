@@ -91,6 +91,27 @@
     .cal-block.break .cal-dur { color:var(--muted); background:rgba(255,255,255,.06); }
     .cal-notas { font-size:.72rem; color:var(--muted); line-height:1.5; margin-top:1px; }
 
+    .scarcity {
+      text-align:center; background:rgba(229,39,43,.14); border:1px solid rgba(229,39,43,.4);
+      border-radius:10px; padding:11px 16px; font-size:.85rem; font-weight:700; color:var(--white);
+      margin-bottom:24px;
+    }
+    .scarcity b { color:var(--gold); }
+
+    .value-list { display:flex; flex-direction:column; gap:11px; margin-bottom:26px; }
+    .value-item { display:flex; gap:12px; align-items:flex-start; }
+    .value-item .chk {
+      width:22px; height:22px; border-radius:50%; background:rgba(245,197,24,.16);
+      border:1px solid rgba(245,197,24,.45); display:flex; align-items:center; justify-content:center;
+      font-size:.68rem; color:var(--gold); flex-shrink:0; margin-top:1px;
+    }
+    .value-item .txt { font-size:.9rem; color:var(--text); line-height:1.55; }
+    .value-item .txt strong { color:var(--white); }
+
+    .price-row { display:flex; align-items:baseline; justify-content:center; gap:6px; margin-bottom:16px; }
+    .price-amount { font-family:'Antonio',sans-serif; font-size:2.7rem; color:var(--gold); line-height:1; }
+    .price-currency { font-size:.78rem; color:var(--muted); }
+
     label { display:block; font-size:.72rem; letter-spacing:.06em; text-transform:uppercase; color:var(--muted); margin-bottom:6px; }
     .field { margin-bottom:16px; }
     input {
@@ -130,7 +151,7 @@
 <body>
 
 <div class="wrap">
-  <div class="eyebrow">Tienes una invitación</div>
+  <div class="eyebrow">Cupo limitado</div>
   <div class="logo">CREA<br><span class="red">SIN MIEDO</span></div>
   <div class="taller-tag">Taller práctico de creación de contenido</div>
   <div class="taller-rule"></div>
@@ -140,11 +161,19 @@
     <div class="meta-pill date" id="pillDate">📅 —</div>
   </div>
 
+  <div class="scarcity" id="scarcityBanner" style="display:none">🔥 Solo quedan <b id="scarcityNum">—</b> lugares</div>
+
   <p class="copy">
-    Nos encantaría que nos acompañes. <strong>Crea sin Miedo</strong> es un día para conectar con tu marca
-    personal, perderle el miedo a crear contenido y salir con resultados que se sienten tuyos.
-    Solo necesitamos tus datos para guardarte tu lugar.
+    Este taller práctico te quita el miedo a crear contenido. Sales con <strong>~30 piezas de contenido grabadas</strong>
+    con nuestra metodología <strong>Sinergéticos</strong> para grabar mucho en poco tiempo — pero no contenido genérico,
+    sino contenido que <strong>posiciona y vende</strong>.
   </p>
+
+  <div class="value-list">
+    <div class="value-item"><div class="chk">✓</div><div class="txt">Grabas en <strong>distintos formatos y estructuras</strong>, no una sola fórmula repetida.</div></div>
+    <div class="value-item"><div class="chk">✓</div><div class="txt">Grabas en un <strong>escenario virtual</strong>, en el set de podcast de Sinergéticos, para subir tu posicionamiento y autoridad.</div></div>
+    <div class="value-item"><div class="chk">✓</div><div class="txt">Sales con contenido <strong>listo para publicar</strong>, no solo con teoría.</div></div>
+  </div>
 
   <div class="details" id="detailsWrap" style="margin-bottom:20px">
     <div class="detail-item loc">
@@ -161,17 +190,11 @@
     <div style="color:var(--muted);font-size:.85rem">Cargando horario…</div>
   </div>
 
-  <div class="details">
-    <div class="detail-item tip">
-      <div class="icon-badge amber">💡</div>
-      <div>
-        <div class="detail-title">Para que la pases fácil</div>
-        <div class="detail-text">Te avisamos por correo antes del evento con cualquier detalle extra (estacionamiento, transporte, qué llevar).</div>
-      </div>
-    </div>
-  </div>
-
   <div class="card">
+    <div class="price-row">
+      <span class="price-amount" id="priceAmount">$3,997</span>
+      <span class="price-currency">MXN</span>
+    </div>
     <form id="regForm">
       <div class="field">
         <label for="nombre">¿Cómo te llamas?</label>
@@ -182,25 +205,15 @@
         <input type="email" id="email" autocomplete="email" placeholder="tu@correo.com">
       </div>
       <div class="field">
-        <label for="telefono">Tu teléfono (opcional)</label>
+        <label for="telefono">Tu teléfono</label>
         <input type="tel" id="telefono" autocomplete="tel" placeholder="33 1234 5678">
       </div>
-      <div class="field">
-        <label for="ocupacion">¿A qué te dedicas?</label>
-        <input type="text" id="ocupacion" autocomplete="organization-title" placeholder="Ej. Emprendedor(a), diseñador(a), estudiante...">
-      </div>
-      <button type="submit" class="btn-red" id="submitBtn">Confirmar lugar →</button>
+      <button type="submit" class="btn-red" id="submitBtn">Pagar $3,997 →</button>
       <div class="form-error" id="formError"></div>
     </form>
-
-    <div class="success" id="success">
-      <div class="check">✓</div>
-      <h2>¡Listo, ya tienes tu lugar!</h2>
-      <p>Gracias por registrarte, nos da mucho gusto. Te vamos a escribir por correo con todos los detalles antes del 2 de agosto. ¡Nos vemos ahí!</p>
-    </div>
   </div>
 
-  <p class="note">Al registrarte nos das luz verde para escribirte sobre este evento, nada más.</p>
+  <p class="note">Pago seguro con Mercado Pago. Tu lugar se confirma al completar el pago.</p>
 
   <footer><span class="red">Crea sin Miedo</span> · <span id="footerText">—</span></footer>
 </div>
@@ -247,7 +260,12 @@ function renderEvento(ev, cronograma) {
   document.getElementById('pillDate').textContent = `📅 ${fmtFechaLarga(ev.fecha)}`;
   document.getElementById('footerText').textContent = `${fmtFechaCorta(ev.fecha)} · ${ev.ciudad}`;
   document.getElementById('pageTitle').textContent = `Regístrate — Crea sin Miedo · ${ev.ciudad} · ${fmtFechaCorta(ev.fecha)}`;
-  document.getElementById('pageDesc').setAttribute('content', `Te invitamos al taller Crea sin Miedo en ${ev.ciudad}, ${fmtFechaLarga(ev.fecha)}. Regístrate y te contamos todos los detalles.`);
+  document.getElementById('pageDesc').setAttribute('content', `Taller práctico Crea sin Miedo en ${ev.ciudad}, ${fmtFechaLarga(ev.fecha)}. Cupo limitado.`);
+
+  if (ev.capacidad) {
+    document.getElementById('scarcityNum').textContent = ev.capacidad;
+    document.getElementById('scarcityBanner').style.display = 'block';
+  }
 
   const addr = [ev.direccion || ev.venue].filter(Boolean).join(' — ');
   const mapsUrl = ev.maps_url || (addr ? `https://maps.google.com/?q=${encodeURIComponent(addr)}` : null);
@@ -296,44 +314,50 @@ function renderCal(items) {
 
 loadEvento();
 
+if (new URLSearchParams(location.search).get('error') === '1') {
+  const formError = document.getElementById('formError');
+  formError.textContent = 'Tu pago no se completó. No se hizo ningún cargo — puedes intentarlo de nuevo.';
+  formError.style.display = 'block';
+}
+
 document.getElementById('regForm').addEventListener('submit', async function(e) {
   e.preventDefault();
 
   const nombreEl = document.getElementById('nombre');
   const emailEl = document.getElementById('email');
   const telefonoEl = document.getElementById('telefono');
-  const ocupacionEl = document.getElementById('ocupacion');
   const nombre = nombreEl.value.trim();
   const email = emailEl.value.trim();
   const telefono = telefonoEl.value.trim();
-  const ocupacion = ocupacionEl.value.trim();
 
   let valid = true;
   if (!nombre) { nombreEl.classList.add('error'); valid = false; } else nombreEl.classList.remove('error');
   if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { emailEl.classList.add('error'); valid = false; } else emailEl.classList.remove('error');
+  if (!telefono) { telefonoEl.classList.add('error'); valid = false; } else telefonoEl.classList.remove('error');
   if (!valid) return;
 
   const btn = document.getElementById('submitBtn');
   const formError = document.getElementById('formError');
   formError.style.display = 'none';
   btn.disabled = true;
-  btn.textContent = 'Registrando…';
+  btn.textContent = 'Procesando…';
 
   try {
-    const res = await fetch('/api/registro', {
+    const res = await fetch('/api/checkout', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ nombre, email, telefono, ocupacion, slug: currentEvento?.slug }),
+      body: JSON.stringify({
+        tier: 'practico', nombre, email, telefono,
+        evento_id: currentEvento?.id, slug: currentEvento?.slug,
+      }),
     });
     const data = await res.json();
-    if (!res.ok) throw new Error(data.error || 'No se pudo completar el registro');
-
-    document.getElementById('regForm').style.display = 'none';
-    document.getElementById('success').style.display = 'block';
+    if (data.init_point) { window.location.href = data.init_point; return; }
+    throw new Error(data.error || 'No se pudo procesar el pago');
   } catch (err) {
     btn.disabled = false;
-    btn.textContent = 'Confirmar lugar →';
-    formError.textContent = err.message || 'Error al registrar. Intenta de nuevo.';
+    btn.textContent = 'Pagar $3,997 →';
+    formError.textContent = err.message || 'Error al procesar. Intenta de nuevo.';
     formError.style.display = 'block';
   }
 });

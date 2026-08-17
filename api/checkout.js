@@ -17,7 +17,7 @@ module.exports = async function handler(req, res) {
   if (req.method === 'OPTIONS') { res.status(200).end(); return; }
   if (req.method !== 'POST') { res.status(405).json({ error: 'Method not allowed' }); return; }
 
-  const { tier, nombre, email, telefono, codigo } = req.body || {};
+  const { tier, nombre, email, telefono, codigo, evento_id, slug } = req.body || {};
 
   if (!TIERS[tier]) { res.status(400).json({ error: 'Tier inválido' }); return; }
   if (!nombre || !email || !telefono) { res.status(400).json({ error: 'Faltan datos requeridos' }); return; }
@@ -51,6 +51,9 @@ module.exports = async function handler(req, res) {
   const client = new MercadoPagoConfig({ accessToken: process.env.MP_ACCESS_TOKEN });
   const preference = new Preference(client);
 
+  const slugQs = slug ? `&slug=${encodeURIComponent(slug)}` : '';
+  const failureUrl = tier === 'practico' ? `${BASE}/registro${slug ? '/' + slug : ''}?error=1` : `${BASE}/checkout?tier=${tier}&error=1`;
+
   const body = {
     items: [{
       title: tierInfo.title,
@@ -60,14 +63,14 @@ module.exports = async function handler(req, res) {
     }],
     payer: { name: nombre, email, phone: { number: telefono } },
     back_urls: {
-      success: `${BASE}/gracias?tier=${tier}`,
-      failure: `${BASE}/checkout?tier=${tier}&error=1`,
-      pending: `${BASE}/gracias?pending=1&tier=${tier}`,
+      success: `${BASE}/gracias?tier=${tier}${slugQs}`,
+      failure: failureUrl,
+      pending: `${BASE}/gracias?pending=1&tier=${tier}${slugQs}`,
     },
     auto_return: 'approved',
     notification_url: `${BASE}/api/webhook`,
     metadata: {
-      tier, nombre, email, telefono,
+      tier, nombre, email, telefono, evento_id: evento_id || null,
       monto_original: TIERS[tier].price,
       descuento: descuentoAplicado,
       codigo_id: codigoValido,
@@ -78,10 +81,15 @@ module.exports = async function handler(req, res) {
   // If free ticket (100% discount), skip MercadoPago and register directly
   if (precio === 0) {
     const freeId = 'FREE-' + Date.now();
-    await registrarAsistente({ tier, nombre, email, telefono, monto: 0, mp_payment_id: freeId, codigo_id: codigoValido });
+    await registrarAsistente({ tier, nombre, email, telefono, monto: 0, mp_payment_id: freeId, codigo_id: codigoValido, evento_id });
     if (codigoValido) await incrementarUsos(codigoValido);
-    await sendTicket({ nombre, email, telefono, tier, paymentId: freeId }).catch(() => {});
-    res.json({ init_point: `${BASE}/gracias?status=approved&tier=${tier}&payment_id=${encodeURIComponent(freeId)}` });
+    let evento = null;
+    if (evento_id) {
+      const rows = await sbGet('csm_eventos', `id=eq.${evento_id}&select=ciudad,fecha,venue,direccion`);
+      evento = Array.isArray(rows) && rows[0] ? rows[0] : null;
+    }
+    await sendTicket({ nombre, email, telefono, tier, paymentId: freeId, evento }).catch(() => {});
+    res.json({ init_point: `${BASE}/gracias?status=approved&tier=${tier}&payment_id=${encodeURIComponent(freeId)}${slugQs}` });
     return;
   }
 
@@ -89,7 +97,7 @@ module.exports = async function handler(req, res) {
   res.json({ init_point: result.init_point });
 };
 
-async function registrarAsistente({ tier, nombre, email, telefono, monto, mp_payment_id, mp_preference_id, codigo_id }) {
+async function registrarAsistente({ tier, nombre, email, telefono, monto, mp_payment_id, mp_preference_id, codigo_id, evento_id }) {
   await fetch(`${SB_URL}/rest/v1/csm_asistentes`, {
     method: 'POST',
     headers: {
@@ -98,7 +106,7 @@ async function registrarAsistente({ tier, nombre, email, telefono, monto, mp_pay
       'Content-Type': 'application/json',
       Prefer: 'return=minimal',
     },
-    body: JSON.stringify({ tipo: tier, nombre, email, telefono, monto, mp_payment_id, mp_preference_id, pagado: true }),
+    body: JSON.stringify({ tipo: tier, nombre, email, telefono, monto, mp_payment_id, mp_preference_id, pagado: true, evento_id: evento_id || null }),
   });
   if (codigo_id) await incrementarUsos(codigo_id);
 }

@@ -1,27 +1,6 @@
 -- Crea sin Miedo — Database Schema
 -- Run this in Supabase SQL Editor
 
--- Asistentes (paying attendees)
-create table if not exists csm_asistentes (
-  id               uuid primary key default gen_random_uuid(),
-  nombre           text not null,
-  email            text not null,
-  telefono         text,
-  tipo             text not null check (tipo in ('general','vip','full')),
-  monto            numeric(10,2) default 0,
-  mp_payment_id    text unique,
-  mp_preference_id text,
-  pagado           boolean default false,
-  check_in         boolean default false,
-  check_in_at      timestamptz,
-  fecha_registro   timestamptz default now(),
-  notas            text
-);
-
-create index if not exists csm_asistentes_email_idx on csm_asistentes(email);
-create index if not exists csm_asistentes_tipo_idx  on csm_asistentes(tipo);
-create index if not exists csm_asistentes_pagado_idx on csm_asistentes(pagado);
-
 -- Eventos (ediciones del taller — una fila por ciudad/fecha)
 create table if not exists csm_eventos (
   id               uuid primary key default gen_random_uuid(),
@@ -38,6 +17,30 @@ create table if not exists csm_eventos (
 );
 
 create index if not exists csm_eventos_fecha_idx on csm_eventos(fecha);
+
+-- Asistentes (paying attendees). tipo 'practico' = taller práctico ($3,997, por evento
+-- vía evento_id); 'general'/'vip'/'full' son la conferencia vieja, sin evento_id.
+create table if not exists csm_asistentes (
+  id               uuid primary key default gen_random_uuid(),
+  evento_id        uuid references csm_eventos(id),
+  nombre           text not null,
+  email            text not null,
+  telefono         text,
+  tipo             text not null check (tipo in ('general','vip','full','practico')),
+  monto            numeric(10,2) default 0,
+  mp_payment_id    text unique,
+  mp_preference_id text,
+  pagado           boolean default false,
+  check_in         boolean default false,
+  check_in_at      timestamptz,
+  fecha_registro   timestamptz default now(),
+  notas            text
+);
+
+create index if not exists csm_asistentes_email_idx on csm_asistentes(email);
+create index if not exists csm_asistentes_tipo_idx  on csm_asistentes(tipo);
+create index if not exists csm_asistentes_pagado_idx on csm_asistentes(pagado);
+create index if not exists csm_asistentes_evento_idx on csm_asistentes(evento_id);
 
 -- Registro simple al taller (invitación, sin pago)
 create table if not exists csm_registro_taller (

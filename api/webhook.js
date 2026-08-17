@@ -4,7 +4,7 @@ const { sendTicket } = require('./_ticket');
 const SB_URL = process.env.SB_URL;
 const SB_KEY = process.env.SB_SERVICE;
 
-const AMOUNTS = { general: 2999, vip: 5000, full: 9997 };
+const AMOUNTS = { general: 2999, vip: 5000, full: 9997, practico: 3997 };
 
 module.exports = async function handler(req, res) {
   if (req.method === 'GET') { res.status(200).end(); return; }
@@ -36,12 +36,13 @@ module.exports = async function handler(req, res) {
     }
 
     const meta = payment.metadata || {};
-    const tier     = meta.tier || 'general';
-    const nombre   = meta.nombre || payment.payer?.first_name || 'Asistente';
-    const email    = meta.email  || payment.payer?.email || '';
-    const telefono = meta.telefono || payment.payer?.phone?.number || '';
-    const monto    = payment.transaction_amount || AMOUNTS[tier] || 0;
-    const pid      = String(paymentId);
+    const tier      = meta.tier || 'general';
+    const nombre    = meta.nombre || payment.payer?.first_name || 'Asistente';
+    const email     = meta.email  || payment.payer?.email || '';
+    const telefono  = meta.telefono || payment.payer?.phone?.number || '';
+    const monto     = payment.transaction_amount || AMOUNTS[tier] || 0;
+    const pid       = String(paymentId);
+    const eventoId  = meta.evento_id || null;
 
     // 1. Save to Supabase
     await sbPost('csm_asistentes', {
@@ -49,10 +50,16 @@ module.exports = async function handler(req, res) {
       mp_payment_id: pid,
       mp_preference_id: payment.preference_id || null,
       pagado: true,
+      evento_id: eventoId,
     });
 
-    // 2. Create / update contact in GHL + send ticket email
-    await sendTicket({ nombre, email, telefono, tier, paymentId: pid });
+    // 2. Traer datos del evento (si aplica) y enviar el ticket
+    let evento = null;
+    if (eventoId) {
+      const rows = await sbFetch(`csm_eventos?id=eq.${eventoId}&select=ciudad,fecha,venue,direccion`);
+      evento = Array.isArray(rows) && rows[0] ? rows[0] : null;
+    }
+    await sendTicket({ nombre, email, telefono, tier, paymentId: pid, evento });
 
     res.status(200).end();
   } catch (err) {

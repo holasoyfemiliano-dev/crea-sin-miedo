@@ -16,4 +16,9 @@ module.exports = {
     title: 'Full Experience — Crea sin Miedo',
     price: 14997,
   },
+  practico: {
+    name:  'Taller Práctico',
+    title: 'Taller Práctico de Creación de Contenido — Crea sin Miedo',
+    price: 3997,
+  },
 };
