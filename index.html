@@ -293,7 +293,7 @@
       </div>
       <div class="stat-item">
         <div class="stat-num" id="statPct">—</div>
-        <div class="stat-label">Lugares disponibles</div>
+        <div class="stat-label">Últimos lugares</div>
       </div>
     </div>
   </div>
@@ -442,7 +442,7 @@
         <div class="price-name">Taller Práctico</div>
         <div class="price-amount">$3,997</div>
         <div class="price-currency">MXN · pago único</div>
-        <div class="price-cupos" id="fullCuposText">Solo quedan lugares limitados</div>
+        <div class="price-cupos" id="fullCuposText">Últimos lugares</div>
         <div class="price-divider"></div>
         <ul class="price-features">
           <li>Día completo, taller práctico e intensivo</li>
@@ -560,18 +560,17 @@
       const fullText = document.getElementById('fullCuposText');
 
       if (restantes !== null) {
-        const label = `${restantes} lugares`;
-        if (pctEl) pctEl.textContent = label;
+        if (pctEl) pctEl.textContent = `Últimos ${restantes}`;
         if (statEl) statEl.textContent = restantes;
         if (restantes <= 0) {
           if (noteEl) { noteEl.textContent = '¡Cupo agotado! Únete a la lista de espera'; noteEl.style.color = 'var(--red)'; }
           if (fullText) { fullText.textContent = 'Cupo agotado'; fullText.style.color = 'var(--red)'; }
         } else if (restantes <= 5) {
-          if (noteEl) { noteEl.textContent = '¡Últimos lugares disponibles!'; noteEl.style.color = 'var(--gold)'; }
-          if (fullText) { fullText.textContent = '¡Últimos lugares!'; fullText.style.color = 'var(--gold)'; }
+          if (noteEl) { noteEl.textContent = `¡Últimos ${restantes} lugares disponibles!`; noteEl.style.color = 'var(--gold)'; }
+          if (fullText) { fullText.textContent = `¡Últimos ${restantes} lugares!`; fullText.style.color = 'var(--gold)'; }
         } else {
-          if (noteEl) noteEl.textContent = 'Solo quedan lugares limitados para este taller';
-          if (fullText) fullText.textContent = 'Solo quedan lugares limitados';
+          if (noteEl) noteEl.textContent = `Últimos ${restantes} lugares para este taller`;
+          if (fullText) fullText.textContent = `Últimos ${restantes} lugares`;
         }
       }
     } catch (e) {
