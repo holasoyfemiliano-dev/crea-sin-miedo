@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Crea sin Miedo — Taller Presencial · Guadalajara · 1 Agosto 2026</title>
-  <meta name="description" content="El taller de marca personal y creación de contenido más práctico de México. Guadalajara, 1 de agosto 2026.">
+  <title id="pageTitle">Crea sin Miedo — Taller Práctico de Creación de Contenido</title>
+  <meta name="description" id="pageDesc" content="Sal con ~30 piezas de contenido grabadas con la metodología Sinergéticos. Contenido que posiciona y vende, no genérico. Cupo limitado.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Antonio:wght@400;700&family=Oswald:wght@600;700&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   <style>
@@ -124,6 +124,7 @@
 
     /* Speakers */
     .speakers-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:20px; }
+    .speakers-grid.two-col { grid-template-columns:repeat(2,1fr); max-width:680px; margin:0 auto; }
     .speaker-card { background:rgba(255,255,255,.03); backdrop-filter:blur(16px); -webkit-backdrop-filter:blur(16px); border:1px solid rgba(255,255,255,.08); border-radius:12px; padding:32px 28px; text-align:center; transition:all .25s; }
     .speaker-card:hover { border-color:rgba(229,39,43,.3); transform:translateY(-4px); box-shadow:0 12px 40px rgba(0,0,0,.4); }
     .speaker-avatar { width:80px; height:80px; border-radius:50%; background:rgba(229,39,43,.08); border:1.5px solid rgba(229,39,43,.3); margin:0 auto 16px; display:flex; align-items:center; justify-content:center; font-family:'Impact',sans-serif; font-size:1.5rem; color:var(--red); letter-spacing:.04em; box-shadow:0 0 24px rgba(229,39,43,.15); overflow:hidden; }
@@ -214,7 +215,7 @@
       .pillar-num { font-size:3.8rem; }
       .agenda-grid { grid-template-columns:1fr; }
       .agenda-block:nth-child(odd) { border-right:none; }
-      .speakers-grid { grid-template-columns:1fr; }
+      .speakers-grid, .speakers-grid.two-col { grid-template-columns:1fr; }
       .pricing-grid { grid-template-columns:1fr; }
       .cta-card { padding:40px 20px; }
       .price-card { padding:28px 20px; }
@@ -261,19 +262,18 @@
 
     <!-- Supporting content below -->
     <p class="hero-sub">
-      Sales con tu marca definida, una estrategia de contenido lista y las primeras piezas grabadas.
-      Un día que convierte lo que sabes en una presencia digital que posiciona y genera.
+      Este taller práctico te quita el miedo a crear contenido. Sales con <strong style="color:var(--white)">~30 piezas grabadas</strong>
+      con nuestra metodología <strong style="color:var(--white)">Sinergéticos</strong> — pero no contenido genérico, sino contenido que posiciona y vende.
     </p>
     <div class="cupo-bar-wrap">
       <div class="cupo-bar-label">
-        <span class="cupo-bar-text">Cupos disponibles</span>
+        <span class="cupo-bar-text">Cupo limitado</span>
         <span class="cupo-bar-pct" id="cupoPct">—</span>
       </div>
-      <div class="cupo-bar-track"><div class="cupo-bar-fill" id="cupoFill"></div></div>
-      <div class="cupo-bar-note" id="cupoNote">Cargando disponibilidad…</div>
+      <div class="cupo-bar-note" id="cupoNote" style="margin-top:0">Cargando disponibilidad…</div>
     </div>
     <div class="hero-btns">
-      <a href="#boletos" class="btn-red">Consigue tu lugar →</a>
+      <a href="/registro" class="btn-red">Consigue tu lugar →</a>
       <a href="#que-vas-a-lograr" class="btn-outline">Ver programa</a>
     </div>
   </div>
@@ -284,16 +284,16 @@
   <div class="container">
     <div class="stats-grid">
       <div class="stat-item">
-        <div class="stat-num">GDL</div>
-        <div class="stat-label">Guadalajara, Jalisco</div>
+        <div class="stat-num" id="statCiudad">—</div>
+        <div class="stat-label" id="statCiudadLabel">Cargando…</div>
       </div>
       <div class="stat-item">
-        <div class="stat-num">1 AGO</div>
-        <div class="stat-label">Sábado 1 de Agosto, 2026</div>
+        <div class="stat-num" id="statFecha">—</div>
+        <div class="stat-label" id="statFechaLabel">Cargando…</div>
       </div>
       <div class="stat-item">
         <div class="stat-num" id="statPct">—</div>
-        <div class="stat-label">Del cupo vendido</div>
+        <div class="stat-label">Lugares disponibles</div>
       </div>
     </div>
   </div>
@@ -368,50 +368,50 @@
   <canvas data-wave="left"  style="position:absolute;top:0;left:0;width:260px;height:100%;pointer-events:none;z-index:0;opacity:.45"></canvas>
   <div class="container">
     <span class="sec-eyebrow">Lo que te llevas</span>
-    <h2 class="sec-title">UN DÍA QUE VALE<br>MÁS QUE UN AÑO</h2>
+    <h2 class="sec-title">SALES CON<br>~30 PIEZAS GRABADAS</h2>
     <div class="divider"></div>
     <div class="agenda-grid">
       <div class="agenda-block fadein">
         <div class="agenda-num">01</div>
-        <div class="agenda-title">Define tu identidad de marca</div>
-        <p class="agenda-desc">Trabajamos quién eres, a quién le hablas y qué te hace diferente. Defines tu posicionamiento y propuesta de valor desde el día 1.</p>
+        <div class="agenda-title">Sistema Sinergéticos</div>
+        <p class="agenda-desc">Nuestra metodología para grabar mucho contenido en poco tiempo, sin improvisar frente a la cámara.</p>
       </div>
       <div class="agenda-block fadein">
         <div class="agenda-num">02</div>
-        <div class="agenda-title">Estrategia de contenido con propósito</div>
-        <p class="agenda-desc">Cómo crear contenido que posiciona, conecta y vende. El sistema de 3 pilares que usan los creadores top.</p>
+        <div class="agenda-title">Contenido que posiciona y vende</div>
+        <p class="agenda-desc">Nada de contenido genérico. Grabas piezas con intención: posicionar tu marca y generar ventas reales.</p>
       </div>
       <div class="agenda-block fadein">
         <div class="agenda-num">03</div>
-        <div class="agenda-title">Aprende a grabar contenido</div>
-        <p class="agenda-desc">Técnicas reales para grabarte con tu celular: encuadre, luz, audio y presencia en cámara. Sin equipo caro, sin excusas.</p>
+        <div class="agenda-title">Distintos formatos y estructuras</div>
+        <p class="agenda-desc">No es una sola fórmula repetida 30 veces. Grabas en varios formatos y estructuras que se adaptan a tu marca.</p>
       </div>
       <div class="agenda-block fadein">
         <div class="agenda-num">04</div>
-        <div class="agenda-title">Panel de creadores con resultados</div>
-        <p class="agenda-desc">Conversación directa con creadores de Guadalajara que ya lo hicieron. Sin teoría, solo experiencia real sobre lo que funciona.</p>
+        <div class="agenda-title">Escenario virtual · set de Sinergéticos</div>
+        <p class="agenda-desc">Grabas en el set de podcast de Sinergéticos, un escenario virtual pensado para subir tu posicionamiento y autoridad.</p>
       </div>
       <div class="agenda-block fadein">
         <div class="agenda-num">05</div>
-        <div class="agenda-title">Plan de acción para tu marca personal</div>
-        <p class="agenda-desc">Defines tus pilares, formatos y frecuencia de publicación. Sales con un plan concreto de qué hacer la próxima semana para empezar a posicionarte.</p>
+        <div class="agenda-title">Contenido listo para publicar</div>
+        <p class="agenda-desc">No sales solo con teoría ni con clips a medias. Sales con piezas terminadas, listas para salir a tus redes.</p>
       </div>
       <div class="agenda-block fadein">
         <div class="agenda-num">06</div>
-        <div class="agenda-title">Networking con creadores y emprendedores</div>
-        <p class="agenda-desc">Conecta con personas que tienen los mismos objetivos que tú. Colaboraciones, alianzas y relaciones reales con gente que también está construyendo algo.</p>
+        <div class="agenda-title">Grupo reducido, atención real</div>
+        <p class="agenda-desc">Cupo limitado a propósito, para que la producción sea de verdad personalizada y no una fábrica de contenido genérico.</p>
       </div>
     </div>
   </div>
 </section>
 
-<!-- SPEAKERS -->
+<!-- FACILITADORES -->
 <section class="section">
   <div class="container">
-    <span class="sec-eyebrow">Quiénes facilitan</span>
-    <h2 class="sec-title">LOS QUE VAN<br>CONTIGO ESE DÍA</h2>
+    <span class="sec-eyebrow">Quién lo lleva</span>
+    <h2 class="sec-title">TE ACOMPAÑAMOS<br>TODO EL DÍA</h2>
     <div class="divider"></div>
-    <div class="speakers-grid">
+    <div class="speakers-grid two-col">
       <div class="speaker-card fadein">
         <div class="speaker-avatar">FE</div>
         <div class="speaker-name">Femiliano</div>
@@ -419,16 +419,10 @@
         <p class="speaker-desc">Creador de Proximity Brand. Construye marcas personales que posicionan, conectan y venden. Lleva el día completo.</p>
       </div>
       <div class="speaker-card fadein">
-        <div class="speaker-avatar">?</div>
-        <div class="speaker-name">Invitado Especial</div>
-        <div class="speaker-role">Próximamente revelado</div>
-        <p class="speaker-desc">Un referente nacional que suma credibilidad y perspectiva única al taller. Se revela en los próximos días.</p>
-      </div>
-      <div class="speaker-card fadein">
-        <div class="speaker-avatar">P</div>
-        <div class="speaker-name">Panel de Creadores</div>
-        <div class="speaker-role">Creadores locales · Guadalajara</div>
-        <p class="speaker-desc">Emprendedores y creadores de Guadalajara comparten su experiencia real. Proximidad directa con gente que ya lo hizo.</p>
+        <div class="speaker-avatar">SG</div>
+        <div class="speaker-name">Sinergéticos</div>
+        <div class="speaker-role">Metodología · Set de podcast</div>
+        <p class="speaker-desc">Su sistema para grabar mucho contenido en poco tiempo, y su escenario virtual, son la columna vertebral del día.</p>
       </div>
     </div>
   </div>
@@ -438,71 +432,27 @@
 <section class="section" id="boletos" style="background:rgba(255,255,255,.012);position:relative;overflow:hidden">
   <canvas data-wave="right" style="position:absolute;top:0;right:0;width:260px;height:100%;pointer-events:none;z-index:0;opacity:.4"></canvas>
   <div class="container">
-    <span class="sec-eyebrow center">Elige tu experiencia</span>
+    <span class="sec-eyebrow center">Un solo boleto</span>
     <h2 class="sec-title" style="text-align:center">ASEGURA TU<br>LUGAR HOY</h2>
     <div class="divider divider-center"></div>
-    <div class="pricing-grid">
+    <div class="pricing-grid" style="grid-template-columns:1fr;max-width:420px;margin:0 auto">
 
-      <!-- GENERAL -->
-      <div class="price-card fadein">
-        <div class="price-name">General</div>
-        <div class="price-amount">$2,997</div>
-        <div class="price-currency">MXN · pago único</div>
-        <div class="price-divider"></div>
-        <ul class="price-features">
-          <li>Acceso completo al taller (full day)</li>
-          <li>5 módulos de contenido práctico</li>
-          <li>Materiales y workbook digital</li>
-          <li>Producción de contenido en vivo</li>
-          <li>Panel de creadores locales</li>
-          <li class="muted">Asiento preferente</li>
-          <li class="muted">Foto profesional</li>
-          <li class="muted">Acceso Sky Bar</li>
-          <li class="muted">Mastermind viernes + cena</li>
-          <li class="muted">Domingo de grabación</li>
-        </ul>
-        <button class="price-btn" onclick="goCheckout('general')">Quiero mi lugar →</button>
-      </div>
-
-      <!-- VIP -->
       <div class="price-card featured fadein">
-        <div class="price-badge" style="background:var(--matrix);color:#000">Más popular</div>
-        <div class="price-name">VIP</div>
-        <div class="price-amount">$4,997</div>
+        <div class="price-badge" style="background:var(--matrix);color:#000">Cupo limitado</div>
+        <div class="price-name">Taller Práctico</div>
+        <div class="price-amount">$3,997</div>
         <div class="price-currency">MXN · pago único</div>
+        <div class="price-cupos" id="fullCuposText">Solo quedan lugares limitados</div>
         <div class="price-divider"></div>
         <ul class="price-features">
-          <li>Todo lo del boleto General</li>
-          <li>Asiento preferente (fila delantera)</li>
-          <li>Foto profesional individual</li>
-          <li>Prioridad en producción de contenido</li>
-          <li>Acceso Sky Bar al final del día</li>
-          <li>Networking con speakers</li>
-          <li>Grabaciones completas del evento</li>
-          <li class="muted">Mastermind viernes + cena</li>
-          <li class="muted">Domingo de grabación de contenido</li>
+          <li>Día completo, taller práctico e intensivo</li>
+          <li>Metodología Sinergéticos para grabar mucho contenido rápido</li>
+          <li>~30 piezas de contenido grabadas, en distintos formatos</li>
+          <li>Grabación en el escenario virtual del set de Sinergéticos</li>
+          <li>Contenido que posiciona y vende, no genérico</li>
+          <li>Grupo reducido, atención personalizada</li>
         </ul>
-        <button class="price-btn" onclick="goCheckout('vip')">Quiero experiencia VIP →</button>
-      </div>
-
-      <!-- FULL EXPERIENCE -->
-      <div class="price-card elite fadein">
-        <div class="price-badge gold">Acceso exclusivo</div>
-        <div class="price-name">Full Experience</div>
-        <div class="price-amount">$14,997</div>
-        <div class="price-currency">MXN · pago único</div>
-        <div class="price-cupos" id="fullCuposText">Cupo muy limitado — acceso exclusivo</div>
-        <ul class="price-features">
-          <li>Todo lo del boleto VIP</li>
-          <li>Grabaciones completas del evento Crea sin Miedo</li>
-          <li>Mastermind exclusivo el viernes 31 jul</li>
-          <li>Cena privada con Femiliano + speakers</li>
-          <li>Domingo 2 ago: producción profesional de contenido</li>
-          <li>Grabación + edición de 3 piezas finales</li>
-          <li>Acceso privado a comunidad de masterminds</li>
-          <li>Seguimiento 30 días post-evento</li>
-        </ul>
-        <button class="price-btn" onclick="goCheckout('full')">Quiero el Full Experience →</button>
+        <a href="/registro" class="price-btn" style="display:block;text-align:center;text-decoration:none">Quiero mi lugar →</a>
       </div>
 
     </div>
@@ -519,11 +469,11 @@
     <h2 class="sec-title" style="text-align:center">RESOLVEMOS TUS<br>DUDAS</h2>
     <div class="divider divider-center"></div>
     <div class="faq-list">
-      <div class="faq-item"><button class="faq-q" onclick="toggleFaq(this)">¿Necesito experiencia previa en contenido? <span class="icon">+</span></button><div class="faq-a">No. El taller está diseñado para todos los niveles. Si eres principiante sales con tus bases sólidas. Si ya creas contenido, sales con una estrategia y contenido producido.</div></div>
-      <div class="faq-item"><button class="faq-q" onclick="toggleFaq(this)">¿Dónde es el evento exactamente? <span class="icon">+</span></button><div class="faq-a">En Guadalajara, Jalisco. La dirección exacta del venue se confirma a todos los asistentes por correo y WhatsApp al registrarse.</div></div>
-      <div class="faq-item"><button class="faq-q" onclick="toggleFaq(this)">¿Qué necesito llevar? <span class="icon">+</span></button><div class="faq-a">Solo tu celular, ganas de crear y ropa en la que te sientas tú mismo. Nosotros ponemos el setup de grabación, la iluminación y el equipo de producción.</div></div>
+      <div class="faq-item"><button class="faq-q" onclick="toggleFaq(this)">¿Necesito experiencia previa en contenido? <span class="icon">+</span></button><div class="faq-a">No. El taller está diseñado para todos los niveles. Si eres principiante sales con tus bases sólidas. Si ya creas contenido, sales con más piezas grabadas y un sistema para seguir produciendo.</div></div>
+      <div class="faq-item"><button class="faq-q" onclick="toggleFaq(this)">¿Dónde es el evento exactamente? <span class="icon">+</span></button><div class="faq-a" id="faqUbicacion">En Zapopan, Jalisco, en El Bunker Sinergético. Al registrarte te compartimos la ubicación exacta y cómo llegar.</div></div>
+      <div class="faq-item"><button class="faq-q" onclick="toggleFaq(this)">¿Qué necesito llevar? <span class="icon">+</span></button><div class="faq-a">Solo tu celular, ganas de crear y ropa en la que te sientas tú mismo. Nosotros ponemos el escenario, la iluminación y el equipo de producción.</div></div>
       <div class="faq-item"><button class="faq-q" onclick="toggleFaq(this)">¿Hay reembolsos? <span class="icon">+</span></button><div class="faq-a">Sí. Hasta 15 días antes del evento puedes solicitar reembolso completo. Después de esa fecha puedes transferir tu boleto a otra persona.</div></div>
-      <div class="faq-item"><button class="faq-q" onclick="toggleFaq(this)">¿El Full Experience incluye hospedaje? <span class="icon">+</span></button><div class="faq-a">No incluye hospedaje, pero al registrarte te compartimos opciones recomendadas cerca del venue con tarifas especiales para asistentes.</div></div>
+      <div class="faq-item"><button class="faq-q" onclick="toggleFaq(this)">¿Cuántas personas van a estar? <span class="icon">+</span></button><div class="faq-a">Un grupo reducido a propósito — el cupo es limitado para que la producción de contenido sea de verdad personalizada, no en masa.</div></div>
     </div>
   </div>
 </section>
@@ -536,14 +486,14 @@
     <div class="cta-card">
       <span class="sec-eyebrow center" style="margin-bottom:16px">El momento es ahora</span>
       <h2 style="font-family:'Antonio',sans-serif;font-size:clamp(2.4rem,5vw,3.8rem);text-align:center;margin-bottom:16px;line-height:1">
-        TU MARCA PERSONAL<br><span style="color:var(--red)">EMPIEZA EL 1 DE AGOSTO</span>
+        SIN MIEDO A CREAR<br><span style="color:var(--red)">SIN CONTENIDO GENÉRICO</span>
       </h2>
       <p style="font-size:.88rem;color:var(--text);line-height:1.75;margin-bottom:32px;text-align:center">
-        No es otro evento donde anotas y te vas. Sales con contenido producido, una estrategia lista
-        y conexiones reales. Guadalajara, 1 de agosto 2026.
+        No es otro evento donde anotas y te vas. Sales con ~30 piezas de contenido grabadas,
+        listas para posicionarte y vender. <span id="ctaFechaCiudad">Cargando fecha…</span>
       </p>
       <div style="text-align:center">
-        <a href="#boletos" class="btn-red">Asegurar mi lugar →</a>
+        <a href="/registro" class="btn-red">Asegurar mi lugar →</a>
       </div>
     </div>
   </div>
@@ -551,8 +501,8 @@
 
 <!-- STICKY CTA -->
 <div id="stickyCta">
-  <div style="font-size:.8rem;color:var(--text)"><strong style="color:var(--white)">Crea sin Miedo</strong> · 1 Agosto · Guadalajara</div>
-  <a href="#boletos" class="nav-cta">Ver boletos</a>
+  <div style="font-size:.8rem;color:var(--text)"><strong style="color:var(--white)">Crea sin Miedo</strong> · <span id="stickyFechaCiudad">—</span></div>
+  <a href="/registro" class="nav-cta">Conseguir lugar</a>
 </div>
 
 <footer>
@@ -561,77 +511,75 @@
 
 <script>
 
-  // Live cupos
-  const TOTAL_CUPOS = 80;
-  const FULL_CUPOS  = 10;
+  // Evento activo + cupos (multi-evento — se actualiza solo cada edición)
+  function fmtFechaLarga(iso) {
+    if (!iso) return null;
+    return new Date(iso + 'T12:00:00').toLocaleDateString('es-MX', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })
+      .replace(/^\w/, c => c.toUpperCase());
+  }
+  function fmtFechaCorta(iso) {
+    if (!iso) return null;
+    const d = new Date(iso + 'T12:00:00');
+    return d.toLocaleDateString('es-MX', { day: 'numeric', month: 'short' }).toUpperCase();
+  }
 
-  async function loadCupos() {
+  async function loadEvento() {
     try {
-      const res = await fetch('/api/admin-data?table=csm_asistentes', {
-        headers: { 'x-admin-key': 'CSM2026' }
-      });
-      if (!res.ok) throw new Error(res.status);
-      const all = await res.json();
-      const arr = Array.isArray(all) ? all : [];
-      const pagados = arr.filter(a => a.pagado);
+      const evRes = await fetch('/api/eventos?slug=next');
+      if (!evRes.ok) throw new Error('sin evento');
+      const ev = await evRes.json();
 
-      const general = pagados.filter(a => a.tipo === 'general').length;
-      const vip     = pagados.filter(a => a.tipo === 'vip').length;
-      const full    = pagados.filter(a => a.tipo === 'full').length;
-      const total   = pagados.length;
-      const pct     = Math.max(30, Math.round((total / TOTAL_CUPOS) * 100));
-      const disponibles = TOTAL_CUPOS - total;
-      const fullRestantes = Math.max(0, FULL_CUPOS - full);
+      document.getElementById('pageTitle').textContent = `Crea sin Miedo — Taller Práctico · ${ev.ciudad} · ${fmtFechaCorta(ev.fecha)}`;
+      document.getElementById('pageDesc').setAttribute('content', `Taller práctico Crea sin Miedo en ${ev.ciudad}, ${fmtFechaLarga(ev.fecha)}. Sal con ~30 piezas de contenido grabadas. Cupo limitado.`);
+      document.getElementById('statCiudad').textContent = ev.ciudad.split(',')[0].toUpperCase();
+      document.getElementById('statCiudadLabel').textContent = ev.ciudad;
+      document.getElementById('statFecha').textContent = fmtFechaCorta(ev.fecha) || '—';
+      document.getElementById('statFechaLabel').textContent = fmtFechaLarga(ev.fecha) || '—';
+      document.getElementById('ctaFechaCiudad').textContent = `${ev.ciudad}, ${fmtFechaLarga(ev.fecha) || ''}.`;
+      document.getElementById('stickyFechaCiudad').textContent = `${fmtFechaCorta(ev.fecha) || ''} · ${ev.ciudad}`;
+      if (ev.venue) {
+        document.getElementById('faqUbicacion').textContent = `En ${ev.ciudad}, en ${ev.venue}. Al registrarte te compartimos la ubicación exacta y cómo llegar.`;
+      }
 
-      // Cupo bar
-      const fillEl = document.getElementById('cupoFill');
+      // Lugares restantes — nunca mostramos el total, solo cuántos quedan
+      let restantes = ev.capacidad || null;
+      try {
+        const asRes = await fetch(`/api/admin-data?table=csm_asistentes&evento_id=${ev.id}`, {
+          headers: { 'x-admin-key': 'CSM2026' },
+        });
+        if (asRes.ok) {
+          const all = await asRes.json();
+          const vendidos = (Array.isArray(all) ? all : []).filter(a => a.tipo === 'practico' && a.pagado).length;
+          if (ev.capacidad) restantes = Math.max(0, ev.capacidad - vendidos);
+        }
+      } catch (e) { /* usamos capacidad tal cual si falla el conteo */ }
+
       const pctEl  = document.getElementById('cupoPct');
       const noteEl = document.getElementById('cupoNote');
-      if (fillEl) fillEl.style.width = pct + '%';
-      if (pctEl)  pctEl.textContent  = pct + '%';
-      if (noteEl) {
-        if (disponibles <= 0) {
-          noteEl.textContent = '¡Cupo agotado! Únete a la lista de espera';
-          noteEl.style.color = 'var(--red)';
-        } else if (disponibles <= 10) {
-          noteEl.textContent = '¡Últimos lugares disponibles!';
-          noteEl.style.color = 'var(--gold)';
-        } else {
-          noteEl.textContent = 'Cupo limitado · los precios suben conforme avanza la fecha';
-        }
-      }
-
-      // Stats bar
       const statEl = document.getElementById('statPct');
-      if (statEl) statEl.textContent = pct + '%';
-
-      // Full Experience cupos
       const fullText = document.getElementById('fullCuposText');
-      if (fullText) {
-        if (fullRestantes <= 0) {
-          fullText.textContent = 'Cupo agotado';
-          fullText.style.color = 'var(--red)';
-        } else if (fullRestantes <= 3) {
-          fullText.textContent = '¡Últimos lugares!';
-          fullText.style.color = 'var(--gold)';
+
+      if (restantes !== null) {
+        const label = `${restantes} lugares`;
+        if (pctEl) pctEl.textContent = label;
+        if (statEl) statEl.textContent = restantes;
+        if (restantes <= 0) {
+          if (noteEl) { noteEl.textContent = '¡Cupo agotado! Únete a la lista de espera'; noteEl.style.color = 'var(--red)'; }
+          if (fullText) { fullText.textContent = 'Cupo agotado'; fullText.style.color = 'var(--red)'; }
+        } else if (restantes <= 5) {
+          if (noteEl) { noteEl.textContent = '¡Últimos lugares disponibles!'; noteEl.style.color = 'var(--gold)'; }
+          if (fullText) { fullText.textContent = '¡Últimos lugares!'; fullText.style.color = 'var(--gold)'; }
         } else {
-          fullText.textContent = 'Cupo muy limitado — acceso exclusivo';
+          if (noteEl) noteEl.textContent = 'Solo quedan lugares limitados para este taller';
+          if (fullText) fullText.textContent = 'Solo quedan lugares limitados';
         }
       }
-    } catch(e) {
-      console.warn('Cupos:', e.message);
-      const pctEl = document.getElementById('cupoPct');
-      if (pctEl) pctEl.textContent = '30%';
-      const fillElE = document.getElementById('cupoFill');
-      if (fillElE) fillElE.style.width = '30%';
-      const statElE = document.getElementById('statPct');
-      if (statElE) statElE.textContent = '30%';
-      const noteEl = document.getElementById('cupoNote');
-      if (noteEl) noteEl.textContent = 'El cupo se agota — los precios suben conforme avanza la fecha';
+    } catch (e) {
+      console.warn('Evento:', e.message);
     }
   }
 
-  loadCupos();
+  loadEvento();
 
   // Sticky CTA
   const sticky = document.getElementById('stickyCta');
@@ -648,11 +596,6 @@
     if (e.isIntersecting) e.target.classList.add('visible');
   }), { threshold: 0.1 });
   document.querySelectorAll('.fadein').forEach(el => obs.observe(el));
-
-  // Checkout redirect
-  function goCheckout(tier) {
-    window.location.href = `/checkout?tier=${tier}`;
-  }
 
   // Matrix wave decoration
   function drawWave(canvas, flipped) {
